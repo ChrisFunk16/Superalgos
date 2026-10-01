@@ -110,10 +110,13 @@ export function createEngine(tl, stage) {
   E.T = (id) => { const s = tl.scenes.find((x) => x.id === id); if (!s) throw new Error('Szene unbekannt: ' + id); return s; };
   E.hits = (kind, voice) => tl.hits.filter((x) => x.kind === kind && (voice == null || x.voice === voice));
   E.style = (text) => { const s = document.createElement('style'); s.textContent = text; document.head.append(s); return s; };
-  /** Szene registrieren. def: {id, start?, end?, span?:[idA,idB], pre?, post?, z?, build(root,E)->state, update(t,state,E)} */
+  /** Szene registrieren. def: {id, start?, end?, span?:[idA,idB], shift?, pre?, post?, z?, build(root,E)->state, update(t,state,E)}
+   *  shift: die Szene ist in „lokaler“ Zeit geschrieben; update bekommt t − shift, feste start/end-Werte werden um shift verschoben. */
   E.scene = (def) => {
+    const literal = def.start != null && !def.span;
     if (def.span) { def.start = E.T(def.span[0]).start; def.end = E.T(def.span[1]).end; }
     else if (def.start == null) { const s = E.T(def.id); def.start = s.start; def.end = s.end; }
+    if (def.shift && literal) { def.start += def.shift; def.end += def.shift; }
     E.scenes.push(def); return def;
   };
   E.start = async () => {
@@ -131,7 +134,7 @@ export function createEngine(tl, stage) {
       for (const s of E.scenes) {
         const vis = !s.broken && t >= s.start - (s.pre || 0) && t < s.end + (s.post || 0);
         if (vis !== s._vis) { s.root.style.display = vis ? 'block' : 'none'; s._vis = vis; }
-        if (vis) { try { s.update(t, s.state, E); } catch (e) { if (!s._err) { console.error('[update ' + s.id + ' @' + t.toFixed(2) + ']', e); s._err = true; } } }
+        if (vis) { try { s.update(t - (s.shift || 0), s.state, E); } catch (e) { if (!s._err) { console.error('[update ' + s.id + ' @' + t.toFixed(2) + ']', e); s._err = true; } } }
       }
       if (dbgEl) dbgEl.textContent = t.toFixed(2) + ' s · bar ' + (Math.floor(t / E.bar) + 1) + ' · beat ' + ((Math.floor(t / E.beat) % 4) + 1);
     };

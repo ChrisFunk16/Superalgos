@@ -29,7 +29,8 @@ N = int(round(DUR * SR))     # 2 880 000
 rng = np.random.default_rng(20261001)
 TL = json.load(open(os.path.join(HERE, '..', 'timeline.json'), encoding='utf-8'))
 HITS = TL['hits']
-CB = int(round([h for h in HITS if h['kind'] == 'crystal'][0]['t'] / BAR)) + 1       # Takt, in dem der Kristall einsetzt (31)
+CB = int(round([h for h in HITS if h['kind'] == 'crystal'][0]['t'] / BAR)) + 1       # Takt, in dem der Kristall einsetzt (33)
+B0 = int(round([h for h in HITS if h['kind'] == 'drop'][0]['t'] / BAR)) + 1           # Takt, in dem der Drop einsetzt (13)
 
 # ------------------------------------------------------------------ Mischpult (linear) – hier drehen
 MIX = dict(
@@ -248,8 +249,8 @@ def chord_at(t):
     if bar >= CB: return 'Amaj9'                             # ab dem Kristall
     if bar == CB - 1: return 'Gadd9'                         # Auftakt: F – G – A (die Aufhellung nach Dur wird vorbereitet)
     if bar == CB - 2: return 'Fmaj7'
-    if bar < 11: return 'Am9'
-    seq = ['Am9', 'Fmaj7', 'Cmaj7', 'Gadd9']; return seq[((bar - 11) // 2) % 4]
+    if bar < B0: return 'Am9'
+    seq = ['Am9', 'Fmaj7', 'Cmaj7', 'Gadd9']; return seq[((bar - B0) // 2) % 4]
 
 def prog(t, a, b): return float(np.clip((t - a) / (b - a), 0, 1))
 def bar_t(bar, beat=1): return (bar - 1) * BAR + (beat - 1) * BEAT
@@ -266,68 +267,72 @@ def render():
     # Bewusst klassisch und gut hörbar: weich pulsierender Kick (Filter öffnet sich), Uhr-Ticks, Achtel-Hats, Bass auf den Offbeats, Pad.
     # Die drei Insellösungen bringen je EINEN Ton des A-Moll-Dreiklangs (M365 = A, openDesk = C, Nextcloud = E) – erst zusammen ergeben sie einen Akkord.
     # Überforderung (14–18 s): Akkord-Stabs auf den fünf Blickwinkeln (Am – F – C – G – Am), 16tel-Arpeggio, Rim-Wirbel, Riser. Kein Clash, kein Polymeter.
-    CUT = hits('cut')[0]['t']                                  # 18.0
+    CUT = hits('cut')[0]['t']                                  # 22.0 – harter Schnitt
+    DROP = hits('drop')[0]['t']                                # 24.0
+    OV = [h['t'] for h in hits('text') if CUT - 5 <= h['t'] < CUT][0]   # 17.5 – Beginn der Überforderung
+    M2, M3 = hits('card', 2)[0]['t'], hits('card', 3)[0]['t']    # 8.5, 13.0 – zweiter/dritter Alltagsmoment
     A1, A1V = B['a1'], B['a1v']                                # a1 = Rhythmus/Fx, a1v = Töne/Stimmen (werden vom Kick geduckt)
     def soft_kick(level, cutoff): return filt(kick(1.0, 0.0, 0.5), 'lp', cutoff, 0.7, order=2) * level
     # Drone: reine Quinte A2 + E3 (hohl und ruhig, kein Sub), Filter öffnet sich über die ganzen 18 s
     n = idx(CUT); t = np.arange(n) / SR
     dy = osc_tri(110.0, n) + osc_tri(110.0 * 1.002, n, 0.3) + osc_tri(164.81, n, 0.6) + osc_tri(164.81 * 0.998, n, 0.9)      # Dreieck: kaum Terz-Obertöne (kein C♯ gegen das C)
-    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.4 * (0.30 + 0.70 * np.clip(t / 14.0, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
-    air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / 10, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
+    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.4 * (0.30 + 0.70 * np.clip(t / OV, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
+    air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / M3, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
     B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
-    for k in range(int(10.0 / BEAT)):                           # Uhr-Ticks (Zählzeiten)
+    for k in range(int(M3 / BEAT)):                             # Uhr-Ticks (Zählzeiten) bis zum dritten Moment
         tt = k * BEAT; A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5, pan=-0.2 if k % 2 else 0.2)
-    # Puls: gedämpfter Kick in halber Zeit (Hook + erster Alltagsmoment), ab 7 s auf jeder Zählzeit, Filter öffnet sich bis 18 s
+    # Puls: gedämpfter Kick in halber Zeit (Hook + erster Alltagsmoment), ab dem zweiten Moment auf jeder Zählzeit, Filter öffnet sich bis zum Schnitt
     for k in range(int(CUT / BEAT)):
         tk = k * BEAT
-        if tk < 7.0 and k % 2: continue
-        co = 105 + 1100 * prog(tk, 7, 18) ** 1.6 + 30 * prog(tk, 0, 7); lv = 0.30 + 0.55 * prog(tk, 0, 18)
-        A1.add(soft_kick(lv, co), tk, 1.0); kicks.append((tk, 0.30 * (0.5 + prog(tk, 0, 18))))
-    # Hats: ab 7 s gedämpfte Achtel, ab 10,5 s offene Hats auf dem Offbeat
-    for k in range(int((CUT - 7.0) / (BEAT / 2))):
-        tt = 7.0 + k * BEAT / 2
-        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, 7, 18)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, 7, 18), pan=(-1) ** k * 0.35)
-        if tt >= 10.5 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, 10.5, 18), pan=0.45)
-    # Bass-Puls ab 10,5 s: Offbeat-Achtel auf A – C – E (Am-Dreiklang), tief genug zum Tragen, aber noch kein Sub
-    for k in range(int((CUT - 10.5) / (BEAT / 2))):
-        tt = 10.5 + k * BEAT / 2
+        if tk < M2 and k % 2: continue
+        co = 105 + 1100 * prog(tk, M2, CUT) ** 1.6 + 30 * prog(tk, 0, M2); lv = 0.30 + 0.55 * prog(tk, 0, CUT)
+        A1.add(soft_kick(lv, co), tk, 1.0); kicks.append((tk, 0.30 * (0.5 + prog(tk, 0, CUT))))
+    # Hats: ab dem zweiten Moment gedämpfte Achtel, ab dem dritten offene Hats auf dem Offbeat
+    for k in range(int((CUT - M2) / (BEAT / 2))):
+        tt = M2 + k * BEAT / 2
+        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, M2, CUT)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, M2, CUT), pan=(-1) ** k * 0.35)
+        if tt >= M3 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, M3, CUT), pan=0.45)
+    # Bass-Puls ab dem dritten Moment: Offbeat-Achtel auf A – C – E (Am-Dreiklang), tief genug zum Tragen, aber noch kein Sub
+    for k in range(int((CUT - M3) / (BEAT / 2))):
+        tt = M3 + k * BEAT / 2
         if k % 2 == 0: continue
         nn = [45, 45, 48, 52][(k // 2) % 4]
-        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, 10.5, 18), pan=0.0)
+        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, M3, CUT), pan=0.0)
     # Drei Stimmen, im 16tel-Raster verzahnt: zusammen ergeben sie die Figur A – C – E – A – E – C (A-Moll-Arpeggio)
-    #   Stimme 1 (Allrounder, Zupfton A4) ab 3,5 s · Stimme 2 (Portal, Marimba C5) ab 7 s · Stimme 3 (Basis, Glocke E5) ab 10,5 s
+    #   Stimme 1 (Allrounder, Zupfton A4) · Stimme 2 (Portal, Marimba C5) · Stimme 3 (Basis, Glocke E5) – je ab ihrem Karten-Schlag
     def v1(f, vel=1.0): return pluck(f, 0.30, vel, 0.25, tau=0.08)
     def v2(f, vel=1.0): return marimba(f, vel, 0.45)
     def v3(f, vel=1.0): return bell(f, 1.3, vel, tail=0.25)
-    VOICES = [(3.5, [3, 11], 69, v1, 0.20, -0.35), (7.0, [6, 14], 72, v2, 0.20, 0.35), (10.5, [9, 13], 76, v3, 0.17, 0.0)]
+    VOICES = [(hits('card', 1)[0]['t'], [3, 11], 69, v1, 0.20, -0.35), (M2, [6, 14], 72, v2, 0.20, 0.35), (M3, [9, 13], 76, v3, 0.17, 0.0)]
     for t_on, steps, nn, fn, lv0, pan_ in VOICES:
         for bar in range(int(t_on // BAR) + 1, int(CUT // BAR) + 1):
             for st in steps:
                 tt = bar_t(bar) + st * S16
                 if tt < t_on or tt >= CUT - 0.05: continue
-                A1V.add(fn(midi(nn), 1.0), tt + hum(0.002), lv0 + 0.16 * prog(tt, t_on, 17), pan=pan_)
+                A1V.add(fn(midi(nn), 1.0), tt + hum(0.002), lv0 + 0.16 * prog(tt, t_on, CUT - 1), pan=pan_)
     # Überforderung: 16tel-Ticks und Rim-Wirbel, beschleunigend lauter/dichter
-    for k in range(int((CUT - 14.0) / S16)):
-        tk = 14.0 + k * S16; A1.add(tick(3800, 0.4), tk, 0.05 + 0.22 * prog(tk, 14, 18), pan=(-1) ** k * 0.4)
-    tt = 16.0
+    for k in range(int((CUT - OV) / S16)):
+        tk = OV + k * S16; A1.add(tick(3800, 0.4), tk, 0.05 + 0.22 * prog(tk, OV, CUT), pan=(-1) ** k * 0.4)
+    tt = CUT - 2.0
     while tt < CUT - 0.05:
-        step = BEAT / 2 if tt < 17.0 else (S16 if tt < 17.6 else S16 / 2)
-        A1.add(rim(0.35 + 0.55 * prog(tt, 16, 18)), tt, 0.35 + 0.45 * prog(tt, 16, 18), pan=0.1); tt += step
+        step = BEAT / 2 if tt < CUT - 1.0 else (S16 if tt < CUT - 0.4 else S16 / 2)
+        A1.add(rim(0.35 + 0.55 * prog(tt, CUT - 2, CUT)), tt, 0.35 + 0.45 * prog(tt, CUT - 2, CUT), pan=0.1); tt += step
     # Fünf Blickwinkel = fünf Akkord-Stabs (Am – F – C – G – Am) im 0,75-s-Raster, darunter ein 16tel-Arpeggio über dem jeweiligen Akkord
-    BT = [h['t'] for h in hits('text') if 14 <= h['t'] < CUT]                     # 14.0 · 14.75 · 15.5 · 16.25 · 17.0
+    BT = [h['t'] for h in hits('text') if OV <= h['t'] < CUT]                     # 17.5 · 18.25 · 19.0 · 19.75 · 20.5
     ACH = ['Am9', 'Fmaj7', 'Cmaj7', 'Gadd9', 'Am9']
     for (a, b), ch in zip(zip(BT, BT[1:] + [CUT]), ACH):
-        A1V.add(stab(CH[ch]['stab'], 0.9, 0.36, 1100 + 800 * prog(a, 14, 18)), a, 0.34 + 0.12 * prog(a, 14, 18), pan=-0.1)
+        A1V.add(stab(CH[ch]['stab'], 0.9, 0.36, 1100 + 800 * prog(a, OV, CUT)), a, 0.34 + 0.12 * prog(a, OV, CUT), pan=-0.1)
         n = int(0.35 * SR); t = np.arange(n) / SR; imp = np.sin(2 * np.pi * np.cumsum(95 * np.exp(-t / 0.04) + 55) / SR) * np.exp(-t / 0.12)
-        A1.add(fade_edges(imp + filt(noise(n), 'bp', 900, 1.0) * np.exp(-t / 0.05) * 0.5, 0.002, 0.02), a, 0.26 + 0.08 * (a - 14))
+        A1.add(fade_edges(imp + filt(noise(n), 'bp', 900, 1.0) * np.exp(-t / 0.05) * 0.5, 0.002, 0.02), a, 0.26 + 0.08 * (a - OV))
         k = 0; tt = a
         while tt < b - 1e-6:
             note = CH[ch]['arp'][[0, 2, 4, 2, 5, 4, 2, 4][k % 8]]
-            A1V.add(pluck(midi(note), 0.26, 0.8, 0.30, tau=0.08), tt + hum(0.002), 0.10 + 0.22 * prog(tt, 14, 18), pan=(-1) ** k * 0.3); tt += S16; k += 1
-    # Hook (0–3,5 s): aufsteigender Moll-Dreiklang A – C – E auf „funktioniert. / Nur nicht / dazwischen.“ – bleibt offen, die Auflösung kommt erst im Finale
-    for hk_, nn in zip([h for h in hits('ping') if h['t'] < 3.0], [69, 72, 76]):
+            A1V.add(pluck(midi(note), 0.26, 0.8, 0.30, tau=0.08), tt + hum(0.002), 0.10 + 0.22 * prog(tt, OV, CUT), pan=(-1) ** k * 0.3); tt += S16; k += 1
+    # Hook (0–4 s): aufsteigender Moll-Dreiklang A – C – E auf „funktioniert. / Nur nicht / dazwischen.“ – bleibt offen, die Auflösung kommt erst im Finale
+    HOOKP = [h for h in hits('ping') if h.get('voice', 0) == 0 and h['t'] < hits('card', 1)[0]['t']]
+    for hk_, nn in zip(HOOKP, [69, 72, 76]):
         A1V.add(marimba(midi(nn), 1.0), hk_['t'], 0.20, pan=(-1) ** int(hk_['t'] * 2) * 0.3)
-    A1V.add(bell(midi(76), 1.6, 0.7, tail=0.5), 2.0, 0.10)                       # „dazwischen.“ klingt nach – das Wort steht jetzt 1,3 s
+    A1V.add(bell(midi(76), 1.6, 0.7, tail=0.5), HOOKP[-1]['t'], 0.10)             # „dazwischen.“ klingt nach – das Wort steht 1,6 s
     # Kartenschläge: Grundton A / C / E (Sub-Impuls + gezupfte Note), danach je Lücke ein heller Ton derselben Stimme
     for h in hits('card'):
         tt, v = h['t'], h['voice']; f0 = {1: 110.0, 2: 130.81, 3: 164.81}[v]
@@ -355,27 +360,28 @@ def render():
     for k in ('a1', 'a1v', 'drone'): B[k].x *= gate[:, None]
     # ---- Übergang „Es geht auch anders“ → Drop (18–20 s): trägt Act I weiter, statt zu verstummen
     #      Herzschlag-Kick (wird lauter), A–C–E-Motiv der drei Inseln (zum ersten Mal zusammen, steigend und offen), Rim-Wirbel, Riser; danach 80 ms Vakuum
-    for tt, lv, co in [(18.5, 0.22, 260), (19.0, 0.32, 340), (19.5, 0.46, 520), (19.75, 0.55, 700), (19.875, 0.60, 900)]:
+    for tt, lv, co in [(CUT + 0.5, 0.22, 260), (CUT + 1.0, 0.32, 340), (CUT + 1.5, 0.46, 520), (CUT + 1.75, 0.55, 700), (CUT + 1.875, 0.60, 900)]:
         A1.add(filt(kick(1.0, 0.0, 0.5), 'lp', co, 0.7, order=2) * lv, tt, 1.0)
-    for tt, nn, lv in [(19.0, 69, 0.26), (19.25, 72, 0.30), (19.5, 76, 0.34)]:
+    for tt, nn, lv in [(CUT + 1.0, 69, 0.26), (CUT + 1.25, 72, 0.30), (CUT + 1.5, 76, 0.34)]:
         A1V.add(marimba(midi(nn), 1.0), tt, lv, pan=(-1) ** int(tt * 4) * 0.3)
-    A1V.add(bell(midi(76), 1.4, 0.8, tail=0.5), 19.5, 0.22)
-    tt = 19.25
-    while tt < 19.9:
-        A1.add(rim(0.3 + 0.5 * prog(tt, 19.25, 19.9)), tt, 0.28 + 0.40 * prog(tt, 19.25, 19.9), pan=0.1); tt += 0.125 if tt < 19.6 else 0.0625
-    B['fx'].add(riser(0.92, 400, 9000, 1.0, pitch=(330, 1320)), 19.0, 0.55)
+    A1V.add(bell(midi(76), 1.4, 0.8, tail=0.5), CUT + 1.5, 0.22)
+    tt = CUT + 1.25
+    while tt < CUT + 1.9:
+        A1.add(rim(0.3 + 0.5 * prog(tt, CUT + 1.25, CUT + 1.9)), tt, 0.28 + 0.40 * prog(tt, CUT + 1.25, CUT + 1.9), pan=0.1); tt += 0.125 if tt < CUT + 1.6 else 0.0625
+    B['fx'].add(riser(0.92, 400, 9000, 1.0, pitch=(330, 1320)), CUT + 1.0, 0.55)
     # Atemzug: Sub-Swell (erstes Mal Tiefbass!) + Rückwärts-Becken, Pad (Am9) ab 19.0 löst das B♭ auf, Rückwärts-Hall saugt in den Drop (20.0)
     n = idx(2.0); t = np.arange(n) / SR; sw = np.sin(2 * np.pi * 55.0 * t) * np.clip((t - 0.4) / 1.5, 0, 1) ** 2
     B['fx'].add(fade_edges(sw * 0.45, 0.01, 0.01), CUT, 1.0)
-    nr = idx(1.3); rc = filt(noise(nr), 'hp', 3800, 0.7, order=2) * np.linspace(0, 1, nr) ** 2.4; B['fx'].add(fade_edges(np.stack([rc, np.roll(rc, 150)], axis=1) * 0.55, 0.01, 0.002), 20.0 - 1.3, 1.0)
-    ASK = [h['t'] for h in hits('text') if 18.5 < h['t'] < 19.5][0]
-    DROP = hits('drop')[0]['t']                                                                                        # 20.0
+    nr = idx(1.3); rc = filt(noise(nr), 'hp', 3800, 0.7, order=2) * np.linspace(0, 1, nr) ** 2.4; B['fx'].add(fade_edges(np.stack([rc, np.roll(rc, 150)], axis=1) * 0.55, 0.01, 0.002), DROP - 1.3, 1.0)
+    ASK = [h['t'] for h in hits('text') if CUT < h['t'] < DROP][0]
     chord = pad_chord(CH['Am9']['stab'], 0.25, attack=0.01, release=0.2, cutoff=2400.0)
     suck = _suck_back(chord)
     B['fx'].add(suck, DROP - len(suck) / SR, 0.55)
 
     # ------------------------------------------------------------------ ACT II – Klarheit (20–52 s) + ACT III
-    cut_a, cut_b = hits('cut')[1]['t'], hits('cut')[1]['end']                 # 53.5 … 54.0
+    S2 = DROP - 20.0; NB2 = int(round(S2 / BAR))                               # Akt II ist für den Drop bei 20.0 (Takt 11) geschrieben: +4 s = +2 Takte
+    PK = [sc['start'] for sc in TL['scenes'] if sc['id'] == 'package'][0]        # Szene 05 (Kettenglieder)
+    cut_a, cut_b = hits('cut')[1]['t'], hits('cut')[1]['end']                 # halber Takt Drop-out vor dem Kristall
     CRY = hits('crystal')[0]['t']                                             # 56.0
     END_GROOVE = CRY + 4.0                                                    # 60.0: danach nur noch Glocken und Pad (Endbild)
     KICK_ON = [(DROP, cut_a), (CRY, END_GROOVE)]
@@ -384,25 +390,25 @@ def render():
     for k in range(nbeats):
         tk = k * BEAT
         if tk >= DROP and kick_on(tk):
-            lv = 0.82 + 0.18 * prog(tk, 20, 36)
+            lv = 0.82 + 0.18 * prog(tk, DROP, DROP + 16)
             B['kick'].add(kick(1.0 * lv, 0.0), tk, 1.0); kicks.append((tk, lv))
     # Bass: Pedal auf Akkordgrund, 8tel auf den Offbeats; Sub-Teppich am Anfang
     def bass_active(tt):
         if tt < DROP or tt >= END_GROOVE: return False
         if cut_a <= tt < cut_b: return False
-        if 34.0 <= tt < 36.0: return False                                    # Variation: Takt 18 ohne Bass
+        if DROP + 14 <= tt < DROP + 16: return False                            # Variation: ein Takt ohne Bass (Szene 04 beginnt)
         return True
     # liegender Sub in den ersten zwei Takten des Groove
     B['bass'].add(sub_boom(55.0, 2.6, 0.9), DROP, 0.38)
-    for bar in range(11, CB + 2):
+    for bar in range(11 + NB2, CB + 2):
         for e8 in range(8):
             tt = bar_t(bar) + e8 * (BEAT / 2)
-            if bar < 11 or tt >= END_GROOVE or not bass_active(tt) or e8 % 2 == 0: continue
+            if bar < 11 + NB2 or tt >= END_GROOVE or not bass_active(tt) or e8 % 2 == 0: continue
             ch = chord_at(tt); root = CH[ch]['bass']; pat = [0, 0, 12, 0, 0, 7, 0, 12]; semi = pat[e8]
             if bar % 2 == 0 and e8 == 7: semi = {'Am9': 10, 'Fmaj7': 7, 'Cmaj7': 7, 'Gadd9': 7, 'Amaj9': 7}[ch]      # Variation, immer akkordeigen
-            B['bass'].add(bass_note(midi(root + semi), BEAT * 0.42, 0.9 + 0.1 * (e8 == 3), 0.25 + 0.5 * prog(tt, 24, 46)), tt, 0.9 * (0.75 + 0.25 * prog(tt, 24, 30)))
+            B['bass'].add(bass_note(midi(root + semi), BEAT * 0.42, 0.9 + 0.1 * (e8 == 3), 0.25 + 0.5 * prog(tt, DROP + 4, DROP + 26)), tt, 0.9 * (0.75 + 0.25 * prog(tt, DROP + 4, DROP + 10)))
     # Hi-Hats
-    for bar in range(11, CB + 1):
+    for bar in range(11 + NB2, CB + 1):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if cut_a <= tt < cut_b or tt >= END_GROOVE: continue
@@ -410,11 +416,11 @@ def render():
             open_ = (s % 4 == 2)
             if open_:
                 B['hats'].add(hat(True, 0.9), tt + hum(0.002), 0.9, pan=0.25)
-            elif bar >= 15 and s % 2 == 1 or (bar >= 15 and s % 4 == 0 and s % 8 != 0):
+            elif bar >= 15 + NB2 and s % 2 == 1 or (bar >= 15 + NB2 and s % 4 == 0 and s % 8 != 0):
                 thin = (cut_a - 3.5) <= tt < (cut_a - 1.5) or bar >= CB
                 B['hats'].add(hat(False, (0.55 + 0.35 * ((s * 5) % 3 == 0)) * (0.5 if thin else 1)), tt + hum(0.002), 0.7, pan=-0.2 if s % 4 == 1 else 0.3)
     # Rim / Clap auf 2 und 4
-    for bar in range(11, CB):
+    for bar in range(11 + NB2, CB):
         for beat in (2, 4):
             tt = bar_t(bar, beat)
             if cut_a <= tt < cut_b: continue
@@ -422,51 +428,51 @@ def render():
     for bar in range(CB, CB + 2):
         for beat in (2, 4): B['rim'].add(rim(0.6), bar_t(bar, beat), 0.8, pan=0.1)
     # Pad: Akkordteppich, Filter öffnet sich über die Zeit
-    segs = [(18.5, 24.0, 'Am9')]; a_ = 24.0
+    segs = [(CUT + 0.5, DROP + 4.0, 'Am9')]; a_ = DROP + 4.0
     while a_ < CRY - 1e-6:
         b_ = a_ + (4.0 if a_ + 4.0 <= CRY - 4.0 + 1e-6 else 2.0); segs.append((a_, min(b_, CRY), chord_at(a_))); a_ = b_
     for a, b, ch in segs:
-        cut_f = 800 + 2600 * prog(a, 20, 48); first = a == 18.5
+        cut_f = 800 + 2600 * prog(a, DROP, DROP + 28); first = a == CUT + 0.5
         pc = pad_chord(CH[ch]['pad'], b - a + (0.6 if not first else 0.0), attack=1.4 if first else 1.2, release=1.4, cutoff=cut_f)
         B['pad'].add(pc, a, 0.8 if first else 1.0)
     # Finale-Pad (A-Dur, hell) – setzt beim Kristall ein und klingt bis zum Ende aus
     pc = pad_chord(CH['Amaj9']['pad'] + [69], 8.0, attack=0.25, release=2.6, cutoff=4200.0, spread=0.7); B['pad'].add(pc, CRY, 1.15)
     # Stabs (Dub-Akkord auf dem Offbeat der Zählzeit 2) – Takte 15–17 und 19–23 sowie 28–29
-    def stab_bar(bar): return (15 <= bar <= 17) or (19 <= bar <= 25) or bar in (CB, CB + 1)
-    for bar in range(11, CB + 2):
+    def stab_bar(bar): return (15 + NB2 <= bar <= 17 + NB2) or (19 + NB2 <= bar <= 25 + NB2) or bar in (CB, CB + 1)
+    for bar in range(11 + NB2, CB + 2):
         if not stab_bar(bar): continue
         tt = bar_t(bar, 2) + BEAT / 2 + hum(0.002); ch = chord_at(tt)
         if tt >= END_GROOVE: continue
-        B['stab'].add(stab(CH[ch]['stab'], 0.9, 0.34, 1400 + 800 * prog(tt, 28, 46)), tt, 0.9, pan=-0.25)
+        B['stab'].add(stab(CH[ch]['stab'], 0.9, 0.34, 1400 + 800 * prog(tt, DROP + 8, DROP + 26)), tt, 0.9, pan=-0.25)
         if bar % 2 == 1 and bar < CB: B['stab'].add(stab([n + 12 for n in CH[ch]['stab'][:3]], 0.5, 0.25, 1800), bar_t(bar, 4) + hum(0.002), 0.5, pan=0.3)
     # Arpeggio (Hauptstimme) – 16tel; dünn in Takt 13/14, voll ab 15, dunkel in Takt 18, heller bis Takt 26
     P1 = [0, 2, 4, 2, 5, 4, 2, 1, 0, 2, 4, 6, 7, 6, 4, 2]
     P2 = [4, 5, 7, 5, 6, 4, 5, 2, 4, 5, 7, 5, 6, 7, 5, 4]
     V = [1.0, 0.45, 0.7, 0.5, 0.9, 0.45, 0.7, 0.5, 1.0, 0.45, 0.7, 0.55, 0.85, 0.5, 0.7, 0.5]
-    for bar in range(12, CB + 2):
+    for bar in range(12 + NB2, CB + 2):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b): continue
-            if bar == 12 and s % 4 != 0: continue
-            if bar < 15 and s % 2 == 1: continue
+            if bar == 12 + NB2 and s % 4 != 0: continue
+            if bar < 15 + NB2 and s % 2 == 1: continue
             if bar >= CB - 1 and tt < CRY and tt >= cut_a - 1.5 and s % 2 == 1: continue
             ch = chord_at(tt); notes = CH[ch]['arp']
             if bar >= CB:
                 notes = CH['Amaj9']['arp']
             note = notes[P1[s] % len(notes)] + (12 if (bar >= CB and s % 4 == 3) else 0)
-            vel = V[s] * (0.7 + 0.3 * prog(tt, 28, 44)) * (0.85 if bar == 18 else 1.0)
-            bright = (0.3 if bar == 18 else 0.55 + 0.45 * prog(tt, 28, 48)) + (0.25 if bar >= CB else 0)
+            vel = V[s] * (0.7 + 0.3 * prog(tt, DROP + 8, DROP + 24)) * (0.85 if bar == 18 + NB2 else 1.0)
+            bright = (0.3 if bar == 18 + NB2 else 0.55 + 0.45 * prog(tt, DROP + 8, DROP + 28)) + (0.25 if bar >= CB else 0)
             B['arp'].add(pluck(midi(note), 0.30, vel, bright), tt + hum(0.0025), 0.9, pan=(-1) ** s * (0.3 + 0.2 * (s % 4 == 0)))
     # Zweite Stimme: eine Oktave höher, auf den Off-16teln, ab Takt 21
-    for bar in range(21, CB + 2):
+    for bar in range(21 + NB2, CB + 2):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b) or s % 4 != 3 and s % 8 != 6: continue
-            if 51.0 <= tt < 54.0 and s % 8 != 6: continue
+            if CRY - 9.0 <= tt < CRY - 6.0 and s % 8 != 6: continue
             ch = chord_at(tt); notes = CH[ch]['arp'] if bar < CB else CH['Amaj9']['arp']
             B['arp2'].add(pluck(midi(notes[P2[s] % len(notes)] + 12), 0.34, 0.8, 0.95, tau=0.09), tt + hum(0.002), 0.9, pan=(-1) ** (s // 4) * 0.6)
     # Luftiges Schimmern (Rauschen, gefiltert) ab Takt 21 – Höhepunkt 24–26
-    for a, b, lv in ((44.0, 50.0, 0.05), (50.0, 58.0, 0.09)):
+    for a, b, lv in ((PK, PK + 6.0, 0.05), (PK + 6.0, CRY - 2.0, 0.09)):
         n = idx(b - a); x = noise(n); x = filt(x, 'bp', 9000, 0.8) * (np.linspace(0.3, 1, n)) * lv
         B['fx'].add(fade_edges(np.stack([x, np.roll(x, 300)], axis=1), 0.5, 0.8), a, 1.0)
 
@@ -475,7 +481,7 @@ def render():
     pk = 0
     for h in HITS:
         tt, kd = h['t'], h['kind']
-        if tt < DROP - 1e-6 or tt >= 60: continue
+        if tt < DROP - 1e-6 or tt > DUR: continue
         if kd == 'drop':
             # Sonic Logo, erste Aussage in Moll: A – C – E – A (die drei Töne der Insellösungen finden sich, der letzte hält)
             for k_, nn in enumerate([81, 84, 88, 93]):
@@ -489,8 +495,8 @@ def render():
             dur = h['end'] - tt; B['fx'].add(riser(dur, 500, 9000, 1.0, pitch=(660, 1320)), tt, 0.55); n = idx(dur); gl = np.sin(2 * np.pi * np.cumsum(1318 * (1 + 0.5 * np.linspace(0, 1, n))) / SR) * np.hanning(n) * 0.2
             B['fx'].add(gl, tt, 0.5)
         elif kd == 'snap':
-            if 45 <= tt <= 47.1:
-                nn = {45.0: 81, 46.0: 84, 47.0: 88}.get(round(tt, 2), 81); B['bell'].add(bell(midi(nn), 2.4, 1.0), tt, 0.75); B['bell'].add(tick(2600, 1.0), tt, 0.4)
+            if PK + 1 <= tt <= PK + 3.1:
+                nn = {PK + 1: 81, PK + 2: 84, PK + 3: 88}.get(round(tt, 2), 81); B['bell'].add(bell(midi(nn), 2.4, 1.0), tt, 0.75); B['bell'].add(tick(2600, 1.0), tt, 0.4)
             elif abs(tt - (CRY + 0.5)) < 0.01: B['bell'].add(bell(midi(88), 3.0, 1.0), tt, 0.80)
             else: B['bell'].add(tick(3200, 1.0), tt, 0.5); B['bell'].add(marimba(midi(93), 0.7), tt, 0.25)
         elif kd == 'lock':
@@ -517,7 +523,7 @@ def render():
                 for k_, nn in enumerate([81, 85, 88, 93]): B['bell'].add(bell(midi(nn), 3.0 if k_ == 3 else 1.4, 1.0, tail=1.2 if k_ == 3 else 0.5), tt + 0.25 * k_, 0.72 if k_ < 3 else 0.82)
             else:
                 tl_ = [x['t'] for x in hits('tagline')]; nn = {tl_[0]: 93, tl_[1]: 90}.get(tt, 88); B['bell'].add(bell(midi(nn), 3.6, 1.0, tail=1.3), tt, 0.7)
-        elif kd == 'riser' and tt >= 52 and 'end' in h:   # Aufbau vor dem Kristall (54–56 s)
+        elif kd == 'riser' and tt >= CRY - 8 and 'end' in h:   # Aufbau vor dem Kristall
             B['fx'].add(riser(h['end'] - tt, 300, 10000, 1.0, pitch=(330, 1760)), tt, 0.60)
     # Aufbau-Fill vor dem Drop-out: 16tel-Snare-Rolle (Rim) in den 1,5 s vor dem Drop-out
     for k in range(int(1.5 / S16)):
@@ -533,7 +539,7 @@ def render():
     B['bell'].add(bell(midi(81), 4.0, 1.0, tail=2.2), END_GROOVE, 0.55); B['bell'].add(bell(midi(69), 4.0, 1.0, tail=2.2), END_GROOVE, 0.45)
 
     # Vakuum: 80 ms Stille direkt vor dem Drop (Pad, Perkussion, Fx), der Schlag danach wirkt dadurch größer
-    V0 = (hits('vacuum') or [{'t': 19.92}])[0]['t']; vg = np.ones(N); i0, i1 = idx(V0), idx(DROP); vg[i0:i1] = 0.0; vg[i0 - 144:i0] = np.linspace(1, 0, 144)
+    V0 = (hits('vacuum') or [{'t': DROP - 0.08}])[0]['t']; vg = np.ones(N); i0, i1 = idx(V0), idx(DROP); vg[i0:i1] = 0.0; vg[i0 - 144:i0] = np.linspace(1, 0, 144)
     for k in ('a1', 'a1v', 'pad', 'fx', 'drone', 'rim', 'hats', 'stab', 'arp', 'arp2'): B[k].x *= vg[:, None]
     print(f'  Ereignisse gerendert in {time.time() - t0:.1f} s')
 
@@ -546,7 +552,7 @@ def render():
     for name, bus in B.items():
         x = bus.x
         if name == 'a1v':
-            g = duck_curve([(tk, lv) for tk, lv in kicks_sorted if tk < 18.0], 0.34, rel=0.15); x = x * g[:, None]
+            g = duck_curve([(tk, lv) for tk, lv in kicks_sorted if tk < CUT], 0.34, rel=0.15); x = x * g[:, None]
         if name in ('a1', 'a1v'): x = filt(x, 'hp', 55.0, 0.7)
         if name in DUCK:
             g = duck_curve([(tk, lv) for tk, lv in kicks_sorted if tk >= DROP - 0.01], DUCK[name]); x = x * g[:, None]

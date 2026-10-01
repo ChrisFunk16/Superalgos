@@ -37,9 +37,10 @@ export default function register(E) {
   `);
 
   /* ======================================================== 05  Gesamtpaket */
-  const SNAP = hit('snap').filter((x) => x >= 45 && x <= 47), LOCK = hit('lock')[0];     // 45, 46, 47 · 48
+  const SHB = E.T('package').start - 44.0;                                                 // Szene 05 ist für den Start bei 44.0 geschrieben
+  const SNAP = hit('snap').map((x) => x - SHB).filter((x) => x >= 45 && x <= 47), LOCK = hit('lock')[0] - SHB;     // 45, 46, 47 · 48 (lokal)
   E.scene({
-    id: 'package', post: 0.5, z: 20,
+    id: 'package', post: 0.5, shift: SHB, z: 20,
     build(root) {
       const W = 360, H = 200, TH = 34, R = (H - TH) / 2, CY = 540;
       const CX = [1090, 1350, 1610];
@@ -142,7 +143,7 @@ export default function register(E) {
       return { card, blocks, doc, lineEls, avs, dots, head };
     },
     update(T, s) {
-      const t = T - 4.0;                                 // Zeiten unten gelten für den Start bei 46.0 (Szene 06 beginnt jetzt bei 50.0)
+      const t = T - (E.T('time').start - 46.0);         // Zeiten unten gelten für den Start bei 46.0
       // Ruhiger Takt (8 s statt 6 s): jeder Zustand bleibt ≥ 1,3 s stehen – Blöcke erscheinen (46.4), kurz halten, schrumpfen/wachsen (48.0–50.0),
       // halten, Dokument (50.2), Cursor tippen (50.8–52.7), halten, Auflösung in Knoten (53.2) – Übergabe ans Finale bei 54.0
       s.head.update(t, 46.2, 53.4);

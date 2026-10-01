@@ -14,6 +14,7 @@ export const THREAD_Y = 700;   // Höhe des orangenen Fadens in der Pause (Act I
 export default function register(E) {
   const { h, tf, tw, ease, prog, clamp, lerp, show } = E;
   const K = E.kit;
+  const SH2 = E.T('reveal').start - 20.0;      // alle Zeiten in dieser Datei sind für den Drop bei 20.0 geschrieben; Szenen laufen um SH2 verschoben
 
   const mixHex = (a, b, p) => {
     const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
@@ -23,7 +24,7 @@ export default function register(E) {
 
   /* ---------------------------------------------------------------- Hintergrund + Lichtflut */
   E.scene({
-    id: 'a2-bg', start: 20, end: 58, z: 10,
+    id: 'a2-bg', start: 20, end: 58, shift: SH2, z: 10,
     build(root) {
       const flood = h('div', { class: 'abs', style: { inset: 0, background: 'var(--cream)' } });
       // Drop-Schlag bei 20.0: Lichtblitz, zwei Druckwellen und ein Funkenkranz aus der Bildmitte (rein dekorativ, Marken-Orange/Navy/Creme)
@@ -61,7 +62,7 @@ export default function register(E) {
     return NODE_X(6);
   };
   E.scene({
-    id: 'a2-ov', start: 20, end: 58.8, z: 45,
+    id: 'a2-ov', start: 20, end: 58.8, shift: SH2, z: 45,
     build(root) {
       const fade = h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 0, height: 120, background: 'linear-gradient(to top, var(--cream) 55%, rgba(250,246,239,0))' } });
       const pill = h('div', { class: 'abs', style: { left: 110, top: 54, display: 'flex', alignItems: 'center', gap: 14, padding: '11px 26px 11px 20px', borderRadius: 999, background: 'rgba(31,37,50,.07)' } },
@@ -135,7 +136,7 @@ export default function register(E) {
   const rowOn = (r, v) => { r.tg.style.background = mixHex('#CBC7BF', '#E67E22', v); r.tg.firstChild.style.left = (3 + 22 * v) + 'px'; r.lbl.textContent = v > 0.5 ? 'Aktiv' : 'Aus'; };
 
   E.scene({
-    id: 'a2-ui', start: 20, end: 45, z: 20,
+    id: 'a2-ui', start: 20, end: 45, shift: SH2, z: 20,
     build(root) {
       const ui = buildUI(E);
       const outer = h('div', { class: 'abs', style: { inset: 0 } });

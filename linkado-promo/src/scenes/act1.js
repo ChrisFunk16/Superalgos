@@ -1,6 +1,7 @@
 // ============================================================
 // Act I – Chaos (0–20 s). Dunkel, kühl, bewusst „designtes“ Chaos.
-//   hook 0–3,5 (letztes Wort steht 1,3 s) · m365 3,5–7 · opendesk 7–10,5 · nextcloud 10,5–14 · overwhelm 14–18 · pause 18–20 (+0.8)
+//   hook 0–4 (letztes Wort steht 1,6 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (+0.8)
+//   Alle Zeiten kommen aus timeline.json (Karten, Pings, Shoves, Texte, Cut, Drop) – nur Feinheiten sind relativ dazu notiert.
 //   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
 // Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Lücken – die Chips poppen auf den
 // ping-hits der timeline.json. Linkado-Orange kommt hier NICHT vor (außer Faden+Flagge in der Pause).
@@ -18,9 +19,11 @@ export default function register(E) {
   const PING = { m365: hit('ping', 1), opendesk: hit('ping', 2), nextcloud: hit('ping', 3) };
   const SHOVE = { m365: hit('shove', 1)[0], opendesk: hit('shove', 2)[0], nextcloud: hit('shove', 3)[0] };
   const T_HOOK = T0.m365;                            // 3.5 – Ende des Hooks = erster Karten-Schlag
-  const CUT = E.hits('cut')[0].t;                    // 18.0 – harter Schnitt
-  const TEXTS = E.hits('text').filter((x) => x.t >= 14 && x.t <= 17.5).map((x) => x.t);   // 14 · 14.75 · 15.5 · 16.25 · 17
-  const ASK = E.hits('text').find((x) => x.t > 18.5 && x.t < 19.5).t;                  // 19.0
+  const CUT = E.hits('cut')[0].t;                    // 22.0 – harter Schnitt
+  const DROP = E.hits('drop')[0].t;                  // 24.0
+  const TEXTS = E.hits('text').filter((x) => x.t >= CUT - 5 && x.t < CUT).map((x) => x.t);   // fünf Blickwinkel im 0,75-s-Raster
+  const OV = TEXTS[0];                               // 17.5 – Beginn der Überforderung
+  const ASK = E.hits('text').find((x) => x.t > CUT && x.t < DROP).t;                  // 23.0
 
   // Position der weggeschobenen Gruppen (um die Bildmitte 960/540)
   const PILE = { m365: { x: -600, y: -300, s: 0.46, r: -7 }, opendesk: { x: 600, y: -318, s: 0.44, r: 6 }, nextcloud: { x: -560, y: 330, s: 0.46, r: 5 } };
@@ -88,7 +91,7 @@ export default function register(E) {
       const chips = FILES.map((txt, i) => {
         const bg = i < 12;                         // Hintergrund-Chips (immer da) vs. Schwarm (nur in der Überforderung)
         const el = h('div', { class: 'a1-chip', text: txt });
-        const d = { el, txt, bg, x: r.range(-140, 1800), y: r.range(40, 1010), rot: r.range(-9, 9), vx: r.range(-26, -8), vy: r.range(-6, 6), sc: r.range(0.8, 1.15), tIn: bg ? 0 : 14.0 + (i - 12) * 0.2 };
+        const d = { el, txt, bg, x: r.range(-140, 1800), y: r.range(40, 1010), rot: r.range(-9, 9), vx: r.range(-26, -8), vy: r.range(-6, 6), sc: r.range(0.8, 1.15), tIn: bg ? 0 : OV + (i - 12) * 0.2 };
         root.append(el); return d;
       });
 
@@ -271,11 +274,11 @@ export default function register(E) {
       s.grid.style.opacity = pre ? 1 : 0.4;
 
       /* ---- Dateinamen-Chips ---- */
-      const over = prog(t, 14.0, 17.8);
+      const over = prog(t, OV, CUT - 0.2);
       s.chips.forEach((c, i) => {
         if (!pre) { show(c.el, false); return; }
         let o, sc = c.sc;
-        if (c.bg) { o = t < T_HOOK ? (0.2 + 0.05 * Math.sin(i)) * (c.y > 250 && c.y < 600 ? 0.3 : 1) : (t < 14 ? 0.14 : lerp(0.14, 0.8, ease.out2(over))); o *= tw(t, 0, 0.8); sc *= 1 + 0.25 * over; }
+        if (c.bg) { o = t < T_HOOK ? (0.2 + 0.05 * Math.sin(i)) * (c.y > 250 && c.y < 600 ? 0.3 : 1) : (t < OV ? 0.14 : lerp(0.14, 0.8, ease.out2(over))); o *= tw(t, 0, 0.8); sc *= 1 + 0.25 * over; }
         else { const p = tw(t, c.tIn, c.tIn + 0.35, ease.snap); o = p * 0.95; sc *= 0.7 + 0.35 * p; }
         show(c.el, o > 0.01);
         const spd = 1 + 2.4 * over;
@@ -283,20 +286,20 @@ export default function register(E) {
       });
 
       /* ---- Hintergrund-Oberflächen ---- */
-      const ov = prog(t, 14.0, 17.8);
+      const ov = prog(t, OV, CUT - 0.2);
       s.bgw.forEach((w, i) => {
-        const p = tw(t, w.tIn, w.tIn + 0.7, ease.ui), o = (t < 14 ? 0.26 : lerp(0.26, 0.6, ease.out2(ov))) * p;
+        const p = tw(t, w.tIn * 1.3, w.tIn * 1.3 + 0.9, ease.ui), o = (t < OV ? 0.26 : lerp(0.26, 0.6, ease.out2(ov))) * p;
         show(w.el, pre && o > 0.01);
         tf(w.el, { x: w.x + 6 * Math.sin(t * 0.7 + i), y: w.y + 5 * Math.cos(t * 0.6 + i) + 20 * (1 - p), r: w.rot, s: 1 + 0.12 * ov, o });
       });
 
-      /* ---- Hook (0–3,5): „dazwischen.“ landet bei 2,0 und steht 1,3 s, bevor der Schnitt kommt ---- */
-      const hk = (el, t0) => tf(el.firstChild, { y: 130 * (1 - tw(t, t0, t0 + 0.7, ease.ui)) });
-      hk(s.w1, 0.2); hk(s.w2, 0.5); hk(s.w3, 1.5); hk(s.w4, 2.0);
-      const gap = 34 * tw(t, 2.1, 2.9, ease.out3); tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
+      /* ---- Hook (0–4): ruhig gesetzt, „dazwischen.“ landet bei 2,4 und steht 1,6 s, bevor der Schnitt kommt ---- */
+      const hk = (el, t0) => tf(el.firstChild, { y: 130 * (1 - tw(t, t0, t0 + 0.9, ease.ui)) });
+      hk(s.w1, 0.3); hk(s.w2, 0.8); hk(s.w3, 1.8); hk(s.w4, 2.4);
+      const gap = 34 * tw(t, 2.6, 3.5, ease.out3); tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
       const hx = tw(t, T_HOOK - 0.2, T_HOOK, ease.in3);                // harter Schnitt auf den Karten-Schlag
       show(s.hook, t < T_HOOK + 0.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
-      s.hookBadges.forEach((b, k) => { const t0 = [0.5, 1.5, 2.0][k], p = tw(t, t0, t0 + 0.35, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
+      s.hookBadges.forEach((b, k) => { const t0 = [0.8, 1.8, 2.4][k], p = tw(t, t0, t0 + 0.45, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
 
       /* ---- Karten-Gruppen ---- */
       s.groups.forEach((G, gi) => {
@@ -305,11 +308,11 @@ export default function register(E) {
         show(G.g, visible); if (!visible) return;
         // Auftritt (Slam) + Wegschieben (Pile) + leichter Drift
         const slam = tw(a, 0, 0.5, ease.snap), sh = tw(t, G.shove, G.shove + 0.55, ease.uiInOut);
-        const grow = 1 + 0.1 * prog(t, 14, 17.8) * sh;
+        const grow = 1 + 0.1 * prog(t, OV, CUT - 0.2) * sh;
         const P = G.pile;
         const sc = lerp(1, P.s, sh) * grow, tx = lerp(0, P.x, sh), ty = lerp(0, P.y, sh), rot = lerp(-1.2, P.r, sh) + Math.sin(t * 0.8 + gi) * 0.6 * sh;
         const sl = 1.09 - 0.09 * slam;
-        tf(G.g, { x: tx, y: ty + 34 * (1 - slam) * (1 - sh), s: sc * (sh > 0 ? 1 : sl), r: rot, o: clamp(slam * 2) * (1 - 0.8 * sh * (t < 14 ? 1 : 1 - 0.15 * prog(t, 14, 17))) });
+        tf(G.g, { x: tx, y: ty + 34 * (1 - slam) * (1 - sh), s: sc * (sh > 0 ? 1 : sl), r: rot, o: clamp(slam * 2) * (1 - 0.8 * sh * (t < OV ? 1 : 1 - 0.15 * prog(t, OV, CUT - 1))) });
         G.g.style.zIndex = String(10 + gi + (sh > 0.5 ? -8 : 0));
         // Titel, Stärke und Alltagssätze (die Sätze erscheinen auf den Pings; beim Wegschieben bleiben nur Gerät und Titel als Schatten)
         tf(G.name, { y: 18 * (1 - tw(a, 0.05, 0.5, ease.ui)), o: tw(a, 0.05, 0.45) * (1 - 0.5 * sh) });
@@ -320,10 +323,10 @@ export default function register(E) {
 
       /* ---- Überforderung (14–18): fünf Blickwinkel auf dem 3/16-Raster (0,75 s) ---- */
       const B = TEXTS;                                                // 14.0 · 14.75 · 15.5 · 16.25 · 17.0
-      s.logins.forEach((lg, k) => { const t0 = B[0] + k * 0.12, p = tw(t, t0, t0 + 0.4, ease.snap); show(lg.el, pre && t >= t0); tf(lg.el, { x: lg.x, y: lg.y + 8 * Math.sin(t * 2 + k), r: lg.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * (t > 17 ? 1 : 0.92) }); });
+      s.logins.forEach((lg, k) => { const t0 = B[0] + k * 0.12, p = tw(t, t0, t0 + 0.4, ease.snap); show(lg.el, pre && t >= t0); tf(lg.el, { x: lg.x, y: lg.y + 8 * Math.sin(t * 2 + k), r: lg.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * (t > B[4] ? 1 : 0.92) }); });
       const tabsOn = pre && t >= B[1] - 0.05;
       show(s.tabBar, tabsOn); tf(s.tabBar, { y: -70 * (1 - tw(t, B[1] - 0.05, B[1] + 0.3, ease.ui)) });
-      const nTabs = Math.floor(lerp(3, 36, ease.out2(prog(t, B[1], 17.6)))); const wTab = Math.min(190, (1800 - 220) / Math.max(1, nTabs));
+      const nTabs = Math.floor(lerp(3, 36, ease.out2(prog(t, B[1], CUT - 0.4)))); const wTab = Math.min(190, (1800 - 220) / Math.max(1, nTabs));
       s.tabs.forEach((el, k) => { show(el, k < nTabs); el.style.left = (20 + k * (wTab + 2)) + 'px'; el.style.width = wTab + 'px'; });
       s.tabCount.textContent = nTabs + ' TABS';
       s.toolTiles.forEach((tl, k) => { const t0 = B[1] + k * 0.045, p = tw(t, t0, t0 + 0.35, ease.snap); show(tl.el, pre && t >= t0); tf(tl.el, { x: tl.x, y: tl.y + 10 * Math.sin(t * 2.2 + k), r: tl.rot, s: 0.5 + 0.5 * p, o: clamp(p * 2) }); });
@@ -334,9 +337,9 @@ export default function register(E) {
       const capP = tw(t, B[3] + 0.3, B[3] + 0.62, ease.snap); show(s.aiCap, pre && t >= B[3] + 0.28); tf(s.aiCap, { y: 24 * (1 - capP), s: 0.92 + 0.08 * capP, o: clamp(capP * 2) * (1 - tw(t, B[4], B[4] + 0.12)) });
       s.asks.forEach((b, k) => { const t0 = B[4] + k * 0.12, p = tw(t, t0, t0 + 0.3, ease.snap); show(b.el, pre && t >= t0); tf(b.el, { x: b.x, y: b.y, r: b.rot, s: 0.6 + 0.4 * p, o: clamp(p * 2) }); });
       // Text-Salven + Rollen-Pille („Blickwinkel“)
-      const inBig = pre && t >= 13.95;
-      show(s.vig, inBig); s.vig.style.opacity = tw(t, 13.9, 14.2);
-      const glitch = clamp((t - 17.72) / 0.28);                       // 17.72 → 18.0
+      const inBig = pre && t >= OV - 0.05;
+      show(s.vig, inBig); s.vig.style.opacity = tw(t, OV - 0.1, OV + 0.2);
+      const glitch = clamp((t - (CUT - 0.28)) / 0.28);                 // die letzten 0,28 s vor dem Schnitt
       const NB = s.bigs.length;
       s.bigs.forEach((b, k) => {
         const t0 = B[k], t1 = k < NB - 1 ? B[k + 1] : CUT, a = t - t0, dur = t1 - t0;
@@ -351,15 +354,15 @@ export default function register(E) {
         const rp = tw(a, 0.02, 0.26, ease.ui); tf(s.roles[k], { y: 16 * (1 - rp), o: rp * (1 - (k < NB - 1 ? tw(a, dur - 0.1, dur) : 0)) });
       });
       // Freeze-Flackern direkt vor dem Schnitt
-      if (t > 17.8 && t < CUT) s.vig.style.opacity = 0.7 + 0.3 * Math.sign(Math.sin(t * 120));
+      if (t > CUT - 0.2 && t < CUT) s.vig.style.opacity = 0.7 + 0.3 * Math.sign(Math.sin(t * 120));
 
       /* ---- Pause (18–20): Stille, ein Satz, der orange Faden ---- */
       const inPause = !pre;
       show(s.ask, inPause && t >= ASK - 0.05);
       s.askLetters.forEach((el, k) => { const p = tw(t, ASK + k * 0.035, ASK + k * 0.035 + 0.45, ease.out3); tf(el, { y: 26 * (1 - p), o: p, blur: 0 }); });
-      const thrP = ease.io2(prog(t, ASK, 20.0));
+      const thrP = ease.io2(prog(t, ASK, DROP));
       show(s.thr, inPause && t >= ASK); s.thr.firstChild.setAttribute('x2', (1860 * thrP).toFixed(1));
-      const pg = tw(t, ASK, 19.9, ease.in2), inh = tw(t, 19.86, 19.99, ease.in2);          // Aufbau → kurzes Einatmen direkt vor dem Drop
+      const pg = tw(t, ASK, DROP - 0.1, ease.in2), inh = tw(t, DROP - 0.14, DROP - 0.01, ease.in2);          // Aufbau → kurzes Einatmen direkt vor dem Drop
       s.thr.firstChild.setAttribute('stroke-width', (4 + 8 * pg).toFixed(2));
       show(s.pGlow, inPause && t >= ASK); tf(s.pGlow, { s: (0.25 + 0.75 * pg) * (1 - 0.35 * inh), o: 0.95 * pg * (1 - 0.5 * inh) });
       tf(s.ask, { s: 1 + 0.03 * pg - 0.05 * inh });
