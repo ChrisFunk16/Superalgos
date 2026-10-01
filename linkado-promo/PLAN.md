@@ -1,9 +1,27 @@
 # Plan: Vom guten Film zum Film, der in Erinnerung bleibt
 
+**Umsetzungsstand (v3):** ✔ erledigt · ◐ vorbereitet · ○ offen. Die ausgearbeiteten Konzepte dazu stehen in [`KONZEPTE-WEITERDENKEN.md`](KONZEPTE-WEITERDENKEN.md).
+
+| Punkt | Stand |
+|---|---|
+| Ton Act I allgemeiner (klassischer A-Moll-Aufbau, keine Clash-Intervalle) | ✔ |
+| Sonic Logo A – C – E – A (Moll beim Drop, Dur im Finale) | ✔ |
+| UI-Klangebene (Tap, Add, Toggle, Swipe, Flug, Tippen, Chime) | ✔ |
+| Stereobreite, Stems, zwei Mischungen (−14 / −20 LUFS) | ✔ |
+| „Dazwischen“-Hook | ✔ (als „Alles funktioniert. Nur nicht dazwischen.“) |
+| Chaos mit anderen Blickwinkeln + KI-Ebene (Login, Tool, Abo, KI, IT) | ✔ |
+| Echte Produktbilder: Oberfläche nach den gelieferten Screenshots, Demo-Inhalte ergänzt | ✔ |
+| Poster (Endkarte) und Schlussbild-Feinschliff (Logo fährt vor der Zeile hoch) | ✔ |
+| Starkes erstes Bild (Frame 0 ist noch leer) für Autoplay-Vorschau | ○ |
+| Faden als verbindendes Bildelement in 02–04 | ○ Konzept |
+| Heldenschuss (3D-Neigung) in Act II, Detailpolitur | ○ Konzept |
+| Bewegungsunschärfe / 60 fps | ○ Konzept |
+| Fassungen: 30 s, 15 s, 9:16, Untertitel, Sprecher, Englisch | ◐ Konzepte |
+
 Stand: Basis steht (Dramaturgie, Marke, Oberfläche, Finale, Ton). Dieser Plan nennt, was ich zusätzlich anpassen oder
 hinzufügen würde – nach Wirkung und Aufwand sortiert. **S** = ca. 1 Stunde, **M** = halber Tag, **L** = ein Tag oder mehr.
 
-## 0. Ton – erster Teil (bereits überarbeitet, Hörprobe liegt bei)
+## 0. Ton – erster Teil (v2 überholt: siehe v3 in `KONZEPT.md`, Abschnitt „Ton“)
 
 **Befund (gemessen):** Der Chaos-Teil klang eher nach verstreuten Piepsern als nach Techno. Bis 6 s gab es keinen Puls, danach nur einen
 Herzschlag; 60–65 % der Energie lagen unter 120 Hz (Drone, gedämpfter Kick), und der Drop bei 20 s war nur 2 dB lauter als 16–18 s –

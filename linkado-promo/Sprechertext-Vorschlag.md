@@ -10,11 +10,11 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 
 | Zeit (s) | Bild | Text |
 |---|---|---|
-| 0–2 | Digitale Zusammenarbeit heute. | *(Pause, nur Musik)* |
+| 0–2 | Alles funktioniert. Nur nicht dazwischen. | *(Pause, nur Musik – oder:)* „Alles funktioniert. Nur nicht dazwischen.“ |
 | 2–6 | Microsoft 365 | „Microsoft 365: bekannt – aber abhängig von US-Konzernen, teuer, nicht zugeschnitten.“ |
 | 6–10 | openDesk | „openDesk: eine deutsche Lösung – aber nur Oberfläche und Login für fremde Open-Source-Software.“ |
 | 10–14 | Nextcloud | „Nextcloud: eine starke Basis – aber oft nur auf dem Nötigsten.“ |
-| 14–18 | Überforderung | „Noch ein Login. Noch ein Tab. Noch ein Tool. Noch eine Frage an die IT.“ |
+| 14–18 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine Frage an die IT.“ |
 | 19–20 | Pause | „Es geht auch anders.“ |
 | 20–24 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
 | 24–28 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |
@@ -24,5 +24,5 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | 46–52 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
 | 54–60 | Logo | „Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.“ |
 
-Gesamt ca. 115 Wörter. Wer weniger Text will: nur die Zeilen 14–18 s, 19 s, 20–24 s und 54–60 s sprechen
+Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 14–18 s, 19 s, 20–24 s und 54–60 s sprechen
 und die übrigen Szenen allein über Bild und Musik tragen lassen.

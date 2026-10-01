@@ -32,10 +32,10 @@ HITS = TL['hits']
 
 # ------------------------------------------------------------------ Mischpult (linear) – hier drehen
 MIX = dict(
-    kick=0.72, bass=0.46, hats=0.055, rim=0.26, pad=0.42, arp=0.36, arp2=0.20, stab=0.38, bell=0.34, fx=0.30, chaos=1.0, drone=0.5, a1=0.40, a1v=0.55,
+    kick=0.72, bass=0.46, hats=0.055, rim=0.26, pad=0.42, arp=0.36, arp2=0.20, stab=0.38, bell=0.34, fx=0.30, chaos=1.0, drone=0.5, a1=0.40, a1v=0.55, ui=0.34,
 )
-SEND_REV = dict(kick=0.00, bass=0.00, hats=0.07, rim=0.35, pad=0.38, arp=0.28, arp2=0.34, stab=0.55, bell=0.60, fx=0.45, chaos=0.34, drone=0.20, a1=0.26, a1v=0.34)
-SEND_DLY = dict(arp=0.38, arp2=0.42, stab=0.55, bell=0.22, chaos=0.10, hats=0.0, a1v=0.30)
+SEND_REV = dict(kick=0.00, bass=0.00, hats=0.07, rim=0.35, pad=0.38, arp=0.28, arp2=0.34, stab=0.55, bell=0.60, fx=0.45, chaos=0.34, drone=0.20, a1=0.26, a1v=0.34, ui=0.24)
+SEND_DLY = dict(arp=0.38, arp2=0.42, stab=0.55, bell=0.22, chaos=0.10, hats=0.0, a1v=0.30, ui=0.08)
 DUCK = dict(pad=0.50, bass=0.55, arp=0.28, arp2=0.28, stab=0.35, bell=0.10, fx=0.20)    # Sidechain-Tiefe je Bus
 
 def midi(n): return 440.0 * 2 ** ((n - 69) / 12.0)
@@ -211,6 +211,23 @@ def sub_boom(freq=55.0, dur=1.6, vel=1.0):
     n = int(dur * SR); t = np.arange(n) / SR; f = freq + 40 * np.exp(-t / 0.05)
     y = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.55); return fade_edges(np.tanh(1.3 * y) * vel, 0.002, 0.05)
 
+# ------------------------------------------------------------------ UI-Klänge (sparsam, tonal in A-Moll/A-Dur)
+def ui_tap(vel=1.0):
+    n = int(0.12 * SR); t = np.arange(n) / SR; f = 700 * np.exp(-t / 0.015) + 220
+    click = filt(noise(n) * np.exp(-t / 0.006), 'bp', 3000, 1.2) * 0.9
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.02) * 0.55
+    return fade_edges((click + body) * vel, 0.0005, 0.01)
+def ui_blip(freq, dur=0.09, vel=1.0):
+    n = int(dur * SR); t = np.arange(n) / SR; return fade_edges(np.sin(2 * np.pi * freq * t) * np.hanning(n) * vel, 0.002, 0.01)
+def ui_swipe(dur=0.42, vel=1.0):
+    n = int(dur * SR); x = sweep(noise(n), 'bp', 600, 3800, q=0.9, block=128, order=2, mode='lin') * np.hanning(n) ** 1.4 * 0.55 * vel
+    p = np.linspace(-0.5, 0.5, n); return fade_edges(np.stack([x * (1 - (p + 0.5)) ** 0.5, x * (p + 0.5) ** 0.5], axis=1), 0.005, 0.02)
+def ui_fly(dur=0.78, vel=1.0):
+    n = int(dur * SR); t = np.arange(n) / SR; u = t / dur
+    x = sweep(noise(n), 'bp', 500, 2600, q=1.0, block=128, order=2, mode='lin') * u ** 1.4 * 0.30
+    g = np.sin(2 * np.pi * np.cumsum(500 + 900 * u ** 1.5) / SR) * 0.10 * u
+    return fade_edges((x + g) * np.hanning(n) ** 0.5 * vel, 0.01, 0.05)
+
 # ------------------------------------------------------------------ Harmonie
 CH = {
     'Am9':   dict(pad=[45, 48, 52, 55, 59], bass=33, arp=[57, 60, 64, 67, 71, 72, 76, 79], stab=[57, 60, 64, 67, 71]),
@@ -232,20 +249,21 @@ def R(x): return x
 # ======================================================================================= ARRANGEMENT
 def render():
     t0 = time.time()
-    B = {k: Bus() for k in ['kick', 'bass', 'hats', 'rim', 'pad', 'arp', 'arp2', 'stab', 'bell', 'fx', 'chaos', 'drone', 'a1', 'a1v']}
+    B = {k: Bus() for k in ['kick', 'bass', 'hats', 'rim', 'pad', 'arp', 'arp2', 'stab', 'bell', 'fx', 'chaos', 'drone', 'a1', 'a1v', 'ui']}
     kicks = []                                                # (Zeit, Pegel) für Sidechain
     hum = lambda s=0.003: rng.uniform(-s, s)                  # Mikro-Timing nur für Nicht-Kick-Elemente
 
-    # ------------------------------------------------------------------ ACT I – Chaos (0–18 s) · v2 „Dekonstruierter Groove“
-    # Idee: Von Anfang an Techno-Puls (gedämpft), aber harmonisch gegeneinander (Halbton/Tritonus zu A-Moll).
-    # Wenig Tiefbass im Chaos → der Drop bei 20.0 s ist die Erlösung (Sub, Breite, Konsonanz).
+    # ------------------------------------------------------------------ ACT I – Chaos (0–18 s) · v3 „Spannungsaufbau in A-Moll“
+    # Bewusst klassisch und gut hörbar: weich pulsierender Kick (Filter öffnet sich), Uhr-Ticks, Achtel-Hats, Bass auf den Offbeats, Pad.
+    # Die drei Insellösungen bringen je EINEN Ton des A-Moll-Dreiklangs (M365 = A, openDesk = C, Nextcloud = E) – erst zusammen ergeben sie einen Akkord.
+    # Überforderung (14–18 s): Akkord-Stabs auf den fünf Blickwinkeln (Am – F – C – G – Am), 16tel-Arpeggio, Rim-Wirbel, Riser. Kein Clash, kein Polymeter.
     CUT = hits('cut')[0]['t']                                  # 18.0
-    A1, A1V = B['a1'], B['a1v']                                # a1 = Rhythmus/Fx, a1v = Stimmen (werden vom Kick geduckt)
+    A1, A1V = B['a1'], B['a1v']                                # a1 = Rhythmus/Fx, a1v = Töne/Stimmen (werden vom Kick geduckt)
     def soft_kick(level, cutoff): return filt(kick(1.0, 0.0, 0.5), 'lp', cutoff, 0.7, order=2) * level
-    # Drone: Halbton-Dyade A3 + B♭3 (Spannung, kein Sub), schwillt langsam an; dazu Luft
+    # Drone: reine Quinte A2 + E3 (hohl und ruhig, kein Sub), Filter öffnet sich über die ganzen 18 s
     n = idx(CUT); t = np.arange(n) / SR
-    dy = (osc_saw(220.0, n) + osc_saw(220.0 * 1.003, n, 0.3) + osc_saw(233.08, n, 0.6) + osc_saw(233.08 * 0.997, n, 0.9))
-    dy = filt(dy, 'lp', 850, 0.9, order=2) * (0.30 + 0.70 * np.clip(t / 14.0, 0, 1) ** 1.3) * (0.85 + 0.15 * np.sin(2 * np.pi * 0.13 * t))
+    dy = osc_tri(110.0, n) + osc_tri(110.0 * 1.002, n, 0.3) + osc_tri(164.81, n, 0.6) + osc_tri(164.81 * 0.998, n, 0.9)      # Dreieck: kaum Terz-Obertöne (kein C♯ gegen das C)
+    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.4 * (0.30 + 0.70 * np.clip(t / 14.0, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
     air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / 10, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
     B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
     for k in range(int(10.0 / BEAT)):                           # Uhr-Ticks (Zählzeiten)
@@ -260,65 +278,59 @@ def render():
     for k in range(int((CUT - 6.0) / (BEAT / 2))):
         tt = 6.0 + k * BEAT / 2
         A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, 6, 18)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, 6, 18), pan=(-1) ** k * 0.35)
-        if tt >= 10.0 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002) - BEAT / 4 + BEAT / 4, 0.22 + 0.18 * prog(tt, 10, 18), pan=0.45)
-    # Bass-Puls ab 10 s: Offbeat-Achtel auf Gis (Halbton unter A) + Tritonus – kein Sub, eher „falscher“ Boden
+        if tt >= 10.0 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, 10, 18), pan=0.45)
+    # Bass-Puls ab 10 s: Offbeat-Achtel auf A – C – E (Am-Dreiklang), tief genug zum Tragen, aber noch kein Sub
     for k in range(int((CUT - 10.0) / (BEAT / 2))):
         tt = 10.0 + k * BEAT / 2
         if k % 2 == 0: continue
-        nn = [44, 44, 44, 50][(k // 2) % 4]
-        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.7), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, 10, 18), pan=0.0)
-    # Stimme 1 (M365): steife Pulse im 3/16-Raster, Gis-Moll-nah (Halbton gegen A)
-    notes1 = [415.30, 493.88, 415.30, 554.37, 369.99]
-    def v1(f, vel=1.0):
-        n = int(0.26 * SR); t = np.arange(n) / SR; fr = f * (1 + 0.03 * np.exp(-t / 0.02))
-        y = osc_pulse(fr, n, 0.34) * np.exp(-t / 0.09); y = filt(y, 'lp', 1900, 0.9, order=2); return fade_edges(y * vel, 0.002, 0.01)
-    k = 0; tt = 2.0
-    while tt < CUT:
-        lvl = 0.18 + 0.12 * prog(tt, 2, 14) + 0.10 * prog(tt, 14, 18); A1V.add(v1(notes1[k % 5], 1.0), tt + hum(0.002), lvl, pan=-0.35); tt += 3 * S16; k += 1
-    # Stimme 2 (openDesk): metallische FM-Ticks im 5/16-Raster um Es5 (Tritonus zu A)
-    notes2 = [622.25, 622.25, 739.99, 622.25, 466.16]
-    def v2(f, vel=1.0):
-        n = int(0.30 * SR); t = np.arange(n) / SR; idxm = 5.0 * np.exp(-t / 0.05); ph = 2 * np.pi * np.cumsum(np.full(n, f)) / SR
-        y = np.sin(ph + idxm * np.sin(ph * 1.414)) * np.exp(-t / 0.11); return fade_edges(filt(y, 'hp', 300, 0.7) * vel, 0.001, 0.02)
-    k = 0; tt = 6.0
-    while tt < CUT:
-        lvl = 0.14 + 0.10 * prog(tt, 6, 14) + 0.08 * prog(tt, 14, 18); A1V.add(v2(notes2[k % 5]), tt + hum(0.002), lvl, pan=0.38); tt += 5 * S16; k += 1
-    # Stimme 3 (Nextcloud): hohle Dreieckstöne im 7/16-Raster um G (Halbton gegen Gis → Cluster)
-    notes3 = [392.0, 293.66, 392.0, 261.63]
-    def v3(f, vel=1.0):
-        n = int(0.55 * SR); t = np.arange(n) / SR; fr = f * (1 + 0.004 * np.sin(2 * np.pi * 5.5 * t)); y = osc_tri(fr, n) * np.minimum(1, t / 0.012) * np.exp(-t / 0.22)
-        return fade_edges(filt(y, 'lp', 1900, 0.8, order=2) * vel, 0.002, 0.02)
-    k = 0; tt = 10.0
-    while tt < CUT:
-        lvl = 0.22 + 0.12 * prog(tt, 10, 18); A1V.add(v3(notes3[k % 4]), tt + hum(0.002), lvl, pan=0.0); tt += 7 * S16; k += 1
-    # 16tel-Ticks und Rim-Wirbel in der Überforderung (14–18 s): beschleunigend lauter/dichter
+        nn = [45, 45, 48, 52][(k // 2) % 4]
+        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, 10, 18), pan=0.0)
+    # Drei Stimmen, im 16tel-Raster verzahnt: zusammen ergeben sie die Figur A – C – E – A – E – C (A-Moll-Arpeggio)
+    #   Stimme 1 (M365, Zupfton A4) ab 2 s · Stimme 2 (openDesk, Marimba C5) ab 6 s · Stimme 3 (Nextcloud, Glocke E5) ab 10 s
+    def v1(f, vel=1.0): return pluck(f, 0.30, vel, 0.25, tau=0.08)
+    def v2(f, vel=1.0): return marimba(f, vel, 0.45)
+    def v3(f, vel=1.0): return bell(f, 1.3, vel, tail=0.25)
+    VOICES = [(2.0, [3, 11], 69, v1, 0.20, -0.35), (6.0, [6, 14], 72, v2, 0.20, 0.35), (10.0, [9, 13], 76, v3, 0.17, 0.0)]
+    for t_on, steps, nn, fn, lv0, pan_ in VOICES:
+        for bar in range(int(t_on // BAR) + 1, int(CUT // BAR) + 1):
+            for st in steps:
+                tt = bar_t(bar) + st * S16
+                if tt < t_on or tt >= CUT - 0.05: continue
+                A1V.add(fn(midi(nn), 1.0), tt + hum(0.002), lv0 + 0.16 * prog(tt, t_on, 17), pan=pan_)
+    # Überforderung: 16tel-Ticks und Rim-Wirbel, beschleunigend lauter/dichter
     for k in range(int((CUT - 14.0) / S16)):
         tk = 14.0 + k * S16; A1.add(tick(3800, 0.4), tk, 0.05 + 0.22 * prog(tk, 14, 18), pan=(-1) ** k * 0.4)
     tt = 16.0
     while tt < CUT - 0.05:
         step = BEAT / 2 if tt < 17.0 else (S16 if tt < 17.6 else S16 / 2)
         A1.add(rim(0.35 + 0.55 * prog(tt, 16, 18)), tt, 0.35 + 0.45 * prog(tt, 16, 18), pan=0.1); tt += step
-    # Treffer aus der Timeline
+    # Fünf Blickwinkel = fünf Akkord-Stabs (Am – F – C – G – Am) im 0,75-s-Raster, darunter ein 16tel-Arpeggio über dem jeweiligen Akkord
+    BT = [h['t'] for h in hits('text') if 14 <= h['t'] < CUT]                     # 14.0 · 14.75 · 15.5 · 16.25 · 17.0
+    ACH = ['Am9', 'Fmaj7', 'Cmaj7', 'Gadd9', 'Am9']
+    for (a, b), ch in zip(zip(BT, BT[1:] + [CUT]), ACH):
+        A1V.add(stab(CH[ch]['stab'], 0.9, 0.36, 1100 + 800 * prog(a, 14, 18)), a, 0.34 + 0.12 * prog(a, 14, 18), pan=-0.1)
+        n = int(0.35 * SR); t = np.arange(n) / SR; imp = np.sin(2 * np.pi * np.cumsum(95 * np.exp(-t / 0.04) + 55) / SR) * np.exp(-t / 0.12)
+        A1.add(fade_edges(imp + filt(noise(n), 'bp', 900, 1.0) * np.exp(-t / 0.05) * 0.5, 0.002, 0.02), a, 0.26 + 0.08 * (a - 14))
+        k = 0; tt = a
+        while tt < b - 1e-6:
+            note = CH[ch]['arp'][[0, 2, 4, 2, 5, 4, 2, 4][k % 8]]
+            A1V.add(pluck(midi(note), 0.26, 0.8, 0.30, tau=0.08), tt + hum(0.002), 0.10 + 0.22 * prog(tt, 14, 18), pan=(-1) ** k * 0.3); tt += S16; k += 1
+    # Hook (0–2 s): aufsteigender Moll-Dreiklang A – C – E auf „funktioniert. / Nur nicht / dazwischen.“ – bleibt offen, die Auflösung kommt erst im Finale
+    for hk_, nn in zip([h for h in hits('ping') if h['t'] < 2.0], [69, 72, 76]):
+        A1V.add(marimba(midi(nn), 1.0), hk_['t'], 0.20, pan=(-1) ** int(hk_['t'] * 2) * 0.3)
+    # Kartenschläge: Grundton A / C / E (Sub-Impuls + gezupfte Note), danach je Lücke ein heller Ton derselben Stimme
+    for h in hits('card'):
+        tt, v = h['t'], h['voice']; f0 = {1: 110.0, 2: 130.81, 3: 164.81}[v]
+        A1.add(sub_boom(f0, 0.45, 0.5), tt, 0.26)
+        A1V.add({1: v1, 2: v2, 3: v3}[v](midi({1: 57, 2: 60, 3: 64}[v]), 1.0), tt, 0.30, pan=[0, -0.3, 0.35, 0.0][v])
+        A1.add(filt(noise(int(0.3 * SR)) * np.exp(-np.arange(int(0.3 * SR)) / SR / 0.05), 'bp', 700, 0.9), tt, 0.10)
     for h in hits('ping'):
         tt, v = h['t'], h.get('voice', 0)
-        if tt >= CUT: continue
-        if v == 1: A1V.add(v1(830.6, 1.0), tt, 0.24, pan=-0.3)
-        elif v == 2: A1V.add(v2(1244.5), tt, 0.16, pan=0.35)
-        elif v == 3: A1V.add(v3(587.33), tt, 0.28, pan=0.0)
-        else: A1V.add(marimba(1046.5 * 2 ** (-28 / 1200)), tt, 0.16, pan=(-1) ** int(tt * 2) * 0.4)
-    for h in hits('card'):
-        tt, v = h['t'], h['voice']
-        A1.add(sub_boom(98 - 6 * v, 0.45, 0.5), tt, 0.28)                       # kurzer Schlag, bewusst höher als der spätere Sub
-        A1V.add({1: v1(415.30), 2: v2(622.25), 3: v3(392.0)}[v], tt, 0.32, pan=[0, -0.3, 0.35, 0.0][v])
-        A1.add(filt(noise(int(0.3 * SR)) * np.exp(-np.arange(int(0.3 * SR)) / SR / 0.05), 'bp', 700, 0.9), tt, 0.10)
+        if tt >= CUT or v == 0: continue
+        A1V.add({1: v1, 2: v2, 3: v3}[v](midi({1: 81, 2: 84, 3: 88}[v]), 1.0), tt, 0.18, pan=[0, -0.3, 0.35, 0.0][v])
     for h in hits('shove'):
         tt = h['t']; n = int(0.45 * SR); t = np.arange(n) / SR; f = 700 * np.exp(-t / 0.25) + 150; y = filt(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.2), 'lp', 1800, 0.7)
-        A1V.add(fade_edges(y, 0.003, 0.03), tt, 0.14, pan=0.0)
-    for h in hits('text'):
-        tt = h['t']
-        if 14 <= tt < CUT:
-            n = int(0.3 * SR); t = np.arange(n) / SR; y = np.sin(2 * np.pi * 130 * t) * np.exp(-t / 0.10) + filt(noise(n), 'bp', 950, 1.0) * np.exp(-t / 0.06) * 0.8
-            A1.add(fade_edges(y, 0.002, 0.02), tt, 0.26 + 0.05 * (tt - 14))
+        A1V.add(fade_edges(y, 0.003, 0.03), tt, 0.12, pan=0.0)
     for h in hits('riser'):
         if h['t'] < 20:
             dur = h['end'] - h['t']; B['fx'].add(riser(dur, 300, 7500, 1.0, pitch=(220, 880)), h['t'], 0.5)
@@ -440,24 +452,38 @@ def render():
         tt, kd = h['t'], h['kind']
         if tt < DROP - 1e-6 or tt >= 60: continue
         if kd == 'drop':
-            B['bell'].add(bell(midi(81), 3.4, 1.0), tt, 0.85); B['bell'].add(bell(midi(69), 3.4, 0.8), tt, 0.5)
+            # Sonic Logo, erste Aussage in Moll: A – C – E – A (die drei Töne der Insellösungen finden sich, der letzte hält)
+            for k_, nn in enumerate([81, 84, 88, 93]):
+                B['bell'].add(bell(midi(nn), 3.4 if k_ == 3 else 1.6, 1.0, tail=1.0 if k_ == 3 else 0.6), tt + 0.25 * k_, 0.70 if k_ < 3 else 0.80)
+            B['bell'].add(bell(midi(69), 3.4, 0.8), tt, 0.50)
         elif kd == 'whoosh':
             dur = h['end'] - tt; B['fx'].add(riser(dur, 500, 9000, 1.0, pitch=(660, 1320)), tt, 0.55); n = idx(dur); gl = np.sin(2 * np.pi * np.cumsum(1318 * (1 + 0.5 * np.linspace(0, 1, n))) / SR) * np.hanning(n) * 0.2
             B['fx'].add(gl, tt, 0.5)
         elif kd == 'snap':
             if 41 <= tt <= 43.1:
                 nn = {41.0: 81, 42.0: 84, 43.0: 88}.get(round(tt, 2), 81); B['bell'].add(bell(midi(nn), 2.4, 1.0), tt, 0.75); B['bell'].add(tick(2600, 1.0), tt, 0.4)
-            elif abs(tt - 54.5) < 0.01: B['bell'].add(bell(midi(88), 3.0, 1.0), tt, 0.7); B['bell'].add(bell(midi(93), 3.0, 0.7), tt + 0.06, 0.45)
+            elif abs(tt - 54.5) < 0.01: B['bell'].add(bell(midi(88), 3.0, 1.0), tt, 0.80)
             else: B['bell'].add(tick(3200, 1.0), tt, 0.5); B['bell'].add(marimba(midi(93), 0.7), tt, 0.25)
         elif kd == 'lock':
             B['bass'].add(sub_boom(55.0, 1.8, 1.0), tt, 0.5)
             for nn in (67, 71, 74, 79): B['bell'].add(bell(midi(nn), 3.0, 0.7), tt + 0.01 * (nn % 3), 0.4)
         elif kd == 'click':
-            B['bell'].add(bell(midi(NOTES_P[pk % 6] + 12), 0.9, 0.8, tail=0.35), tt, 0.35); B['bell'].add(tick(3500, 0.8), tt, 0.35); pk += 1
+            var = h.get('variant', 'tap'); B['ui'].add(ui_tap(1.0 if var != 'nav' else 0.8), tt, 0.8)
+            if var == 'add':    B['ui'].add(marimba(midi(76), 0.8, 0.30), tt + 0.03, 0.5); B['ui'].add(marimba(midi(81), 1.0, 0.40), tt + 0.10, 0.6)
+            if var == 'toggle': B['ui'].add(ui_blip(midi(81), 0.08), tt + 0.04, 0.35); B['ui'].add(ui_blip(midi(88), 0.10), tt + 0.11, 0.35)
+        elif kd == 'swipe':  B['ui'].add(ui_swipe(0.42), tt - 0.05, 0.5)
+        elif kd == 'fly':    B['ui'].add(ui_fly(h['end'] - tt), tt, 0.6)
+        elif kd == 'land':   B['ui'].add(marimba(midi(93), 0.7, 0.35), tt, 0.5, pan=-0.3); B['ui'].add(ui_tap(0.5), tt, 0.4)
+        elif kd == 'chime':  B['ui'].add(bell(midi(88), 1.2, 0.8, tail=0.25), tt, 0.55); B['ui'].add(bell(midi(93), 1.6, 0.9, tail=0.3), tt + 0.13, 0.55)
+        elif kd == 'type':
+            for q_ in range(h['n']): B['ui'].add(tick(float(rng.uniform(1900, 2900)), float(rng.uniform(0.25, 0.45))), tt + (h['end'] - tt) * q_ / h['n'], 0.55, pan=float(rng.uniform(-0.2, 0.2)))
         elif kd == 'ping' and h.get('voice', 0) == 0:
             B['bell'].add(marimba(midi(NOTES_P[pk % 6]), 1.0), tt, 0.50, pan=(-1) ** pk * 0.35); pk += 1
         elif kd == 'tagline':
-            nn = {54.75: 88, 56.0: 90, 57.0: 93}.get(round(tt, 2), 88); B['bell'].add(bell(midi(nn), 3.6, 1.0, tail=1.3), tt, 0.7)
+            if abs(tt - 57.0) < 0.01:      # Sonic Logo als Signatur: A – C♯ – E – A (Dur)
+                for k_, nn in enumerate([81, 85, 88, 93]): B['bell'].add(bell(midi(nn), 3.0 if k_ == 3 else 1.4, 1.0, tail=1.2 if k_ == 3 else 0.5), tt + 0.25 * k_, 0.72 if k_ < 3 else 0.82)
+            else:
+                nn = {54.75: 93, 56.0: 90}.get(round(tt, 2), 88); B['bell'].add(bell(midi(nn), 3.6, 1.0, tail=1.3), tt, 0.7)
         elif kd == 'riser' and tt >= 52 and 'end' in h:
             B['fx'].add(riser(h['end'] - tt, 300, 10000, 1.0, pitch=(330, 1760)), tt, 0.60)
     # Aufbau-Fill vor dem Drop-out: 16tel-Snare-Rolle (Rim) von 52.0 bis 53.5
@@ -467,16 +493,20 @@ def render():
     # Kristall bei 54.0: Sub-Boom, Glas-Kaskade (A-Dur), Becken-Schimmer
     B['bass'].add(sub_boom(55.0, 2.6, 1.0), CRY, 0.6)
     for k, nn in enumerate([69, 73, 76, 81, 85, 88, 93, 97, 100]):
-        B['bell'].add(bell(midi(nn), 3.4, 0.9 - 0.04 * k, tail=1.2), CRY + 0.07 * k, 0.55)
+        B['bell'].add(bell(midi(nn), 3.4, 0.9 - 0.04 * k, tail=1.2), CRY + 0.07 * k, 0.38)
+    B['bell'].add(bell(midi(81), 3.4, 1.0, tail=1.2), CRY, 0.75); B['bell'].add(bell(midi(85), 3.0, 1.0, tail=1.0), CRY + 0.25, 0.75)       # Sonic Logo: A5 · C♯6 (· E6 bei 54.5 · A6 bei 54.75)
     B['bell'].add(bell(midi(57), 4.0, 1.0, tail=1.6), CRY, 0.6)
     # Ausklang: letzte lange Glocke bei 58.0 (A5), klingt bis zum Ende
     B['bell'].add(bell(midi(81), 4.0, 1.0, tail=2.2), 58.0, 0.55); B['bell'].add(bell(midi(69), 4.0, 1.0, tail=2.2), 58.0, 0.45)
 
     print(f'  Ereignisse gerendert in {time.time() - t0:.1f} s')
 
-    # ------------------------------------------------------------------ MISCHUNG
+    # ------------------------------------------------------------------ MISCHUNG (in Gruppen → Stems; Hall/Delay je Gruppe, damit Stems für sich stehen)
+    GROUPS = {'drums': ['kick', 'hats', 'rim', 'a1'], 'bass': ['bass'], 'pad': ['pad', 'drone'], 'music': ['arp', 'arp2', 'stab', 'a1v'], 'bells': ['bell', 'ui'], 'fx': ['fx', 'chaos']}
+    OF = {b: g for g, bs in GROUPS.items() for b in bs}
+    WIDTH = dict(pad=1.5, arp=1.15, arp2=1.4, stab=1.3, bell=1.3, ui=1.2, fx=1.4)         # Seitenanteil oberhalb 200 Hz (Breite)
     kicks_sorted = sorted(kicks)
-    out = np.zeros((N, 2)); wet_in = np.zeros((N, 2)); dly_in = np.zeros((N, 2))
+    G = {g: dict(dry=np.zeros((N, 2)), wet=np.zeros((N, 2)), dly=np.zeros((N, 2))) for g in GROUPS}
     for name, bus in B.items():
         x = bus.x
         if name == 'a1v':
@@ -486,26 +516,35 @@ def render():
             g = duck_curve([(tk, lv) for tk, lv in kicks_sorted if tk >= DROP - 0.01], DUCK[name]); x = x * g[:, None]
         if name == 'bass':                                   # Bass mono
             m = x.mean(axis=1, keepdims=True); x = np.repeat(m, 2, axis=1)
-        if name in ('arp', 'arp2', 'pad', 'stab', 'bell', 'hats', 'chaos', 'rim'): x = filt(x, 'hp', 140.0, 0.7)
+        if name in ('arp', 'arp2', 'pad', 'stab', 'bell', 'hats', 'chaos', 'rim', 'ui'): x = filt(x, 'hp', 140.0, 0.7)
         if name in ('arp', 'arp2', 'stab'): x = filt(x, 'hs', 2600.0, 0.7, 5.0)
         if name == 'pad': x = filt(x, 'hs', 2200.0, 0.7, 3.5)
         if name == 'hats': x = filt(x, 'lp', 11000.0, 0.7)
-        out += x * MIX[name]
-        if SEND_REV.get(name, 0) > 0: wet_in += x * MIX[name] * SEND_REV[name]
-        if SEND_DLY.get(name, 0) > 0: dly_in += x * MIX[name] * SEND_DLY[name]
-    print(f'  Bus-Mix in {time.time() - t0:.1f} s'); wet = reverb(wet_in); print(f'  Hall in {time.time() - t0:.1f} s')
-    dly = pingpong(dly_in); dly_rev = reverb(dly * 0.35)
-    mix = out + wet * 0.85 + dly * 0.8 + dly_rev * 0.5
-    # Master: Hochpass, sanfte Sättigung, Normalisierung
-    mix = filt(mix, 'hp', 28.0, 0.7, order=2)
-    mix = filt(mix, 'ls', 90.0, 0.7, 1.5)            # tiefen Kick/Bass leicht stützen
-    mix = filt(mix, 'peak', 280.0, 0.9, -1.5)         # etwas Schlamm raus
-    mix = mix / (np.abs(mix).max() + 1e-9) * 0.85
-    mix = np.tanh(mix * 1.15) / np.tanh(1.15)
-    # Anfang/Ende ohne Klick
-    fi = int(0.02 * SR); mix[:fi] *= np.linspace(0, 1, fi)[:, None]
-    fo = int(0.7 * SR); mix[-fo:] *= (0.5 * (1 + np.cos(np.linspace(0, np.pi, fo))))[:, None]
-    return mix
+        if name in WIDTH: x = widen(x, WIDTH[name])
+        g = G[OF[name]]; g['dry'] += x * MIX[name]
+        if SEND_REV.get(name, 0) > 0: g['wet'] += x * MIX[name] * SEND_REV[name]
+        if SEND_DLY.get(name, 0) > 0: g['dly'] += x * MIX[name] * SEND_DLY[name]
+    print(f'  Bus-Mix in {time.time() - t0:.1f} s')
+    def chain(x):                                              # linearer Teil der Master-Kette
+        x = filt(x, 'hp', 28.0, 0.7, order=2); x = filt(x, 'ls', 90.0, 0.7, 1.5); return filt(x, 'peak', 280.0, 0.9, -1.5)
+    stems = {}
+    for gname, g in G.items():
+        wet = reverb(g['wet']); dly = pingpong(g['dly']); dly_rev = reverb(dly * 0.35)
+        stems[gname] = chain(g['dry'] + wet * 0.85 + dly * 0.8 + dly_rev * 0.5)
+    print(f'  Hall/Delay in {time.time() - t0:.1f} s')
+    mix = sum(stems.values())
+    norm = 0.85 / (np.abs(mix).max() + 1e-9)
+    mix = np.tanh(mix * norm * 1.15) / np.tanh(1.15)            # sanfte Sättigung
+    fi = int(0.02 * SR); fo = int(0.7 * SR)
+    env = np.ones(N); env[:fi] = np.linspace(0, 1, fi); env[-fo:] = 0.5 * (1 + np.cos(np.linspace(0, np.pi, fo)))   # Anfang/Ende ohne Klick
+    mix = mix * env[:, None]
+    stems = {k: v * norm * 1.2 * env[:, None] for k, v in stems.items()}
+    return mix, stems
+
+def widen(x, amt, fc=200.0):
+    """Mid/Side-Verbreiterung: nur der Seitenanteil oberhalb fc wird angehoben (Bass/Kick bleiben mittig)."""
+    m = (x[:, 0] + x[:, 1]) / 2; sd = (x[:, 0] - x[:, 1]) / 2; sd = sd + (amt - 1) * filt(sd, 'hp', fc, 0.7)
+    return np.stack([m + sd, m - sd], axis=1)
 
 def _suck_back(chord):
     """Rückwärts-Hall: Akkord → Hall-Schwanz umdrehen, steigt in den Drop hinein."""
@@ -552,19 +591,27 @@ def analyse(y):
 
 def main():
     t0 = time.time(); print('Rendere Soundtrack …')
-    y = render()
-    # Lautheit auf ca. −14 LUFS (Web/Social), Spitzen ≤ −1 dBFS
+    y, stems = render()
     import pyloudnorm as pyln
-    meter = pyln.Meter(SR); lufs = meter.integrated_loudness(y); gain = 10 ** ((-14.0 - lufs) / 20); y = y * gain
-    pk = np.abs(y).max(); lim = 10 ** (-1.0 / 20)
-    if pk > lim:
-        # weicher Limiter, danach exakt auf −1 dBFS
-        y = np.tanh(y / lim * 0.92) / np.tanh(0.92) * lim; y *= lim / np.abs(y).max()
-    assert len(y) == N, (len(y), N)
-    wav = os.path.join(HERE, 'soundtrack.wav'); sf.write(wav, y, SR, subtype='PCM_16')
-    try: subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', wav, '-codec:a', 'libmp3lame', '-b:a', '192k', os.path.join(HERE, 'soundtrack.mp3')], check=True)
+    meter = pyln.Meter(SR); lufs = meter.integrated_loudness(y)
+    def finish(sig, target, gain=None):
+        g = 10 ** ((target - lufs) / 20) if gain is None else gain
+        out = sig * g; pk = np.abs(out).max(); lim = 10 ** (-1.0 / 20)
+        if pk > lim: out = np.tanh(out / lim * 0.92) / np.tanh(0.92) * lim; out *= lim / np.abs(out).max()          # weicher Limiter, exakt −1 dBFS
+        return out
+    master = finish(y, -14.0)                                   # Web/Social
+    leise = finish(y, -20.0)                                    # Messe/Empfang/Hintergrund
+    assert len(master) == N, (len(master), N)
+    wav = os.path.join(HERE, 'soundtrack.wav'); sf.write(wav, master, SR, subtype='PCM_16')
+    sf.write(os.path.join(HERE, 'soundtrack-leise.wav'), leise, SR, subtype='PCM_16')
+    sd = os.path.join(HERE, 'stems'); os.makedirs(sd, exist_ok=True)
+    g14 = 10 ** ((-14.0 - lufs) / 20); mx = max(np.abs(v).max() for v in stems.values()) * g14; sc = min(1.0, 0.98 / mx) * g14
+    for k, v in stems.items(): sf.write(os.path.join(sd, f'stem_{k}.wav'), v * sc, SR, subtype='PCM_24')
+    try:
+        for nm in ('soundtrack', 'soundtrack-leise'):
+            subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', os.path.join(HERE, nm + '.wav'), '-codec:a', 'libmp3lame', '-b:a', '192k', os.path.join(HERE, nm + '.mp3')], check=True)
     except Exception as e: print('mp3 übersprungen:', e)
-    print(f'Fertig in {time.time() - t0:.1f} s → {wav}')
+    print(f'Fertig in {time.time() - t0:.1f} s → {wav} (+ leise, + {len(stems)} Stems)')
     if '--no-analysis' not in sys.argv: analyse(sf.read(wav)[0])
 
 if __name__ == '__main__':

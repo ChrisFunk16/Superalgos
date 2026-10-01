@@ -10,14 +10,18 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 | `out/linkado-werbefilm-1080p.mp4` | Web-Fassung, 1920×1080, 30 fps |
 | `out/poster.png` | Standbild (Endkarte) |
 | `audio/soundtrack.mp3` | Musik als eigene Tonspur (48 kHz, −14 LUFS, Spitzen ≤ −1 dBFS); die verlustfreie `soundtrack.wav` erzeugt `python3 audio/soundtrack.py` |
+| `audio/soundtrack-leise.mp3` | dieselbe Musik, −20 LUFS (Messe / Empfang / Hintergrund) |
+| `audio/stems/*.wav` | Stems für den Schnitt: drums · bass · pad · music · bells (inkl. UI) · fx (24 Bit, ohne Sättigung/Limiter; Summe ≈ Master) – entstehen beim Ton-Rendern |
+| `KONZEPT.md` · `KONZEPTE-WEITERDENKEN.md` · `PLAN.md` | Dramaturgie, weitergedachte Konzepte (Fassungen, Faden, KI, Ton), priorisierter Plan |
 | `Sprechertext-Vorschlag.md` | optionaler Sprechertext mit Zeitmarken |
 
 > **Platzhalter / bitte prüfen**
 > * Das **Logo** ist aus den gelieferten Abbildungen als Vektor nachgezeichnet (`src/logo.js`). Liegt das Original-SVG vor,
 >   die Pfade in `LOGO.parts` ersetzen – alle Szenen greifen nur auf `LOGO` zu.
 > * **Farben** sind aus Screenshots/Logo geschätzt (`src/brand.css`, Block `:root`). Exakte Hex-Werte dort eintragen.
-> * Die **Oberflächen** (Startseite, Dateien) sind nach den Screenshots von linkado.de nachgebaut; **Appshop und
->   Hilfe/Support** sind eine Interpretation und deshalb mit „SNEAK PEEK“ gekennzeichnet. Alle Namen/Inhalte sind Demo-Daten.
+> * Die **Oberflächen** (Startseite „Ihr Tag“, Apps und Pakete, Support, Leiste) sind nach **echten Screenshots der Cloud** nachgebaut (`src/ui.js`). Die Instanz war leer;
+>   **alle Inhalte (Termine, Dateien, Anfragen, Namen, Assistent-Antworten) sind erfundene Demo-Daten**. Szenen 02–04 tragen „SNEAK PEEK“.
+>   Die Original-Screenshots liegen lokal in `refs/` (nicht im Repository: enthalten Instanz-Daten).
 > * Die Aussagen zu Microsoft 365, openDesk und Nextcloud sind bewusst fair formuliert („erst Stärke, dann *Aber:*“).
 >   Die Nextcloud-Zeile zielt auf den *ungepflegten Standard-Alltag*, nicht auf die Software – bitte final freigeben.
 > * Im Logo-Lockup steht „Der europäische digitale Arbeitsplatz“; im Briefing war von „offenem Arbeitsplatz“ die Rede.
@@ -28,13 +32,14 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 ```
 timeline.json            Zeitplan: 30 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
-  engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche
+  engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
-  scenes/act1.js           Chaos: Hook, Microsoft 365, openDesk, Nextcloud, Überforderung, Pause
-  scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht/Suche, Appshop, Hilfe + Fortschrittsfaden
+  scenes/act1.js           Chaos: Hook, Microsoft 365, openDesk, Nextcloud, Überforderung in fünf Blickwinkeln, Pause
+  scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht/Suche mit Assistent, Apps und Pakete, Support + Fortschrittsfaden
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
-audio/soundtrack.py      synthetischer Soundtrack (numpy/scipy), liest die hits aus timeline.json
+audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
+audio/alt/               frühere Fassungen des Tons (v1, v2)
 render.mjs               rendert Frame für Frame mit Headless-Chromium (Playwright)
 build.sh                 komplette Produktion (Ton → Bilder → ffmpeg)
 ```
@@ -57,7 +62,7 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 
 ## Texte, Farben, Zeiten ändern
 
-* **Texte:** in den Szenendateien (Versalien-Titel in `act2.js`/`act2b.js` über `K.headline`, Chaos-Karten in `act1.js`, Schlusszeilen in `finale.js`).
+* **Texte:** in den Szenendateien (Versalien-Titel in `act2.js`/`act2b.js` über `K.headline`, Chaos-Karten, Hook und Blickwinkel in `act1.js`, Schlusszeilen in `finale.js`, Demo-Inhalte der Oberfläche in `ui.js`).
 * **Farben/Schrift:** `src/brand.css` (`:root`) und `src/logo.js` (`BRAND`).
 * **Zeiten:** `timeline.json` (Szenen + hits). Das Ton-Skript liest die hits zur Laufzeit; danach `python3 audio/soundtrack.py`.
 * **Mischung des Tons:** Wörterbuch `MIX` am Anfang von `audio/soundtrack.py`.

@@ -140,7 +140,7 @@ export default function register(E) {
       /* ---- Lichtkante (Kristall) – Position der schrägen Front ---- */
       const sweep = prog(t, T_CRYSTAL, T_CRYSTAL + 0.65), sl = 80;
       const xf = lerp(CX - LW / 2 - 200, CX + LW / 2 + 260, ease.uiInOut(sweep)), crystalOn = t >= T_CRYSTAL;
-      const logoY = lerp(LOGO_TOP_START, LOGO_TOP_FINAL, tw(t, T_LINES[0] - 0.05, T_LINES[0] + 0.75, ease.uiInOut));
+      const logoY = lerp(LOGO_TOP_START, LOGO_TOP_FINAL, tw(t, T_WEDGE + 0.05, T_WEDGE + 0.70, ease.uiInOut));
       const dy = logoY - LOGO_TOP_START;
       const yTop = LOGO_TOP_START - 60, hh = LH + 120;
       const edgeX = (y) => xf + sl - (2 * sl * (y - yTop)) / hh;             // x der schrägen Front auf Höhe y (Bildschirm)
