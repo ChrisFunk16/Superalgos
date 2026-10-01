@@ -1,6 +1,7 @@
 // ============================================================
 // Act I – Chaos (0–20 s). Dunkel, kühl, bewusst „designtes“ Chaos.
 //   hook 0–2 · m365 2–6 · opendesk 6–10 · nextcloud 10–14 · overwhelm 14–18 · pause 18–20 (+0.8)
+//   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
 // Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Lücken – die Chips poppen auf den
 // ping-hits der timeline.json. Linkado-Orange kommt hier NICHT vor (außer Faden+Flagge in der Pause).
 // ============================================================
@@ -16,7 +17,7 @@ export default function register(E) {
   const PING = { m365: hit('ping', 1), opendesk: hit('ping', 2), nextcloud: hit('ping', 3) };
   const SHOVE = { m365: hit('shove', 1)[0], opendesk: hit('shove', 2)[0], nextcloud: 13.7 };
   const CUT = E.hits('cut')[0].t;                    // 18.0 – harter Schnitt
-  const TEXTS = E.hits('text').filter((x) => x.t >= 14 && x.t <= 17).map((x) => x.t);   // 14,15,16,17
+  const TEXTS = E.hits('text').filter((x) => x.t >= 14 && x.t <= 17.5).map((x) => x.t);   // 14 · 14.75 · 15.5 · 16.25 · 17
   const ASK = E.hits('text').find((x) => x.t > 18.5 && x.t < 19.5).t;                  // 19.0
 
   // Position der weggeschobenen Gruppen (um die Bildmitte 960/540)
@@ -55,12 +56,22 @@ export default function register(E) {
   .a1-login .f { height:42px; border-radius:9px; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.14); margin-bottom:10px; display:flex; align-items:center; padding:0 12px; font:500 17px/1 var(--font-body); color:#9AA3B8; }
   .a1-login .bt { height:44px; border-radius:9px; display:flex; align-items:center; justify-content:center; font:700 17px/1 var(--font-body); color:#fff; }
   .a1-big { position:absolute; left:0; right:0; text-align:center; text-transform:uppercase; font-family:var(--font-display); font-weight:700; color:${CREAM}; letter-spacing:-.005em; white-space:nowrap; }
+  .a1-ai { position:absolute; left:0; top:0; width:300px; border-radius:14px; background:#1B2335; border:1.5px solid rgba(255,255,255,.16); box-shadow:0 14px 34px rgba(0,0,0,.55); overflow:hidden; font-family:var(--font-body); color:${CREAM}; }
+  .a1-ai .hd { height:44px; display:flex; align-items:center; gap:10px; padding:0 16px; font:700 19px/1 var(--font-body); color:#fff; }
+  .a1-ai .bd { padding:16px 16px 8px; } .a1-ai .bd i { display:block; height:11px; border-radius:4px; background:rgba(255,255,255,.18); margin-bottom:10px; }
+  .a1-ai .ft { padding:0 16px 14px; display:flex; align-items:center; gap:8px; font:600 15px/1 var(--font-body); color:#E5565B; }
+  .a1-role { position:absolute; left:0; right:0; top:344px; display:flex; justify-content:center; z-index:43; }
+  .a1-role .p { display:inline-flex; align-items:center; gap:16px; padding:10px 26px 10px 12px; border-radius:99px; background:rgba(20,26,40,.94); border:1.5px solid rgba(255,255,255,.22); font:700 24px/1 var(--font-body); letter-spacing:.16em; color:#B9C1D3; white-space:nowrap; }
+  .a1-role .ic { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .a1-role .dots { display:flex; gap:7px; margin-left:8px; } .a1-role .dots i { width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.22); display:block; }
+  .a1-cap { position:absolute; left:0; right:0; top:588px; display:flex; justify-content:center; z-index:43; }
+  .a1-cap .p { display:inline-flex; align-items:center; gap:12px; padding:12px 24px 12px 16px; border-radius:99px; background:#E5565B; color:#fff; font:700 24px/1 var(--font-body); letter-spacing:.1em; box-shadow:0 10px 26px rgba(229,86,91,.35); white-space:nowrap; }
   .a1-bubble { position:absolute; left:0; top:0; padding:14px 22px; border-radius:20px 20px 20px 5px; background:#E8E1D3; color:#1F2532; font:600 24px/1.2 var(--font-body); box-shadow:0 8px 18px rgba(0,0,0,.42); white-space:nowrap; }
   `);
 
-  const FILES = ['protokoll_final_v3.docx', 'protokoll_final_v4_NEU.docx', 'Aufgaben_Q3_(2).xlsx', 'Angebot_Meyer_FINAL_neu.pdf', 'Präsentation_v7_Kopie.pptx', 'Kundenliste_alt.xlsx', 'Notizen_Montag.txt', 'Termine_KW40_neu.ics',
-    'Budget_2026_final_final.xlsx', 'Rechnung_0815_scan.pdf', 'Konzept_ENTWURF_v2.docx', 'Fotos_Messe_Kopie (3).zip', 'Logo_final_final_v3.png', 'Vertrag_unterschrieben_neu.pdf', 'Protokoll_Teamtermin (1).docx', 'Zugang_Projekt_alt.txt',
-    'Angebot_Hartmann_v2.pdf', 'Besprechung_Do_NEU.docx', 'Mailanhang_Kopie_2.pdf', 'Preisliste_2025_alt.xlsx', 'Aufgaben_Liste_final.xlsx', 'Skizze_Messestand_v5.pptx', 'Einladung_Sommerfest.docx', 'Notizen_Kunde_neu.txt'];
+  const FILES = ['protokoll_final_v4_NEU.docx', 'prompt_final_v7.txt', 'Aufgaben_Q3_(2).xlsx', 'KI-Zusammenfassung (2).pdf', 'Präsentation_v7_Kopie.pptx', 'Chat-Export_Montag.json', 'Notizen_Montag.txt', 'Termine_KW40_neu.ics',
+    'Budget_2026_final_final.xlsx', 'Transkript_Meeting.vtt', 'Konzept_ENTWURF_v2.docx', 'Logo_final_final_v3.png', 'Fotos_Messe_Kopie (3).zip', 'Vertrag_unterschrieben_neu.pdf', 'Zugang_Projekt_alt.txt', 'Angebot_Hartmann_v2.pdf',
+    'Mailanhang_Kopie_2.pdf', 'Preisliste_2025_alt.xlsx', 'Aufgaben_Liste_final.xlsx', 'prompt_test_neu.txt', 'Skizze_Messestand_v5.pptx', 'Einladung_Sommerfest.docx', 'Notizen_Kunde_neu.txt', 'KI-Entwurf_Mail_v3.docx'];
 
   E.scene({
     id: 'act1', span: ['hook', 'pause'], post: 0.8, z: 2,
@@ -80,8 +91,11 @@ export default function register(E) {
 
       /* ---- Hook ---- */
       const word = (s, c) => h('span', { class: 'w' }, h('span', { text: s, style: { color: c } }));
-      const w1 = word('Digitale', DIM), w2 = word('Zusammenarbeit', DIM), w3 = word('heute.', CREAM);
-      const hook = h('div', { class: 'a1-hook' }, h('div', {}, w1, ' ', w2), h('div', {}, w3));
+      const w1 = word('Alles', DIM), w2 = word('funktioniert.', DIM), w3 = word('Nur nicht', DIM);
+      // „dazwischen.“ – die beiden Hälften öffnen sich: das Dazwischen wird sichtbar
+      const hl = h('span', { text: 'dazwi', style: { display: 'inline-block' } }), hr = h('span', { text: 'schen.', style: { display: 'inline-block' } });
+      const w4 = h('span', { class: 'w' }, h('span', { style: { color: CREAM } }, hl, hr));
+      const hook = h('div', { class: 'a1-hook' }, h('div', {}, w1, ' ', w2), h('div', {}, w3, ' ', w4));
       root.append(hook);
       const hookBadges = [[430, 250, '3'], [1500, 330, '12'], [1280, 780, '7']].map(([x, y, n]) => { const b = h('div', { class: 'a1-badge', text: n }); root.append(b); return { el: b, x, y }; });
 
@@ -108,7 +122,7 @@ export default function register(E) {
         const cols = ['#2F6FDE', '#1E9E6A', '#E5565B', '#36A9E8', '#7B6CF6', '#14A8A8', '#4C5BD4', '#D1497A'];
         const icos = ['file-text', 'table-2', 'presentation', 'mail', 'calendar', 'message-square', 'cloud', 'users'];
         const tiles = cols.map((c, k) => { const el = h('div', { class: 'a1-tile', style: { background: c, left: 120 + (k % 4) * 152, top: 100 + Math.floor(k / 4) * 154 }, html: icon(icos[k], 52, '#fff', 2) }); win.append(el); return el; });
-        const tags = ['+ LIZENZ', '+ ADD-ON', '+ SPEICHER', '+ SUPPORT'].map((s, k) => { const el = h('div', { class: 'a1-tag' }, h('span', { html: icon('euro', 24, '#E5565B', 2.6) }), s); g.append(el); return el; });
+        const tags = ['+ LIZENZ', '+ ADD-ON', '+ SPEICHER', '+ KI-ZUSATZ'].map((s, k) => { const el = h('div', { class: 'a1-tag' }, h('span', { html: icon('euro', 24, '#E5565B', 2.6) }), s); g.append(el); return el; });
         const ghost = h('div', { class: 'abs', style: { left: 120 + 3 * 152 - 4, top: 100 + 154 - 4, width: 136, height: 136, borderRadius: 30, border: '3px dashed rgba(229,86,91,.85)', zIndex: 3 } });
         win.append(ghost); g.append(win); win.style.zIndex = 2;
         tags.forEach((el) => { el.style.zIndex = 5; });
@@ -157,7 +171,7 @@ export default function register(E) {
       /* Visual 3 – Nextcloud: nacktes Wireframe + Update-Balken „nur das Nötigste“ */
       const vNextcloud = (g) => {
         const ui = buildUI(E);
-        const w = ui.window({ raw: true }); w.setActive('Dateien'); w.main.append(ui.dashboard().el);
+        const w = ui.window({ raw: true }); w.setActive('Startseite'); w.main.append(ui.home().el);
         w.el.style.transformOrigin = '0 0';
         const frame = h('div', { class: 'abs', style: { left: 1030, top: 270, width: 780, height: 470 } }); frame.append(w.el); g.append(frame);
         const bar = h('div', { class: 'abs', style: { left: 1030, top: 770, width: 780, height: 70, borderRadius: 16, background: '#1B2335', border: '1.5px solid rgba(255,255,255,.14)', display: 'flex', alignItems: 'center', gap: 18, padding: '0 24px' } },
@@ -184,7 +198,7 @@ export default function register(E) {
       ];
       const groups = cfgs.map(mkGroup);
 
-      /* ---- Überforderung (14–18): Logins, Tabs, Tools, Fragen ---- */
+      /* ---- Überforderung (14–18): fünf Blickwinkel – Login · Tool · Abo · KI · IT ---- */
       const logins = [[120, 120, '#E5565B', 'Microsoft-Konto'], [1480, 150, '#7B6CF6', 'Portal-Login'], [1360, 700, '#36A9E8', 'Cloud-Zugang'], [150, 700, '#8E97AE', 'VPN']].map(([x, y, c, ttl], k) => {
         const el = h('div', { class: 'a1-login', style: { borderTop: `6px solid ${c}` } }, h('h6', { text: ttl }), h('div', { class: 'f', text: 'Benutzername' }), h('div', { class: 'f', text: '••••••••' }), h('div', { class: 'bt', style: { background: c }, text: 'Anmelden' }));
         root.append(el); return { el, x, y, c, rot: [-6, 5, -4, 7][k] };
@@ -194,12 +208,25 @@ export default function register(E) {
       const tabCount = h('div', { class: 'abs', style: { right: 24, top: 14, height: 42, padding: '0 18px', borderRadius: 21, background: '#E5565B', color: '#fff', font: '700 22px/42px var(--font-body)', zIndex: 5 } });
       tabBar.append(tabCount); root.append(tabBar);
       const toolTiles = Array.from({ length: 12 }, (_, k) => { const c = ['#2F6FDE', '#1E9E6A', '#E5565B', '#36A9E8', '#7B6CF6', '#14A8A8', '#4C5BD4', '#D1497A'][k % 8]; const el = h('div', { class: 'a1-tile', style: { background: c, width: 110, height: 110, left: 0, top: 0 }, html: icon(['file-text', 'table-2', 'presentation', 'mail', 'calendar', 'message-square', 'cloud', 'users', 'notebook-pen', 'kanban', 'video', 'clipboard-list'][k], 46, '#fff', 2) }); const b = h('div', { class: 'a1-badge', text: String(3 + ((k * 7) % 96)), style: { left: 74, top: -14, transform: 'scale(.7)', transformOrigin: '0 50%' } }); el.append(b); root.append(el); return { el, x: r.range(180, 1640), y: r.range(120, 900), rot: r.range(-12, 12) }; });
-      const asks = ['Wo ist die Datei?', 'Passwort vergessen?', 'Wer hat Zugriff?', 'Ticket #4711 offen', 'Welche Version gilt?'].map((txt, k) => { const el = h('div', { class: 'a1-bubble', text: txt }); root.append(el); return { el, x: [160, 1380, 620, 1250, 260][k], y: [220, 260, 820, 840, 620][k], rot: [-4, 3, -2, 4, -3][k] }; });
+      // Blickwinkel Geschäftsführung: Abos stapeln sich
+      const aboTags = ['+ LIZENZ', '+ ADD-ON', '+ SPEICHER', '+ KI-ZUSATZ', '+ SUPPORT', '+ NOCH EIN PAKET'].map((txt, k) => { const el = h('div', { class: 'a1-tag', style: { zIndex: 36 } }, h('span', { html: icon('euro', 24, '#E5565B', 2.6) }), txt); root.append(el); return { el, x: [150, 1500, 1380, 190, 760, 1010][k], y: [170, 230, 800, 760, 118, 880][k], rot: [-7, 6, -5, 5, -3, 4][k] }; });
+      const aboCount = h('div', { class: 'abs', style: { left: 0, top: 0, height: 42, padding: '0 18px', borderRadius: 21, background: '#E5565B', color: '#fff', font: '700 22px/42px var(--font-body)', zIndex: 37 } }); root.append(aboCount);
+      // Blickwinkel Datenschutz: jede*r bringt die eigene KI mit
+      const ais = [['Chat-KI', '#7B6CF6', 140, 120], ['Notiz-KI', '#36A9E8', 1480, 110], ['Bild-KI', '#E5565B', 1440, 740], ['Meeting-KI', '#D1497A', 100, 730], ['Übersetzer-KI', '#3FBF8A', 1010, 850]].map(([name, col, x, y], k) => {
+        const el = h('div', { class: 'a1-ai', style: { zIndex: 36 } }, h('div', { class: 'hd', style: { background: col } }, h('span', { html: icon('sparkles', 20, '#fff', 2.2) }), name), h('div', { class: 'bd' }, h('i'), h('i', { style: { width: '64%' } }), h('i', { style: { width: '82%' } })), h('div', { class: 'ft' }, h('span', { html: icon('cloud-upload', 17, '#E5565B', 2.4) }), 'sendet Daten …'));
+        root.append(el); return { el, x, y, rot: [-5, 4, -4, 5, -2][k] };
+      });
+      const aiCap = h('div', { class: 'a1-cap' }, h('div', { class: 'p' }, h('span', { html: icon('shield-alert', 28, '#fff', 2.2) }), 'WOHIN GEHEN DIE DATEN?')); root.append(aiCap);
+      // Blickwinkel IT: Fragen
+      const asks = ['Wo ist die Datei?', 'Passwort vergessen?', 'Wer hat Zugriff?', 'Ticket #4711 offen', 'Welche Version gilt?', 'Darf die KI das?'].map((txt, k) => { const el = h('div', { class: 'a1-bubble', text: txt }); root.append(el); return { el, x: [160, 1380, 620, 1250, 260, 900][k], y: [250, 330, 820, 860, 640, 180][k], rot: [-4, 3, -2, 4, -3, 2][k] }; });
       const vig = h('div', { class: 'abs', style: { left: 160, top: 300, width: 1600, height: 480, background: 'radial-gradient(closest-side, rgba(14,19,30,.94), rgba(14,19,30,.86) 55%, rgba(14,19,30,0))', zIndex: 40 } });
-      const bigs = [['NOCH EIN LOGIN.', 120], ['NOCH EIN TAB.', 120], ['NOCH EIN TOOL.', 120], ['NOCH EINE FRAGE AN DIE IT.', 100]].map(([txt, sz], k) => {
+      const BIGS = [['NOCH EIN LOGIN.', 120], ['NOCH EIN TOOL.', 120], ['NOCH EIN ABO.', 120], ['NOCH EINE KI.', 120], ['NOCH EINE FRAGE AN DIE IT.', 100]];
+      const bigs = BIGS.map(([txt, sz], k) => {
         const mk = (col, extra = {}) => h('div', { class: 'a1-big', text: txt, style: { top: 470 - sz / 2, fontSize: sz, color: col, zIndex: 42, ...extra } }); const main = mk(CREAM); const gr = mk('#E5565B', { zIndex: 41 }); const gc = mk('#36A9E8', { zIndex: 41 });
         root.append(gr, gc, main); return { main, gr, gc };
       });
+      const ROLES = [['user-round', 'MITARBEITENDE', '#E5565B'], ['users', 'TEAMS', '#7B6CF6'], ['banknote', 'GESCHÄFTSFÜHRUNG', '#E5565B'], ['shield-check', 'DATENSCHUTZ', '#7B6CF6'], ['headphones', 'IT-ABTEILUNG', '#36A9E8']];
+      const roles = ROLES.map(([ico, txt, col], k) => { const el = h('div', { class: 'a1-role' }, h('div', { class: 'p' }, h('span', { class: 'ic', style: { background: col }, html: icon(ico, 24, '#fff', 2.2) }), h('span', { text: txt }), h('span', { class: 'dots' }, ROLES.map((_, q) => h('i', { style: { background: q === k ? col : '' } }))))); root.append(el); return el; });
       root.append(vig);
 
       /* ---- Pause ---- */
@@ -210,7 +237,7 @@ export default function register(E) {
       root.append(ask, thr, thrFlag);
       const dark = h('div', { class: 'abs', style: { inset: 0, background: '#0E131E', zIndex: 35 } }); root.append(dark);
 
-      return { glow, grid, chips, hook, w1, w2, w3, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, asks, vig, bigs, ask, askLetters, thr, thrFlag, dark };
+      return { glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
     },
 
     update(t, s) {
@@ -236,10 +263,11 @@ export default function register(E) {
 
       /* ---- Hook (0–2) ---- */
       const hk = (el, t0) => tf(el.firstChild, { y: 130 * (1 - tw(t, t0, t0 + 0.7, ease.ui)) });
-      hk(s.w1, 0.15); hk(s.w2, 0.45); hk(s.w3, 0.95);
-      const hx = tw(t, 1.7, 2.0, ease.in3);
-      show(s.hook, t < 2.05); tf(s.hook, { y: -50 * hx, o: 1 - hx });
-      s.hookBadges.forEach((b, k) => { const t0 = [0.5, 1.0, 1.5][k], p = tw(t, t0, t0 + 0.35, ease.snap); show(b.el, t >= t0 && t < 2.05); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
+      hk(s.w1, 0.15); hk(s.w2, 0.5); hk(s.w3, 1.0); hk(s.w4, 1.5);
+      const gap = 34 * tw(t, 1.62, 2.1, ease.out3); tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
+      const hx = tw(t, 1.88, 2.0, ease.in3);                       // harter Schnitt auf den Karten-Schlag bei 2.0
+      show(s.hook, t < 2.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
+      s.hookBadges.forEach((b, k) => { const t0 = [0.5, 1.0, 1.5][k], p = tw(t, t0, t0 + 0.35, ease.snap); show(b.el, t >= t0 && t < 2.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
 
       /* ---- Karten-Gruppen ---- */
       s.groups.forEach((G, gi) => {
@@ -260,29 +288,37 @@ export default function register(E) {
         G.vis.update(t, G.t0, G.pings);
       });
 
-      /* ---- Überforderung (14–18) ---- */
-      const L = (k) => TEXTS[k];
-      s.logins.forEach((lg, k) => { const t0 = 14.0 + k * 0.28, p = tw(t, t0, t0 + 0.4, ease.snap); show(lg.el, pre && t >= t0); tf(lg.el, { x: lg.x, y: lg.y + 8 * Math.sin(t * 2 + k), r: lg.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * (t > 17 ? 1 : 0.92) }); });
-      const tabsOn = pre && t >= L(1) - 0.05;
-      show(s.tabBar, tabsOn); tf(s.tabBar, { y: -70 * (1 - tw(t, L(1) - 0.05, L(1) + 0.3, ease.ui)) });
-      const nTabs = Math.floor(lerp(3, 36, ease.out2(prog(t, L(1), 17.6)))); const wTab = Math.min(190, (1800 - 220) / Math.max(1, nTabs));
+      /* ---- Überforderung (14–18): fünf Blickwinkel auf dem 3/16-Raster (0,75 s) ---- */
+      const B = TEXTS;                                                // 14.0 · 14.75 · 15.5 · 16.25 · 17.0
+      s.logins.forEach((lg, k) => { const t0 = B[0] + k * 0.12, p = tw(t, t0, t0 + 0.4, ease.snap); show(lg.el, pre && t >= t0); tf(lg.el, { x: lg.x, y: lg.y + 8 * Math.sin(t * 2 + k), r: lg.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * (t > 17 ? 1 : 0.92) }); });
+      const tabsOn = pre && t >= B[1] - 0.05;
+      show(s.tabBar, tabsOn); tf(s.tabBar, { y: -70 * (1 - tw(t, B[1] - 0.05, B[1] + 0.3, ease.ui)) });
+      const nTabs = Math.floor(lerp(3, 36, ease.out2(prog(t, B[1], 17.6)))); const wTab = Math.min(190, (1800 - 220) / Math.max(1, nTabs));
       s.tabs.forEach((el, k) => { show(el, k < nTabs); el.style.left = (20 + k * (wTab + 2)) + 'px'; el.style.width = wTab + 'px'; });
       s.tabCount.textContent = nTabs + ' TABS';
-      s.toolTiles.forEach((tl, k) => { const t0 = L(2) + k * 0.075, p = tw(t, t0, t0 + 0.35, ease.snap); show(tl.el, pre && t >= t0); tf(tl.el, { x: tl.x, y: tl.y + 10 * Math.sin(t * 2.2 + k), r: tl.rot, s: 0.5 + 0.5 * p, o: clamp(p * 2) }); });
-      s.asks.forEach((b, k) => { const t0 = L(3) + k * 0.16, p = tw(t, t0, t0 + 0.3, ease.snap); show(b.el, pre && t >= t0); tf(b.el, { x: b.x, y: b.y, r: b.rot, s: 0.6 + 0.4 * p, o: clamp(p * 2) }); });
-      // Text-Salven
+      s.toolTiles.forEach((tl, k) => { const t0 = B[1] + k * 0.045, p = tw(t, t0, t0 + 0.35, ease.snap); show(tl.el, pre && t >= t0); tf(tl.el, { x: tl.x, y: tl.y + 10 * Math.sin(t * 2.2 + k), r: tl.rot, s: 0.5 + 0.5 * p, o: clamp(p * 2) }); });
+      s.aboTags.forEach((a, k) => { const t0 = B[2] + k * 0.09, p = tw(t, t0, t0 + 0.4, ease.snap); show(a.el, pre && t >= t0); tf(a.el, { x: a.x, y: a.y - (1 - p) * 120 + 5 * Math.sin(t * 2.4 + k), r: a.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2.5) }); });
+      const nAbo = Math.floor(lerp(2, 9, ease.out2(prog(t, B[2], B[2] + 0.7)))); s.aboCount.textContent = nAbo + ' ABOS';
+      show(s.aboCount, pre && t >= B[2]); tf(s.aboCount, { x: 1390, y: 100, s: 0.7 + 0.3 * tw(t, B[2], B[2] + 0.3, ease.snap), o: tw(t, B[2], B[2] + 0.15) });
+      s.ais.forEach((a, k) => { const t0 = B[3] + k * 0.09, p = tw(t, t0, t0 + 0.4, ease.snap); show(a.el, pre && t >= t0); tf(a.el, { x: a.x, y: a.y + 8 * Math.sin(t * 2.1 + k), r: a.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * 0.96 }); });
+      const capP = tw(t, B[3] + 0.3, B[3] + 0.62, ease.snap); show(s.aiCap, pre && t >= B[3] + 0.28); tf(s.aiCap, { y: 24 * (1 - capP), s: 0.92 + 0.08 * capP, o: clamp(capP * 2) * (1 - tw(t, B[4], B[4] + 0.12)) });
+      s.asks.forEach((b, k) => { const t0 = B[4] + k * 0.12, p = tw(t, t0, t0 + 0.3, ease.snap); show(b.el, pre && t >= t0); tf(b.el, { x: b.x, y: b.y, r: b.rot, s: 0.6 + 0.4 * p, o: clamp(p * 2) }); });
+      // Text-Salven + Rollen-Pille („Blickwinkel“)
       const inBig = pre && t >= 13.95;
       show(s.vig, inBig); s.vig.style.opacity = tw(t, 13.9, 14.2);
       const glitch = clamp((t - 17.72) / 0.28);                       // 17.72 → 18.0
+      const NB = s.bigs.length;
       s.bigs.forEach((b, k) => {
-        const t0 = TEXTS[k], t1 = k < 3 ? TEXTS[k + 1] : CUT, a = t - t0;
+        const t0 = B[k], t1 = k < NB - 1 ? B[k + 1] : CUT, a = t - t0, dur = t1 - t0;
         const on = pre && t >= t0 && t < t1;
         [b.main, b.gr, b.gc].forEach((el) => show(el, on));
+        show(s.roles[k], on);
         if (!on) return;
-        const p = tw(a, 0, 0.16, ease.out4), shake = Math.sin(a * 70) * 7 * (1 - tw(a, 0, 0.2));
-        const gl = k === 3 ? glitch : 0, split = 4 * (1 - tw(a, 0, 0.25)) + 22 * gl;
-        const base = { x: shake + (gl > 0 ? Math.sin(t * 90) * 10 * gl : 0), s: 1.07 - 0.07 * p, o: clamp(p * 2) * (1 - (k < 3 ? tw(a, 0.86, 1.0, ease.in2) : 0)) };
+        const p = tw(a, 0, 0.14, ease.out4), shake = Math.sin(a * 70) * 7 * (1 - tw(a, 0, 0.2));
+        const gl = k === NB - 1 ? glitch : 0, split = 4 * (1 - tw(a, 0, 0.25)) + 22 * gl;
+        const base = { x: shake + (gl > 0 ? Math.sin(t * 90) * 10 * gl : 0), s: 1.07 - 0.07 * p, o: clamp(p * 2) * (1 - (k < NB - 1 ? tw(a, dur - 0.12, dur, ease.in2) : 0)) };
         tf(b.main, base); tf(b.gr, { ...base, x: base.x - split, o: base.o * (0.0 + (split > 5 ? 0.8 : 0)) }); tf(b.gc, { ...base, x: base.x + split, o: base.o * (0.0 + (split > 5 ? 0.8 : 0)) });
+        const rp = tw(a, 0.02, 0.26, ease.ui); tf(s.roles[k], { y: 16 * (1 - rp), o: rp * (1 - (k < NB - 1 ? tw(a, dur - 0.1, dur) : 0)) });
       });
       // Freeze-Flackern direkt vor dem Schnitt
       if (t > 17.8 && t < CUT) s.vig.style.opacity = 0.7 + 0.3 * Math.sign(Math.sin(t * 120));

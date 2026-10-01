@@ -7,7 +7,7 @@
 //   04 Hilfe direkt in der Cloud                            (34–40)
 // Kamera-Zooms führen den Blick; Aktionen landen auf den hits der timeline.json.
 // ============================================================
-import { buildUI } from '../ui.js';
+import { buildUI, LAY } from '../ui.js';
 
 export const THREAD_Y = 700;   // Höhe des orangenen Fadens in der Pause (Act I) – hier übernimmt er
 
@@ -75,12 +75,13 @@ export default function register(E) {
     },
   });
 
+
   /* ---------------------------------------------------------------- Das Linkado-Fenster: 01 – 04 */
   const POSE = {
     full:   { s: 0.70, px: 872, py: 214 },
     search: { s: 1.08, px: 870, py: 132 },
-    shop:   { s: 0.98, px: 870, py: 104 },
-    help:   { s: 1.00, px: 870, py: 96 },
+    shop:   { s: 0.86, px: 862, py: 118 },
+    help:   { s: 0.86, px: 862, py: 104 },
     away:   { s: 0.52, px: 1060, py: 300 },
   };
   const POSES = [[20, 'full'], [23.2, 'full'], [24.2, 'search'], [27.4, 'search'], [28.3, 'shop'], [33.4, 'shop'], [34.3, 'help'], [39.4, 'help'], [40.8, 'away']];
@@ -94,20 +95,24 @@ export default function register(E) {
     return { s: A.s * Math.pow(B.s / A.s, p) * (a === b || A === B ? drift : 1), px: lerp(A.px, B.px, p), py: lerp(A.py, B.py, p) };
   }
 
-  // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: 25.4, 30.0, 31.5, 33.5, 35.5
+  // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: siehe CLICKS (stehen auch als hits in timeline.json)
+  const CLICKS = [25.4, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85];
+  const B0 = LAY.apps.btn(0), B1 = LAY.apps.btn(1), TG = LAY.apps.toggle(3), SUP = LAY.rail.support, SIN = LAY.support.input;
   const CUR = [
-    [24.70, 980, 620], [25.35, 538, 322], [26.85, 538, 322], [27.15, 470, 418], [27.70, 470, 418], [28.30, 940, 660],
-    [29.00, 940, 660], [29.95, 352, 436], [30.50, 352, 436], [31.45, 792, 440], [32.05, 792, 440], [32.65, 306, 200],
-    [33.05, 306, 200], [33.45, 972, 480], [33.95, 972, 480], [34.60, 1010, 700],
-    [34.65, 1010, 700], [35.05, 560, 312], [35.45, 686, 308], [36.05, 686, 308], [36.60, 760, 560],
+    [24.70, 980, 640], [25.35, 330, 268], [26.85, 330, 268], [27.30, 520, 380], [28.30, 760, 560],
+    [29.95, B0[0], B0[1]], [30.45, B0[0], B0[1]], [31.45, B1[0], B1[1]], [31.95, B1[0], B1[1]],
+    [32.40, 900, 520], [33.15, TG[0], TG[1]], [33.35, TG[0], TG[1]],
+    [33.98, SUP[0], SUP[1]], [34.30, SUP[0], SUP[1]],
+    [35.45, SIN[0] - 80, SIN[1]], [35.80, SIN[0] - 80, SIN[1]], [37.00, 700, 560],
+    [37.80, 1156, 126], [38.30, 1156, 126], [38.80, 1190, 170],
   ];
-  const CLICKS = [25.4, 30.0, 31.5, 33.5, 35.5];
 
-  // App-Flüge (Karte → Seitenleiste)
+  // App-Flüge (Hinzufügen-Taste → Seitenleiste); Rail-Positionen 6 und 7 (unter Talk)
   const FLY = [
-    { t0: 30.0, from: [188, 324], to: [48, 589], app: 0 },
-    { t0: 31.5, from: [628, 324], to: [48, 669], app: 1 },
+    { t0: 30.0, from: B0, to: [LAY.rail.x, LAY.rail.y(6)], app: 0 },
+    { t0: 31.5, from: B1, to: [LAY.rail.x, LAY.rail.y(7)], app: 1 },
   ];
+  const rowOn = (r, v) => { r.tg.style.background = mixHex('#CBC7BF', '#E67E22', v); r.tg.firstChild.style.left = (3 + 22 * v) + 'px'; r.lbl.textContent = v > 0.5 ? 'Aktiv' : 'Aus'; };
 
   E.scene({
     id: 'a2-ui', start: 20, end: 41, z: 20,
@@ -116,16 +121,14 @@ export default function register(E) {
       const outer = h('div', { class: 'abs', style: { inset: 0 } });
       const cam = h('div', { class: 'abs', style: { left: 0, top: 0, width: 1480, height: 900, transformOrigin: '0 0' } });
       // Rohfassung = „Nextcloud-Standard“
-      const raw = ui.window({ raw: true }); raw.setActive('Startseite'); raw.main.append(ui.dashboard().el);
+      const raw = ui.window({ raw: true }); raw.setActive('Startseite'); raw.main.append(ui.home().el);
       // Linkado
       const win = ui.window(); win.setActive('Startseite');
-      const dash = ui.dashboard(), shop = ui.appshop(), files = ui.files();
-      win.main.append(dash.el, shop.el, files.el);
-      const res = ui.results('Angebot'); Object.assign(res.el.style, { left: '52px', top: '283px' }); dash.el.append(res.el);
-      const hint = ui.hint(); Object.assign(hint.el.style, { left: '560px', top: '220px' }); files.el.append(hint.el);
-      const help = ui.help(); win.main.append(help.el);
-      const rFor = win.mk('Formulare', 'clipboard-list', 'Formulare', 12 + 6 * 80);
-      const rDeck = win.mk('Deck', 'columns-3', 'Deck', 12 + 7 * 80);
+      const dash = ui.home(), shop = ui.apps(), sup = ui.support();
+      win.main.append(dash.el, shop.el, sup.el);
+      const res = ui.results('Angebot'); Object.assign(res.el.style, { left: '64px', top: '246px' }); dash.el.append(res.el);
+      const rDeck = win.mk('Deck', 'deck', 'Deck', 8 + 6 * 77);
+      const rFor = win.mk('Formulare', 'forms', 'Formulare', 8 + 7 * 77);
       // Welle (Nextcloud → Linkado): Glanzband + orange Kante, nur innerhalb des Fensters sichtbar
       const bandWrap = h('div', { class: 'abs', style: { left: 0, top: 0, width: 1480, height: 900, borderRadius: 20, overflow: 'hidden', pointerEvents: 'none', zIndex: 20 } });
       const shine = h('div', { class: 'abs', style: { top: 0, width: 150, height: 900, background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55))', transform: 'skewX(-18.43deg)' } });
@@ -150,11 +153,11 @@ export default function register(E) {
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
-      return { ui, outer, cam, raw, win, dash, shop, files, res, hint, help, rFor, rDeck, rails: [rFor, rDeck], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: '' };
+      return { ui, outer, cam, raw, win, dash, shop, sup, res, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s) {
-      const { cam, outer, raw, win, dash, shop, files, res, hint, help, cur } = s;
+      const { cam, outer, raw, win, dash, shop, sup, res, cur } = s;
 
       /* ---- Kamera + Fenster-Auftritt/Abgang ---- */
       const c = camAt(t);
@@ -177,52 +180,48 @@ export default function register(E) {
       /* ---- Überschriften ---- */
       s.heads[0].update(t, 20.25, 24.0); s.heads[1].update(t, 24.0, 28.0); s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 40.0);
 
-      /* ---- 02: Übersicht – Widgets rasten ein, Suche ---- */
+      /* ---- 02: Übersicht – Widgets rasten ein, Suche mit Assistent ---- */
       const loose = tw(t, 23.2, 23.95, ease.out3) * (1 - ease.snap(prog(t, 24.0, 24.55)));
-      tf(dash.hero, { x: -14 * loose, y: 10 * loose, r: -1.5 * loose }); tf(dash.day, { x: 16 * loose, y: -8 * loose, r: 1.3 * loose });
+      tf(dash.hero, { x: -14 * loose, y: 10 * loose, r: -1.0 * loose }); tf(dash.day, { x: 16 * loose, y: -8 * loose, r: 1.0 * loose });
+      tf(dash.nextCard, { x: -12 * loose, y: 14 * loose }); tf(dash.news, { x: 14 * loose, y: 10 * loose });
+      dash.fcards.forEach((f, i) => tf(f, { y: (10 + 4 * i) * loose }));
       const focus = t >= 25.38 && t < 27.6;
-      dash.search.style.boxShadow = focus ? '0 0 0 4px rgba(230,126,34,.55), 0 2px 0 rgba(0,0,0,.10)' : '';
+      dash.search.style.boxShadow = focus ? '0 0 0 4px rgba(255,255,255,.75), 0 0 0 7px rgba(23,26,34,.55)' : '';
       const typed = Math.floor(clamp((t - 25.62) / 0.7) * 7 + 0.001);
       dash.searchText.textContent = t < 25.4 ? 'Suchen: Datei, Person, Termin …' : 'Angebot'.slice(0, typed);
-      dash.searchText.style.color = t < 25.4 ? '' : 'var(--navy)';
+      dash.searchText.style.color = t < 25.4 ? '' : '#171A22';
       dash.caret.style.display = (t >= 25.4 && t < 27.3 && (t < 26.5 || Math.floor(t * 2) % 2 === 0)) ? 'inline-block' : 'none';
       const rp = tw(t, 26.4, 26.75, ease.ui), rq = tw(t, 27.55, 27.95, ease.in2);
       show(res.el, t >= 26.38 && t < 28.0);
       tf(res.el, { y: -14 * (1 - rp), o: rp * (1 - rq) });
       res.rows.forEach((r, i) => { const p = tw(t, 26.45 + i * 0.08, 26.9 + i * 0.08, ease.ui); tf(r, { y: 10 * (1 - p), o: p }); });
 
-      /* ---- Ansichtswechsel Startseite → Appshop → Dateien ---- */
-      const act = t < 28.0 ? 'Startseite' : t < 34.0 ? 'Appshop' : t < 35.5 ? 'Dateien' : 'Support';
+      /* ---- Ansichtswechsel Startseite → Apps und Pakete → Support ---- */
+      const act = t < 28.0 ? 'Startseite' : t < 34.0 ? '' : 'Support';
       if (act !== s.activeRail) { win.setActive(act); s.activeRail = act; }
       show(dash.el, t < 28.5); tf(dash.el, { o: 1 - tw(t, 28.0, 28.45, ease.out2), s: 1 - 0.015 * tw(t, 28.0, 28.45) });
       show(shop.el, t >= 27.98 && t < 34.6);
       shop.el.style.opacity = tw(t, 28.0, 28.3, ease.out2) * (1 - tw(t, 34.0, 34.5, ease.out2));
-      const hp = tw(t, 28.1, 28.7, ease.ui);
-      tf(shop.head, { y: 20 * (1 - hp), o: hp }); tf(shop.seg, { y: 20 * (1 - hp), o: hp });
-      const mp = tw(t, 32.7, 33.2, ease.ui);                               // „Meine Apps“
-      tf(shop.chips, { y: 20 * (1 - hp), o: hp * (1 - mp) });
-      show(shop.cardsWrap, mp < 0.99); show(shop.listWrap, mp > 0.005);
-      shop.cardsWrap.style.opacity = 1 - mp;
-      shop.cards.forEach((cd, i) => { const p = tw(t, 28.25 + i * 0.07, 28.85 + i * 0.07, ease.ui); tf(cd.el, { y: 44 * (1 - p), o: p }); });
-      shop.seg.children[0].classList.toggle('on', mp < 0.5); shop.seg.children[1].classList.toggle('on', mp >= 0.5);
-      const ON = [1, 1, 0, 0, 0, 0, 1, 1];
-      shop.list.forEach((r, i) => {
-        const p = tw(t, 32.8 + i * 0.06, 33.3 + i * 0.06, ease.ui); tf(r.el, { y: 26 * (1 - p), o: p });
-        const on = i === 2 ? tw(t, 33.5, 33.78, ease.out3) : ON[i];
-        r.tg.style.background = mixHex('#D8D0BF', '#E67E22', on); r.tg.firstChild.style.left = (4 + 28 * on) + 'px';
-      });
-      show(files.el, t >= 33.98 && t < 40.9);
-      files.el.style.opacity = tw(t, 34.0, 34.5, ease.out2);
+      const hp = (a, d = 0.6) => tw(t, 28.1 + a, 28.1 + a + d, ease.ui);
+      tf(shop.menu, { x: -18 * (1 - hp(0)), o: hp(0) });
+      tf(shop.head, { y: 22 * (1 - hp(0.05)), o: hp(0.05) }); tf(shop.stat, { y: 16 * (1 - hp(0.15)), o: hp(0.15) });
+      tf(shop.search, { y: 16 * (1 - hp(0.2)), o: hp(0.2) }); tf(shop.chips, { y: 16 * (1 - hp(0.25)), o: hp(0.25) });
+      shop.cards.forEach((cd, i) => { const p = tw(t, 28.3 + i * 0.09, 28.9 + i * 0.09, ease.ui); tf(cd.el, { y: 44 * (1 - p), o: p }); });
+      const sc = ease.uiInOut(prog(t, 32.4, 33.05));                       // Scroll zu „Pakete“
+      shop.scroll.style.transform = `translateY(${(-LAY.apps.scroll * sc).toFixed(2)}px)`;
+      shop.tg = shop.tg || {};
+      const tgv = [tw(t, 30.65, 30.95, ease.out3), tw(t, 32.15, 32.45, ease.out3), 0, tw(t, 33.2, 33.45, ease.out3), 0];
+      shop.rows.forEach((r, i) => rowOn(r, r.on ? 1 : tgv[i]));
+      shop.nApps.textContent = String(59 + (t >= 30.65 ? 1 : 0) + (t >= 32.15 ? 1 : 0));
 
       /* ---- 03: Apps hinzufügen – Icon fliegt in die Seitenleiste ---- */
       FLY.forEach((f, k) => {
         const card = shop.cards[f.app], rail = s.rails[k];
         const q = t - f.t0;
-        // Button-Zustand
-        const done = q >= 0.06;
-        card.idle.style.display = done ? 'none' : 'inline-flex'; card.done.style.display = done ? 'inline-flex' : 'none';
-        card.btn.classList.toggle('done', done);
-        tf(card.btn, { s: 1 - 0.04 * Math.sin(Math.PI * clamp(q / 0.25)) });
+        const done = q >= 0.24;
+        show(card.add, !done); show(card.more, done);
+        card.badge.className = 'ui-badge' + (done ? '' : ' n'); card.badge.firstChild.textContent = done ? 'Aktiv' : 'Verfügbar';
+        tf(card.add, { s: 1 - 0.06 * Math.sin(Math.PI * clamp(q / 0.24)) });
         // Seitenleisten-Eintrag
         const lp = tw(q, 0.62, 1.1, ease.outBack);
         tf(rail, { s: 0.55 + 0.45 * lp, o: clamp(lp * 1.8) });
@@ -233,7 +232,7 @@ export default function register(E) {
       const path = s.trailSvg.firstChild;
       if (act_f && t >= act_f.t0 + 0.04) {
         const q = t - act_f.t0, p = ease.uiInOut(prog(q, 0.06, 0.78));
-        const [x0, y0] = act_f.from, [x2, y2] = act_f.to, cx = (x0 + x2) / 2 + 150, cy = (y0 + y2) / 2 - 70;
+        const [x0, y0] = act_f.from, [x2, y2] = act_f.to, cx = (x0 + x2) / 2 + 40, cy = (y0 + y2) / 2 - 90;
         const bx = (1 - p) * (1 - p) * x0 + 2 * (1 - p) * p * cx + p * p * x2, by = (1 - p) * (1 - p) * y0 + 2 * (1 - p) * p * cy + p * p * y2;
         const ap = shop.cards[act_f.app];
         s.flyer.style.display = q < 0.8 ? 'flex' : 'none';
@@ -246,25 +245,41 @@ export default function register(E) {
         path.style.display = '';
       } else { s.flyer.style.display = 'none'; path.style.display = 'none'; }
 
-      /* ---- 04: Hilfe direkt dort, wo die Frage entsteht ---- */
-      files.rows[1].classList.toggle('hl', t >= 34.95 && t < 36.1);
-      const hpp = tw(t, 35.05, 35.45, ease.snap);
-      show(hint.el, t >= 35.03 && t < 36.4);
-      tf(hint.el, { s: 0.8 + 0.2 * hpp, o: clamp(hpp * 1.6) * (1 - tw(t, 36.0, 36.35)), x: 0 });
-      const dp = tw(t, 35.5, 36.15, ease.ui);
-      show(help.el, dp > 0.001);
-      tf(help.el, { x: -490 * (1 - dp) });
-      help.steps.forEach((st, i) => {
+      /* ---- 04: Support – Frage → Antwort des Assistenten → Anfrage ---- */
+      show(sup.el, t >= 33.98 && t < 40.9);
+      sup.el.style.opacity = tw(t, 34.0, 34.4, ease.out2);
+      const sp = (a, d = 0.55) => tw(t, 34.1 + a, 34.1 + a + d, ease.ui);
+      tf(sup.menu, { x: -16 * (1 - sp(0)), o: sp(0) });
+      const g0 = sup.sc.children;                                           // Seitenüberschrift, Banner usw. gestaffelt
+      Array.from(g0).forEach((el, i) => { if (el === sup.rOld.el || el === sup.rNew.el) return; const p = sp(0.04 + i * 0.045); tf(el, { y: 18 * (1 - p), o: p }); });
+      // Eingabe
+      const qTxt = 'Ordner teilen', ty = Math.floor(clamp((t - 35.62) / 0.6) * qTxt.length + 0.001);
+      sup.input.textContent = t < 35.5 ? 'z. B. Dateien, Kalender, Zugang' : qTxt.slice(0, ty);
+      sup.input.style.color = t < 35.5 ? '#7A7770' : '#171A22';
+      sup.caret.style.display = (t >= 35.5 && t < 36.8) ? 'inline-block' : 'none';
+      sup.sc.querySelector('.ui-sin .inp').style.boxShadow = (t >= 35.48 && t < 37.0) ? '0 0 0 3px rgba(230,126,34,.55)' : '';
+      // Zone: Liste → Antwort
+      const al = tw(t, 36.15, 36.55, ease.ui);
+      sup.arts.forEach((a, i) => { tf(a, { y: 0, o: 1 - al }); }); sup.artsLbl.style.opacity = 1 - al;
+      show(sup.ai, al > 0.001);
+      tf(sup.ai, { y: 16 * (1 - al), s: 0.97 + 0.03 * al, o: al });
+      sup.steps.forEach((st, i) => {
         const ti = [36.3, 36.9, 37.5][i], p = tw(t, ti, ti + 0.32, ease.outBack);
         st.ck.style.display = p > 0 ? 'flex' : 'none'; tf(st.ck, { s: Math.max(0.01, p) });
-        st.dot.style.borderColor = t >= ti ? 'var(--orange)' : '#D8D0BF';
+        st.dot.style.borderColor = t >= ti ? 'var(--orange)' : '#E2C9A8';
       });
-      const bub = (el, t0) => { const p = tw(t, t0, t0 + 0.4, ease.ui); show(el, t >= t0 - 0.01); tf(el, { y: 14 * (1 - p), o: p, s: 0.96 + 0.04 * p }); };
-      bub(help.b1, 38.0); bub(help.b2, 38.5);
-      const typing = t >= 38.95 && t < 39.4;
-      show(help.typing, typing);
-      if (typing) Array.from(help.typing.querySelectorAll('i')).forEach((d, i) => { d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin((t * 9) - i * 0.9))).toFixed(2)}px)`; });
-      bub(help.b3, 39.4);
+      // Anfragen
+      const rn = tw(t, 38.0, 38.5, ease.snap);
+      show(sup.rNew.el, t >= 37.99); tf(sup.rNew.el, { y: -20 * (1 - rn), s: 0.96 + 0.04 * rn, o: clamp(rn * 1.6) });
+      const grow = tw(t, 39.3, 39.8, ease.ui);
+      sup.rNew.el.style.height = (54 + 22 * grow) + 'px';
+      sup.rOld.el.style.top = (684 + (64 + 22 * grow) * ease.out3(prog(t, 38.0, 38.5))) + 'px';
+      const rs = t >= 38.8;
+      sup.rNew.stEl.className = 'ui-rst ' + (rs ? 'o' : ''); sup.rNew.stText.textContent = rs ? 'Antwort vom Support' : 'Eingegangen';
+      tf(sup.rNew.stEl, { s: 1 + 0.12 * Math.sin(Math.PI * clamp((t - 38.8) / 0.35)) });
+      tf(sup.reply, { o: tw(t, 39.35, 39.85, ease.out2), y: 6 * (1 - tw(t, 39.35, 39.85)) });
+      sup.reply.style.display = t >= 39.34 ? '' : 'none';
+      sup.rNew.sub.textContent = rs ? 'Anfrage von Ihnen · vor 1 Minute' : 'Anfrage von Ihnen · gerade eben';
 
       /* ---- Cursor ---- */
       let cx = CUR[0][1], cy = CUR[0][2];
@@ -272,7 +287,7 @@ export default function register(E) {
       else for (let i = 0; i < CUR.length - 1; i++) if (t >= CUR[i][0] && t < CUR[i + 1][0]) { const p = ease.uiInOut(prog(t, CUR[i][0], CUR[i + 1][0])); cx = lerp(CUR[i][1], CUR[i + 1][1], p); cy = lerp(CUR[i][2], CUR[i + 1][2], p); }
       let press = 1;
       for (const ck of CLICKS) { const d = t - ck; if (d >= -0.05 && d < 0.3) press = Math.min(press, d < 0.05 ? 1 - 0.16 * clamp((d + 0.05) / 0.1) : 0.84 + 0.16 * clamp((d - 0.05) / 0.25)); }
-      const cop = tw(t, 24.7, 24.95) * (1 - tw(t, 36.3, 36.7));
+      const cop = tw(t, 24.7, 24.95) * (1 - tw(t, 38.5, 38.9));
       show(cur.el, cop > 0.01); tf(cur.el, { x: cx, y: cy, s: press, o: cop });
       let rip = 0, rt = 0; for (const ck of CLICKS) { const d = t - ck; if (d >= 0 && d < 0.55) { rip = 1; rt = d / 0.55; } }
       show(cur.rip, rip > 0);

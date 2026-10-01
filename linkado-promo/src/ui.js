@@ -1,126 +1,218 @@
 // ============================================================
-// Linkado-Oberfläche für den Film (nachgebaut nach den Screenshots von linkado.de)
+// Linkado-Oberfläche für den Film – nachgebaut nach echten Screenshots der Cloud
+// (Startseite „Ihr Tag“, Apps und Pakete, Support, Rail mit gefüllten Icons).
 // Native Fenstergröße 1480×900 px; die Kamera skaliert/verschiebt das Fenster.
-// Alle Texte sind Demo-Inhalte. Jede Textstelle trägt die Klasse "t", damit die
-// Rohfassung (".raw" = Nextcloud-Standard als graues Wireframe) sie zu Balken machen kann.
+// Die Instanz im Original ist frisch und leer – deshalb sind Demo-Inhalte ergänzt
+// (Termine, Dateien, Anfragen). Alle Namen/Daten sind erfunden.
+// Jede Textstelle trägt die Klasse "t", damit die Rohfassung (".raw" = Nextcloud-
+// Standard als graues Wireframe) sie zu Balken machen kann.
 // ============================================================
-export const WIN = { w: 1480, h: 900, top: 60, rail: 96 };
-const MAIN = { w: WIN.w - WIN.rail, h: WIN.h - WIN.top };   // 1384 × 840
+export const WIN = { w: 1480, h: 900, top: 56, rail: 84 };
+const MAIN = { w: WIN.w - WIN.rail, h: WIN.h - WIN.top };   // 1396 × 844
+
+/* Wichtige Koordinaten im Fensterraum (für Cursor, Flüge, Kamera) */
+export const LAY = {
+  rail: { x: 42, y: (i) => WIN.top + 8 + i * 77 + 36, support: [42, WIN.top + MAIN.h - 8 - 36] },
+  home: { search: [WIN.rail + 64, WIN.top + 184, 520, 50] },
+  apps: {
+    x0: WIN.rail + 232, scroll: 590, pk: 778,
+    card: (k) => [WIN.rail + 232 + 36 + k * 302, WIN.top + 476, 276, 236],
+    btn: (k) => [WIN.rail + 232 + 36 + k * 302 + 22 + 72, WIN.top + 476 + 236 - 22 - 20],
+    toggle: (i) => [WIN.rail + 232 + 310 + 438, WIN.top + 778 + 130 + i * 76 + 38 - 590],
+  },
+  support: { input: [WIN.rail + 236 + 36 + 12 + 190, WIN.top + 326] },
+};
 
 let cssDone = false;
 export function installUiCss(E) {
   if (cssDone) return; cssDone = true;
+  const R = WIN.rail;
   E.style(`
-  .ui-win { position:absolute; left:0; top:0; width:${WIN.w}px; height:${WIN.h}px; border-radius:20px; background:#F6F1E8; overflow:hidden;
+  .ui-win { isolation:isolate; position:absolute; left:0; top:0; width:${WIN.w}px; height:${WIN.h}px; border-radius:20px; background:#ECE7E3; overflow:hidden;
             box-shadow:0 2px 6px rgba(31,37,50,.10), 0 40px 90px rgba(31,37,50,.28); transform-origin:0 0; font-family:var(--font-body); color:var(--navy); }
   .ui-win * { box-sizing:border-box; }
-  .ui-top { position:absolute; left:0; top:0; right:0; height:${WIN.top}px; background:var(--navy); display:flex; align-items:center; gap:18px; padding:0 20px; z-index:5; }
-  .ui-grid { width:30px; height:30px; display:grid; grid-template-columns:repeat(3,6px); gap:4px; align-content:center; justify-content:center; }
-  .ui-grid i { width:6px; height:6px; background:#fff; border-radius:1.5px; opacity:.92; }
-  .ui-lbox { width:38px; height:38px; border-radius:10px; background:var(--orange); display:flex; align-items:center; justify-content:center; }
-  .ui-lbox svg { width:38px; height:38px; }
-  .ui-top .sp { flex:1; }
-  .ui-ti { width:34px; height:34px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.88); }
-  .ui-avatar { position:relative; width:38px; height:38px; border-radius:50%; background:#E8DECB; color:var(--navy); font:700 14px/1 var(--font-body); display:flex; align-items:center; justify-content:center; }
-  .ui-avatar::after { content:""; position:absolute; right:-1px; bottom:-1px; width:11px; height:11px; border-radius:50%; background:#3FBF8A; border:2px solid var(--navy); }
-  .ui-rail { position:absolute; left:0; top:${WIN.top}px; bottom:0; width:${WIN.rail}px; background:var(--navy); z-index:4; }
-  .ui-ri { position:absolute; left:10px; width:${WIN.rail - 20}px; height:74px; border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
-           color:rgba(255,255,255,.80); font:600 13px/1 var(--font-body); }
-  .ui-ri.on { background:#F6F1E8; color:var(--navy); }
-  .ui-main { position:absolute; left:${WIN.rail}px; top:${WIN.top}px; width:${MAIN.w}px; height:${MAIN.h}px; background:#F6F1E8; border-top-left-radius:18px; overflow:hidden; z-index:3; }
+  .ui-win svg { display:block; }
+  .ui-top { position:absolute; left:0; top:0; right:0; height:${WIN.top}px; background:#1E2430; z-index:5; }
+  .ui-gridtile { position:absolute; left:10px; top:5px; width:46px; height:46px; border-radius:9px; background:rgba(255,255,255,.10); display:grid; grid-template-columns:repeat(3,5px); gap:3.5px; align-content:center; justify-content:center; }
+  .ui-gridtile i { width:5px; height:5px; background:#fff; border-radius:1px; }
+  .ui-lbox { position:absolute; left:73px; top:11px; width:34px; height:34px; border-radius:8px; background:var(--orange); display:flex; align-items:center; justify-content:center; }
+  .ui-lbox svg { width:34px; height:34px; }
+  .ui-tir { position:absolute; right:14px; top:0; height:${WIN.top}px; display:flex; align-items:center; gap:12px; }
+  .ui-ti { position:relative; width:32px; height:32px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.86); }
+  .ui-ti .dot { position:absolute; right:5px; top:4px; width:8px; height:8px; border-radius:50%; background:#EF4B3F; }
+  .ui-avatar { position:relative; width:36px; height:36px; border-radius:50%; background:#fff; color:#7A4FD0; font:700 16px/1 var(--font-body); display:flex; align-items:center; justify-content:center; margin-left:4px; }
+  .ui-avatar::after { content:""; position:absolute; right:-2px; bottom:-2px; width:12px; height:12px; border-radius:50%; background:#3FBF8A; border:2px solid #1E2430; }
+  .ui-rail { position:absolute; left:0; top:${WIN.top}px; bottom:0; width:${R}px; background:#1E2430; z-index:4; --rc:#1E2430; }
+  .ui-ri { position:absolute; left:10px; width:${R - 20}px; height:72px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
+           color:#fff; font:700 11.5px/1 var(--font-body); letter-spacing:.005em; }
+  .ui-ri.on { background:#F1ECE7; color:#1E2430; --rc:#F1ECE7; }
+  .ui-ri.on::before { content:""; position:absolute; left:-10px; top:26px; width:6px; height:24px; background:var(--orange); transform:skewX(-14deg); border-radius:1px; }
+  .ui-rdiv { position:absolute; left:10px; width:${R - 20}px; height:1px; background:rgba(255,255,255,.18); }
+  .ui-main { position:absolute; left:${R}px; top:${WIN.top}px; width:${MAIN.w}px; height:${MAIN.h}px; background:#ECE7E3; overflow:hidden; z-index:3; }
   .ui-view { position:absolute; inset:0; }
   .ui-abs { position:absolute; }
+  .ui-tick { display:inline-block; width:5px; height:15px; background:var(--orange); transform:skewX(-14deg); flex:none; border-radius:1px; }
+  .ui-cap { display:flex; align-items:center; gap:9px; font:700 12px/1 var(--font-body); letter-spacing:.12em; color:#2A2F3A; text-transform:uppercase; }
 
   /* --- Startseite --- */
-  .ui-hero { position:absolute; left:16px; top:16px; width:1352px; height:352px; border-radius:16px; background:var(--orange-deep); overflow:hidden; }
-  .ui-hero::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(255,255,255,.055) 0 2px, transparent 2px 24px); }
-  .ui-hin { position:absolute; left:38px; top:32px; }
-  .ui-date { font:600 14px/1 var(--font-body); letter-spacing:.1em; color:rgba(31,37,50,.86); display:inline-block; }
-  .ui-greet { margin-top:14px; font-size:58px; line-height:1; color:var(--navy); font-weight:700; display:block; }
-  .ui-sub1 { margin-top:12px; font:700 18px/1.3 var(--font-body); color:var(--navy); display:block; }
-  .ui-sub2 { margin-top:6px; font:500 17px/1.3 var(--font-body); color:rgba(31,37,50,.9); display:block; }
-  .ui-search { margin-top:24px; width:660px; height:58px; background:#fff; border-radius:12px; display:flex; align-items:center; gap:14px; padding:0 18px; font:500 18px/1 var(--font-body); color:#6B6F78; box-shadow:0 2px 0 rgba(0,0,0,.10); position:relative; }
-  .ui-kbd { margin-left:auto; border:1.5px solid #CFCFCF; border-radius:7px; padding:3px 10px; font:600 14px/1 var(--font-body); color:#8A8A8A; }
-  .ui-btns { margin-top:14px; display:flex; gap:12px; }
-  .ui-b { height:46px; border-radius:10px; border:1.5px solid rgba(31,37,50,.55); display:flex; align-items:center; gap:10px; padding:0 18px; font:600 16px/1 var(--font-body); color:var(--navy); background:rgba(255,255,255,.14); }
-  .ui-bigdate { position:absolute; right:44px; top:34px; display:flex; align-items:flex-start; gap:16px; }
-  .ui-bigdate .d { font:800 214px/0.88 var(--font-display); color:var(--navy); display:block; letter-spacing:-.02em; }
-  .ui-bigdate .m { font:700 16px/1.28 var(--font-body); letter-spacing:.08em; color:var(--navy); margin-top:40px; display:block; }
-  .ui-day { position:absolute; left:16px; top:384px; width:1352px; height:440px; border-radius:16px; background:#fff; box-shadow:var(--shadow-1); }
-  .ui-dayh { position:absolute; left:28px; top:24px; right:28px; height:44px; display:flex; align-items:center; gap:16px; font:600 15px/1 var(--font-body); }
-  .ui-dayh .cap { font:700 14px/1 var(--font-body); letter-spacing:.1em; color:var(--orange-deep); display:flex; align-items:center; gap:10px; }
-  .ui-dayh .dt { color:var(--navy); font-weight:700; }
-  .ui-seg { display:flex; border:1.5px solid #E1DACB; border-radius:10px; overflow:hidden; font:600 14px/1 var(--font-body); }
-  .ui-seg span { padding:11px 16px; color:#6B6F78; } .ui-seg span.on { background:#F1EBDD; color:var(--navy); }
-  .ui-axis { position:absolute; left:40px; top:96px; width:1272px; height:300px; }
-  .ui-hour { position:absolute; top:0; height:300px; width:100px; border-left:1.5px solid #EFE9DC; font:700 13px/1 var(--font-body); color:#9A9690; padding:2px 0 0 8px; }
-  .ui-ev { position:absolute; border-radius:10px; background:#FCE8D0; border-left:5px solid var(--orange); padding:12px 14px; font:700 15px/1.25 var(--font-body); color:var(--navy); overflow:hidden; }
-  .ui-ev small { display:block; font:500 13px/1.3 var(--font-body); color:#6B6F78; margin-top:3px; }
-  .ui-now { position:absolute; top:-8px; width:3px; height:308px; background:var(--orange); }
-  .ui-now b { position:absolute; left:-4px; top:-26px; font:800 12px/1 var(--font-body); letter-spacing:.08em; color:var(--orange-deep); white-space:nowrap; }
-  .ui-res { position:absolute; width:700px; background:#fff; border-radius:16px; box-shadow:0 2px 6px rgba(31,37,50,.10), 0 30px 70px rgba(31,37,50,.26); padding:10px; z-index:8; }
-  .ui-rg { font:700 12px/1 var(--font-body); letter-spacing:.12em; color:#9A9690; padding:12px 14px 6px; display:block; }
-  .ui-rr { height:62px; border-radius:11px; display:flex; align-items:center; gap:16px; padding:0 14px; font:600 18px/1.2 var(--font-body); color:var(--navy); }
+  .ui-hero { position:absolute; left:0; top:0; width:${MAIN.w}px; height:300px; background:var(--orange-deep); overflow:hidden; }
+  .ui-hero::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(100deg, transparent 0 21px, rgba(60,25,0,.075) 21px 22.5px); }
+  .ui-hin { position:absolute; left:64px; top:30px; color:#171A22; }
+  .ui-date { font:600 13px/1 var(--font-body); letter-spacing:.1em; display:inline-block; }
+  .ui-greet { margin:12px 0 0; font-size:50px; line-height:1; font-weight:700; display:block; letter-spacing:-.01em; }
+  .ui-sub1 { margin-top:14px; font:700 17px/1.3 var(--font-body); display:block; }
+  .ui-sub2 { margin-top:4px; font:500 16.5px/1.3 var(--font-body); display:block; }
+  .ui-row { position:absolute; left:64px; top:184px; display:flex; align-items:center; gap:12px; }
+  .ui-search { width:520px; height:50px; background:#fff; border-radius:9px; display:flex; align-items:center; gap:13px; padding:0 14px 0 16px; font:500 16px/1 var(--font-body); color:#6B6F78; box-shadow:0 2px 0 rgba(0,0,0,.10); position:relative; }
+  .ui-kbd { margin-left:auto; border:1.5px solid #D2D2D2; border-radius:6px; padding:3px 9px; font:600 13px/1 var(--font-body); color:#8A8A8A; }
+  .ui-b { height:46px; border-radius:9px; border:1.5px solid rgba(23,26,34,.7); display:flex; align-items:center; gap:10px; padding:0 16px; font:700 15px/1 var(--font-body); color:#171A22; }
+  .ui-bigdate { position:absolute; right:64px; top:36px; display:flex; align-items:flex-start; gap:12px; color:#171A22; }
+  .ui-bigdate .d { font:800 150px/1 var(--font-display); display:block; letter-spacing:-.03em; }
+  .ui-bigdate .m { font:700 14px/1.28 var(--font-body); letter-spacing:.08em; margin-top:54px; display:block; }
+  .ui-day { position:absolute; left:64px; top:252px; width:1268px; height:214px; border-radius:12px; background:#fff; box-shadow:0 1px 2px rgba(31,37,50,.06), 0 10px 26px rgba(31,37,50,.10); }
+  .ui-dayh { position:absolute; left:20px; top:16px; right:20px; height:36px; display:flex; align-items:center; gap:12px; font:700 14px/1 var(--font-body); }
+  .ui-dayh .dt { color:#171A22; }
+  .ui-ctl { height:34px; border:1px solid #E0DAD3; border-radius:8px; display:flex; align-items:center; padding:0 14px; font:700 13px/1 var(--font-body); color:#171A22; gap:8px; background:#fff; }
+  .ui-seg { display:flex; height:34px; border:1px solid #E0DAD3; border-radius:8px; overflow:hidden; font:600 13px/1 var(--font-body); color:#6B6F78; }
+  .ui-seg span { display:flex; align-items:center; padding:0 14px; } .ui-seg span.on { background:#F1ECE7; color:#171A22; font-weight:700; }
+  .ui-band { position:absolute; left:20px; top:62px; width:1224px; height:140px; overflow:hidden; background:repeating-linear-gradient(100deg, rgba(31,37,50,.07) 0 1.3px, transparent 1.3px 8px); }
+  .ui-hr { position:absolute; top:0; height:140px; border-left:1px solid #EFEAE3; font:700 11px/1 'Inter',monospace; color:#2A2F3A; padding:3px 0 0 6px; letter-spacing:.04em; }
+  .ui-ev { position:absolute; height:38px; background:#F7DDBF; padding:0 18px 0 16px; display:flex; align-items:center; gap:9px; font:600 12.5px/1 var(--font-body); color:#171A22; white-space:nowrap; clip-path:polygon(9px 0,100% 0,calc(100% - 9px) 100%,0 100%); }
+  .ui-ev::before { content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--orange); }
+  .ui-ev b { font-weight:800; }
+  .ui-ev small { color:#6B5A48; font:500 12px/1 var(--font-body); }
+  .ui-now { position:absolute; top:-4px; width:5px; height:150px; background:var(--orange); transform:skewX(-14deg); }
+  .ui-now b { position:absolute; left:6px; bottom:6px; transform:skewX(14deg); font:800 11px/1 var(--font-body); letter-spacing:.08em; color:#8A4A10; white-space:nowrap; }
+  .ui-sc { position:absolute; right:3px; top:2px; width:6px; height:130px; border-radius:3px; background:#8C8F94; opacity:.85; }
+  .ui-tmpl { position:absolute; left:64px; top:486px; width:1268px; height:34px; display:flex; align-items:center; font:500 13px/1 var(--font-body); color:#5E6168; }
+  .ui-adj { margin-left:auto; height:34px; border-radius:8px; background:#fff; display:flex; align-items:center; gap:9px; padding:0 16px; font:700 13px/1 var(--font-body); color:#171A22; }
+  .ui-sec { position:absolute; }
+  .ui-wcard { position:absolute; background:#fff; border-radius:10px; box-shadow:0 1px 2px rgba(31,37,50,.05); }
+  .ui-nrow { display:flex; align-items:center; gap:16px; padding:0 20px; height:62px; font:700 15px/1.25 var(--font-body); color:#171A22; }
+  .ui-nrow + .ui-nrow { border-top:1px solid #F0EBE5; }
+  .ui-nrow small { display:block; font:500 12.5px/1.3 var(--font-body); color:#6B6F78; margin-top:2px; }
+  .ui-slant { width:46px; height:34px; background:#F7DDBF; clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%); display:flex; align-items:center; justify-content:center; font:800 12.5px/1 var(--font-body); color:#8A4A10; flex:none; }
+  .ui-pill { margin-left:auto; padding:6px 12px; border-radius:99px; background:#FBE8D3; color:#8A4A10; font:700 12px/1 var(--font-body); white-space:nowrap; }
+  .ui-fcard { position:absolute; height:64px; background:#fff; border-radius:10px; display:flex; align-items:center; gap:12px; padding:0 14px; box-shadow:0 1px 2px rgba(31,37,50,.05); }
+  .ui-fcard .ic { width:34px; height:34px; border-radius:8px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; flex:none; color:#4A4F5C; }
+  .ui-fcard b { display:block; font:700 14px/1.2 var(--font-body); color:#171A22; white-space:nowrap; }
+  .ui-fcard small { display:block; font:500 12px/1.3 var(--font-body); color:#6B6F78; margin-top:3px; white-space:nowrap; }
+  .ui-res { position:absolute; width:640px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(31,37,50,.10), 0 30px 70px rgba(31,37,50,.28); padding:8px; z-index:8; }
+  .ui-rg { font:700 11px/1 var(--font-body); letter-spacing:.12em; color:#8A867D; padding:10px 12px 6px; display:block; }
+  .ui-rr { height:56px; border-radius:9px; display:flex; align-items:center; gap:14px; padding:0 12px; font:600 16px/1.2 var(--font-body); color:#171A22; }
   .ui-rr.on { background:#FCEFDD; }
-  .ui-rr .ic { width:40px; height:40px; border-radius:10px; background:#F1EBDD; display:flex; align-items:center; justify-content:center; color:var(--navy); flex:none; }
+  .ui-rr .ic { width:36px; height:36px; border-radius:9px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; color:#171A22; flex:none; }
   .ui-rr .ic.o { background:var(--orange); color:#fff; }
-  .ui-rr small { display:block; font:500 14px/1.3 var(--font-body); color:#7A7770; margin-top:2px; }
+  .ui-rr .ic.ai { background:linear-gradient(135deg,#E67E22,#C76A19); color:#fff; }
+  .ui-rr small { display:block; font:500 13px/1.3 var(--font-body); color:#6F6C66; margin-top:2px; }
   .ui-rr .go { margin-left:auto; color:#B5AFA2; }
-  mark.ui-m { background:transparent; color:var(--orange-deep); font-weight:800; }
+  mark.ui-m { background:transparent; color:#B0560F; font-weight:800; }
 
-  /* --- Dateien --- */
-  .ui-fside { position:absolute; left:0; top:0; width:262px; height:100%; background:#EFE9DC; padding:18px 14px; }
-  .ui-fi { height:46px; border-radius:10px; display:flex; align-items:center; gap:14px; padding:0 14px; font:600 16px/1 var(--font-body); color:var(--navy); margin-bottom:4px; }
-  .ui-fi.on { background:var(--orange); color:#fff; }
-  .ui-fmain { position:absolute; left:262px; top:0; right:0; height:100%; background:#fff; }
-  .ui-ftool { position:absolute; left:28px; top:22px; right:28px; height:50px; display:flex; align-items:center; gap:18px; font:600 16px/1 var(--font-body); }
-  .ui-new { height:44px; border-radius:10px; background:var(--orange); color:#fff; display:flex; align-items:center; gap:8px; padding:0 20px; font:700 16px/1 var(--font-body); }
-  .ui-fhead { position:absolute; left:28px; right:28px; top:92px; height:40px; display:flex; align-items:center; font:700 14px/1 var(--font-body); color:#8A867D; border-bottom:1.5px solid #EFE9DC; }
-  .ui-frow { position:absolute; left:28px; right:28px; height:68px; display:flex; align-items:center; font:600 17px/1 var(--font-body); color:var(--navy); border-bottom:1px solid #F2EDE2; border-radius:8px; }
-  .ui-frow .nm { display:flex; align-items:center; gap:16px; width:560px; } .ui-frow .sz { width:140px; color:#7A7770; font-weight:500; } .ui-frow .md { width:200px; color:#7A7770; font-weight:500; }
-  .ui-frow .sh { margin-left:auto; display:flex; align-items:center; gap:22px; color:#9A9690; }
-  .ui-frow.hl { background:#FCEFDD; }
+  /* --- Apps und Pakete --- */
+  .ui-amenu { position:absolute; left:0; top:0; width:232px; height:100%; background:#D3D5D7; padding:18px 0 0; }
+  .ui-amh { font:700 15px/1 var(--font-body); color:#171A22; padding:10px 20px 14px 36px; }
+  .ui-ami { margin:0 10px; height:35px; border-radius:6px; display:flex; align-items:center; gap:11px; padding:0 6px 0 11px; font:500 13.3px/1 var(--font-body); white-space:nowrap; color:#22262F; }
+  .ui-ami.on { background:var(--orange-deep); color:#fff; font-weight:600; }
+  .ui-areg { position:absolute; left:232px; top:0; right:0; bottom:0; background:#FBF9F4; overflow:hidden; }
+  .ui-ascroll { position:absolute; left:0; top:0; width:${MAIN.w - 232}px; }
+  .ui-ahead { position:absolute; left:0; top:0; width:100%; height:236px; background:#F5EDDF; overflow:hidden; }
+  .ui-ahead::after { content:""; position:absolute; right:130px; top:-20px; width:150px; height:230px; background:rgba(231,214,186,.55); transform:skewX(-20deg); }
+  .ui-ahead::before { content:""; position:absolute; right:70px; top:-20px; width:44px; height:230px; background:rgba(231,214,186,.35); transform:skewX(-20deg); }
+  .ui-atitle { margin-top:12px; font:700 34px/1.1 var(--font-display); display:block; letter-spacing:-.005em; color:#171A22; }
+  .ui-adesc { margin-top:14px; font:500 14.5px/1.5 var(--font-body); color:#5E6168; display:block; width:540px; }
+  .ui-tabs { position:absolute; left:36px; top:190px; display:flex; gap:26px; font:600 15.5px/1 var(--font-body); color:#5E6168; }
+  .ui-tabs span { padding-bottom:13px; position:relative; } .ui-tabs span.on { color:#171A22; font-weight:700; }
+  .ui-tabs span.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:3px; background:var(--orange); }
+  .ui-astat { position:absolute; left:0; top:236px; width:100%; height:48px; border-top:1px solid #E7DECF; border-bottom:1px solid #EAE3D6; display:flex; align-items:center; gap:26px; padding-left:36px; font:500 13px/1 var(--font-body); color:#4A4F5C; }
+  .ui-astat b { font:800 17px/1 var(--font-body); color:#171A22; margin-right:6px; display:inline-block; min-width:12px; }
+  .ui-field { position:absolute; left:36px; width:560px; }
+  .ui-field label { display:block; font:700 12.5px/1 var(--font-body); color:#171A22; margin-bottom:9px; }
+  .ui-input { height:44px; border:1px solid #D9D2C6; border-radius:7px; background:#fff; display:flex; align-items:center; padding:0 14px; font:500 15px/1 var(--font-body); color:#6B6F78; }
+  .ui-chips { position:absolute; display:flex; gap:9px; }
+  .ui-chip { height:38px; border-radius:19px; padding:0 17px; display:flex; align-items:center; font:700 13.5px/1 var(--font-body); background:#fff; border:1px solid #D9D2C6; color:#171A22; }
+  .ui-chip.on { background:#1E2430; color:#fff; border-color:#1E2430; }
+  .ui-spot { position:absolute; width:276px; height:236px; border-radius:12px; padding:20px 22px; border:1px solid rgba(120,90,50,.18); }
+  .ui-spot .ey { font:700 11px/1 var(--font-body); letter-spacing:.1em; color:#3A3F4A; }
+  .ui-spot h5 { margin:12px 0 0; font:700 19px/1.15 var(--font-display); color:#171A22; letter-spacing:-.005em; }
+  .ui-spot p { margin:7px 0 0; font:500 13px/1.45 var(--font-body); color:#4A4F5C; }
+  .ui-st { position:absolute; left:22px; top:148px; display:flex; align-items:center; gap:9px; font:500 12px/1 var(--font-body); color:#4A4F5C; }
+  .ui-badge { padding:5px 10px; border-radius:99px; background:#D9ECE6; color:#1F6F5A; font:700 11.5px/1 var(--font-body); }
+  .ui-badge.n { background:rgba(31,37,50,.08); color:#4A4F5C; }
+  .ui-more { position:absolute; left:22px; bottom:22px; height:36px; display:flex; align-items:center; font:700 14px/1 var(--font-body); color:#171A22; }
+  .ui-add { position:absolute; left:22px; bottom:22px; width:144px; height:40px; border-radius:9px; background:var(--orange); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; font:700 14.5px/1 var(--font-body); }
+  .ui-plist { position:absolute; left:0; width:280px; background:#EFE5D8; border-top:1px solid #E1D4C0; border-right:1px solid #E1D4C0; }
+  .ui-pi { height:78px; padding:15px 18px 0 22px; border-bottom:1px solid #E1D4C0; position:relative; }
+  .ui-pi b { display:block; font:700 15.5px/1.2 var(--font-body); color:#171A22; }
+  .ui-pi small { display:block; font:500 12.5px/1 var(--font-body); color:#5E6168; margin-top:9px; }
+  .ui-pi .badge { position:absolute; right:16px; bottom:14px; }
+  .ui-pi.on { background:#fff; } .ui-pi.on::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--orange); }
+  .ui-pdet { position:absolute; left:310px; }
+  .ui-pdet .k { font:500 12.5px/1 var(--font-body); color:#5E6168; }
+  .ui-pdet h6 { margin:10px 0 0; font:700 23px/1.1 var(--font-display); color:#171A22; }
+  .ui-pbox { margin-top:14px; width:570px; border-radius:9px; background:#F5ECE0; border:1px solid #E6D9C6; padding:14px 16px; font:500 13px/1.5 var(--font-body); color:#4A4F5C; }
+  .ui-prow { position:absolute; left:0; width:570px; height:76px; border-bottom:1px solid #E6D9C6; display:flex; align-items:center; gap:16px; }
+  .ui-prow .ini { width:42px; height:42px; border-radius:9px; background:#E3E9EE; display:flex; align-items:center; justify-content:center; font:800 13.5px/1 var(--font-body); color:#1E2430; flex:none; }
+  .ui-prow b { display:block; font:700 15px/1.2 var(--font-body); color:#171A22; }
+  .ui-prow small { display:block; font:500 12.5px/1.3 var(--font-body); color:#5E6168; margin-top:4px; }
+  .ui-prow .im { font:500 11.5px/1 var(--font-body); color:#6B6F78; margin-top:5px; display:block; }
+  .ui-tg { margin-left:auto; width:44px; height:25px; border-radius:13px; background:#CBC7BF; position:relative; flex:none; }
+  .ui-tg i { position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#1E2430; }
+  .ui-prow .on { width:34px; font:500 12px/1 var(--font-body); color:#2A2F3A; }
+  .ui-prow .hl { font:700 12.5px/1 var(--font-body); color:#9A4B0C; text-decoration:underline; margin-left:12px; }
 
-  /* --- Hilfe-Panel & Support --- */
-  .ui-help { position:absolute; width:470px; left:0; top:0; height:100%; background:#fff; border-radius:0 18px 18px 0; box-shadow:0 2px 6px rgba(31,37,50,.10), 24px 0 70px rgba(31,37,50,.28); z-index:9; overflow:hidden; }
-  .ui-hh { height:74px; background:var(--navy); color:#fff; display:flex; align-items:center; padding:0 26px; gap:14px; font:700 20px/1 var(--font-display); letter-spacing:.04em; text-transform:uppercase; }
-  .ui-hh .x { margin-left:auto; opacity:.8; }
-  .ui-hq { margin:20px 24px 0; height:54px; border-radius:12px; border:1.5px solid #E1DACB; display:flex; align-items:center; gap:12px; padding:0 16px; font:500 17px/1 var(--font-body); color:var(--navy); background:#FBF8F2; }
-  .ui-art { margin:16px 24px 0; border-radius:14px; background:#F6F1E8; padding:18px 20px 6px; }
-  .ui-art h4 { margin:0 0 4px; font:700 21px/1.2 var(--font-display); text-transform:uppercase; }
-  .ui-art p { margin:0 0 10px; font:500 15px/1.4 var(--font-body); color:#6B6F78; }
-  .ui-step { display:flex; align-items:center; gap:16px; height:52px; font:600 17px/1.2 var(--font-body); }
-  .ui-dot { position:relative; width:34px; height:34px; border-radius:50%; border:2px solid #D8D0BF; display:flex; align-items:center; justify-content:center; font:700 15px/1 var(--font-body); color:#9A9690; flex:none; background:#fff; }
+  /* --- Support --- */
+  .ui-smenu { position:absolute; left:0; top:0; width:236px; height:100%; background:#F7F3EE; border-right:1px solid #E8E2DA; padding:30px 16px 0; }
+  .ui-sm1 { font:700 21px/1 var(--font-display); color:#171A22; display:flex; align-items:center; gap:9px; margin-left:4px; }
+  .ui-sm2 { font:500 12.5px/1 var(--font-body); color:#6B6F78; margin:9px 0 0 4px; display:block; }
+  .ui-sbtn { margin-top:22px; height:44px; border-radius:9px; background:#fff; border:1px solid #E4DED6; display:flex; align-items:center; gap:11px; padding:0 14px; font:600 14px/1 var(--font-body); color:#171A22; }
+  .ui-sni { margin-top:6px; height:44px; border-radius:9px; display:flex; align-items:center; gap:12px; padding:0 14px; font:500 14px/1 var(--font-body); color:#4A4F5C; position:relative; }
+  .ui-sni.on { background:#FCEBDD; color:#171A22; font-weight:700; } .ui-sni.on::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--orange); border-radius:2px; }
+  .ui-slink { margin:22px 0 0 4px; font:500 12.5px/1 var(--font-body); color:#171A22; text-decoration:underline; display:inline-block; }
+  .ui-sreg { position:absolute; left:236px; top:0; right:0; bottom:0; background:#FDFCFA; overflow:hidden; }
+  .ui-sc0 { position:absolute; left:36px; top:0; width:880px; height:100%; }
+  .ui-h1 { margin:0; position:absolute; left:0; top:54px; font:700 29px/1.1 var(--font-display); text-transform:uppercase; color:#171A22; letter-spacing:-.005em; white-space:nowrap; }
+  .ui-h2 { font:700 21px/1.1 var(--font-display); text-transform:uppercase; color:#171A22; letter-spacing:-.003em; }
+  .ui-orange { position:absolute; right:0; top:46px; height:46px; padding:0 20px; border-radius:9px; background:var(--orange); color:#fff; display:flex; align-items:center; gap:10px; font:700 14.5px/1 var(--font-body); box-shadow:0 6px 16px rgba(230,126,34,.30); }
+  .ui-banner { position:absolute; left:0; top:132px; width:880px; height:82px; border-radius:11px; background:#E9EEF1; padding:0 18px 0 24px; display:flex; align-items:center; gap:16px; overflow:hidden; }
+  .ui-banner::before { content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--orange); transform:skewX(-8deg); transform-origin:0 0; }
+  .ui-banner .ic { width:36px; height:36px; border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
+  .ui-banner .bt { font:700 17.5px/1.15 var(--font-display); text-transform:uppercase; color:#171A22; }
+  .ui-banner small { display:block; font:500 12.5px/1.3 var(--font-body); color:#2A2F3A; margin-top:3px; }
+  .ui-banner .go { margin-left:auto; height:40px; border-radius:8px; background:#fff; display:flex; align-items:center; gap:10px; padding:0 14px; font:700 12.5px/1 var(--font-body); color:#171A22; white-space:nowrap; flex:none; }
+  .ui-scard { position:absolute; left:0; top:268px; width:556px; height:92px; border-radius:10px; background:#FBF8F2; border:1px solid #E9E3DA; padding:12px 12px 0; }
+  .ui-scard label { display:block; font:500 12px/1 var(--font-body); color:#5E6168; margin-bottom:9px; }
+  .ui-sin { display:flex; gap:9px; }
+  .ui-sin .inp { flex:1; height:44px; border-radius:8px; border:1px solid #E4DED6; background:#fff; display:flex; align-items:center; padding:0 14px; font:500 15px/1 var(--font-body); color:#7A7770; position:relative; }
+  .ui-sin .go { height:44px; padding:0 18px; border-radius:8px; background:#fff; border:1px solid #E4DED6; display:flex; align-items:center; font:700 14px/1 var(--font-body); color:#171A22; }
+  .ui-caret { display:inline-block; width:2px; height:22px; background:var(--orange); margin-left:2px; border-radius:2px; }
+  .ui-schips { position:absolute; left:0; top:374px; display:flex; gap:9px; }
+  .ui-sch { height:38px; border-radius:19px; padding:0 17px; display:flex; align-items:center; font:500 13.5px/1 var(--font-body); background:#fff; border:1px solid #E4DED6; color:#171A22; }
+  .ui-zone { position:absolute; left:0; top:430px; width:556px; height:200px; }
+  .ui-art { position:absolute; left:0; width:556px; height:56px; border-radius:10px; background:#fff; border:1px solid #EEE8DF; display:flex; align-items:center; gap:14px; padding:0 14px; font:600 14.5px/1.2 var(--font-body); color:#171A22; }
+  .ui-art .ic { width:32px; height:32px; border-radius:8px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; flex:none; }
+  .ui-art small { margin-left:auto; font:500 12px/1 var(--font-body); color:#7A7770; }
+  .ui-ai { position:absolute; left:0; top:0; width:556px; border-radius:12px; background:linear-gradient(180deg,#FFF6EA,#FFF1E0); border:1px solid #F1D3AE; padding:16px 20px 14px; }
+  .ui-aih { display:flex; align-items:center; gap:11px; font:700 15px/1 var(--font-body); color:#171A22; }
+  .ui-aih .ic { width:30px; height:30px; border-radius:8px; background:linear-gradient(135deg,#E67E22,#C76A19); display:flex; align-items:center; justify-content:center; color:#fff; }
+  .ui-aih small { margin-left:auto; font:600 11.5px/1 var(--font-body); color:#9A6A3A; }
+  .ui-step { display:flex; align-items:center; gap:14px; height:38px; font:600 15px/1.2 var(--font-body); color:#171A22; }
+  .ui-dot { position:relative; width:26px; height:26px; border-radius:50%; border:2px solid #E2C9A8; display:flex; align-items:center; justify-content:center; font:700 12.5px/1 var(--font-body); color:#B08A5E; flex:none; background:#fff; }
   .ui-dot .ck { position:absolute; inset:-2px; border-radius:50%; background:var(--orange); display:flex; align-items:center; justify-content:center; }
-  .ui-sup { margin:16px 24px 0; }
-  .ui-sh { display:flex; align-items:center; gap:14px; margin-bottom:12px; font:700 16px/1.2 var(--font-body); }
-  .ui-sh small { display:block; font:600 13px/1.3 var(--font-body); color:#3A9E70; }
-  .ui-bub { max-width:340px; padding:13px 18px; border-radius:16px 16px 16px 4px; background:#F1EBDD; font:500 17px/1.38 var(--font-body); color:var(--navy); margin-bottom:9px; }
-  .ui-bub.me { margin-left:auto; border-radius:16px 16px 4px 16px; background:var(--navy); color:#fff; }
-  .ui-inp { position:absolute; left:24px; right:24px; bottom:22px; height:54px; border-radius:12px; border:1.5px solid #E1DACB; display:flex; align-items:center; padding:0 16px; gap:12px; font:500 16px/1 var(--font-body); color:#8A867D; background:#fff; }
-  .ui-fab { position:absolute; width:62px; height:62px; border-radius:50%; background:var(--orange); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 30px rgba(230,126,34,.45); z-index:7; }
-  .ui-hint { position:absolute; height:48px; padding:0 20px 0 6px; border-radius:24px; background:var(--navy); color:#fff; display:flex; align-items:center; gap:12px; font:600 16px/1 var(--font-body); box-shadow:0 14px 34px rgba(31,37,50,.3); z-index:8; white-space:nowrap; }
-  .ui-hint .q { width:36px; height:36px; border-radius:50%; background:var(--orange); display:flex; align-items:center; justify-content:center; }
-  .ui-caret { display:inline-block; width:2.5px; height:28px; background:var(--orange); margin-left:-8px; border-radius:2px; }
-
-  /* --- Appshop --- */
-  .ui-ahead { position:absolute; left:34px; top:26px; right:34px; display:flex; align-items:flex-end; }
-  .ui-atitle { font:700 46px/1 var(--font-display); text-transform:uppercase; letter-spacing:-.005em; display:block; }
-  .ui-asub { font:500 17px/1.3 var(--font-body); color:#6B6F78; margin-top:10px; display:block; }
-  .ui-chips { position:absolute; left:34px; top:132px; display:flex; gap:10px; }
-  .ui-chip { height:42px; border-radius:21px; padding:0 20px; display:flex; align-items:center; font:600 15px/1 var(--font-body); background:#fff; border:1.5px solid #E1DACB; color:#4A4F5C; }
-  .ui-chip.on { background:var(--navy); color:#fff; border-color:var(--navy); }
-  .ui-card { position:absolute; width:420px; height:206px; border-radius:18px; background:#fff; box-shadow:var(--shadow-1); padding:24px; }
-  .ui-card .ai { width:68px; height:68px; border-radius:18px; display:flex; align-items:center; justify-content:center; color:#fff; }
-  .ui-card h5 { margin:0; font:700 24px/1.1 var(--font-display); text-transform:uppercase; }
-  .ui-card p { margin:8px 0 0; font:500 16px/1.4 var(--font-body); color:#6B6F78; }
-  .ui-card .ab { position:absolute; left:24px; right:24px; bottom:22px; height:46px; border-radius:11px; display:flex; align-items:center; justify-content:center; gap:8px; font:700 16px/1 var(--font-body); background:var(--orange); color:#fff; }
-  .ui-card .ab.done { background:#fff; color:#2F9A68; box-shadow:inset 0 0 0 2px #2F9A68; }
-  .ui-mrow { position:absolute; left:34px; width:900px; height:84px; border-radius:16px; background:#fff; box-shadow:var(--shadow-1); display:flex; align-items:center; gap:22px; padding:0 26px; font:700 21px/1.2 var(--font-display); text-transform:uppercase; }
-  .ui-mrow small { display:block; font:500 15px/1.3 var(--font-body); color:#6B6F78; text-transform:none; margin-top:3px; }
-  .ui-mrow .ai { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff; flex:none; }
-  .ui-tg { margin-left:auto; width:64px; height:36px; border-radius:18px; background:#D8D0BF; position:relative; flex:none; }
-  .ui-tg i { position:absolute; top:4px; left:4px; width:28px; height:28px; border-radius:50%; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,.25); }
+  .ui-aif { margin-top:6px; font:500 12px/1.3 var(--font-body); color:#8A6A44; display:flex; align-items:center; gap:7px; }
+  .ui-reqh { position:absolute; left:0; top:650px; width:556px; display:flex; align-items:baseline; justify-content:space-between; }
+  .ui-reqh .lk { font:500 12.5px/1 var(--font-body); color:#171A22; text-decoration:underline; }
+  .ui-req { position:absolute; left:0; width:556px; border-radius:10px; background:#fff; border:1px solid #EEE8DF; padding:0 16px; display:flex; align-items:center; gap:14px; overflow:hidden; }
+  .ui-req .ic { width:34px; height:34px; border-radius:9px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; flex:none; }
+  .ui-req b { display:block; font:700 14.5px/1.2 var(--font-body); color:#171A22; }
+  .ui-req small { display:block; font:500 12.5px/1.35 var(--font-body); color:#6B6F78; margin-top:3px; }
+  .ui-rst { margin-left:auto; padding:6px 11px; border-radius:99px; background:rgba(31,37,50,.08); color:#4A4F5C; font:700 11.5px/1 var(--font-body); white-space:nowrap; flex:none; }
+  .ui-rst.g { background:#D9ECE6; color:#1F6F5A; } .ui-rst.o { background:#FBE8D3; color:#8A4A10; }
+  .ui-rcard { position:absolute; left:580px; width:300px; border-radius:12px; background:#EAEEF1; padding:18px 20px; }
+  .ui-rcard h6 { margin:0; font:700 17px/1.2 var(--font-display); color:#171A22; display:flex; align-items:center; gap:9px; }
+  .ui-rcard p { margin:10px 0 0; font:500 12.5px/1.55 var(--font-body); color:#2A2F3A; }
+  .ui-rcard p.g { color:#6B6F78; }
+  .ui-rcard .lk { margin-top:12px; font:700 12.5px/1 var(--font-body); color:#171A22; display:flex; align-items:center; gap:8px; }
+  .ui-rcard u { font:500 12.5px/1 var(--font-body); color:#171A22; }
 
   /* --- Cursor & Klick --- */
   .ui-cur { position:absolute; left:0; top:0; width:34px; height:34px; z-index:50; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.35)); }
@@ -129,24 +221,42 @@ export function installUiCss(E) {
   /* --- Rohfassung („Nextcloud-Standard“) --- */
   .raw, .raw * { color:transparent !important; text-shadow:none !important; box-shadow:none !important; }
   .raw.ui-win { background:#E6E9EE !important; box-shadow:0 2px 6px rgba(31,37,50,.10), 0 40px 90px rgba(31,37,50,.22) !important; }
-  .raw .ui-top, .raw .ui-rail { background:#BFC5CE !important; }
+  .raw .ui-top, .raw .ui-rail { background:#BFC5CE !important; --rc:#BFC5CE; }
   .raw .ui-main { background:#EEF0F4 !important; }
-  .raw .ui-ri.on { background:#EEF0F4 !important; }
-  .raw .ui-lbox { background:#A9B0BB !important; } .raw .ui-lbox svg, .raw .ui-grid i { opacity:.0; }
-  .raw .ui-grid i { background:#A9B0BB !important; opacity:1; }
+  .raw .ui-ri.on { background:#EEF0F4 !important; } .raw .ui-ri.on::before { background:#A9B0BB !important; }
+  .raw .ui-ri .t { background:#D6DBE2 !important; }
+  .raw .ui-gridtile { background:rgba(255,255,255,.28) !important; } .raw .ui-gridtile i { background:#A9B0BB !important; }
+  .raw .ui-lbox { background:#A9B0BB !important; } .raw .ui-lbox svg { opacity:0; }
   .raw .ui-avatar { background:#A9B0BB !important; } .raw .ui-avatar::after { display:none; }
+  .raw .ui-ti .dot { background:#A9B0BB !important; }
   .raw .ui-hero { background:#D6DAE1 !important; } .raw .ui-hero::before { display:none; }
-  .raw .ui-day { background:#F8F9FB !important; border:1.5px solid #D3D8DF; }
-  .raw .ui-search, .raw .ui-b { background:#F8F9FB !important; border:1.5px solid #C4CAD3 !important; }
-  .raw .ui-ev { background:#E3E6EB !important; border-left-color:#B0B7C2 !important; }
-  .raw .ui-now { background:#B0B7C2 !important; }
-  .raw .ui-hour { border-left-color:#E0E4EA !important; }
-  .raw .ui-seg { border-color:#D3D8DF !important; }
+  .raw .ui-day, .raw .ui-wcard, .raw .ui-fcard, .raw .ui-adj { background:#F8F9FB !important; border:1.5px solid #D3D8DF; }
+  .raw .ui-search, .raw .ui-b, .raw .ui-ctl { background:#F8F9FB !important; border:1.5px solid #C4CAD3 !important; }
+  .raw .ui-seg { border-color:#D3D8DF !important; } .raw .ui-seg span.on { background:#E6E9EE !important; }
+  .raw .ui-band { background:none !important; }
+  .raw .ui-ev { background:#E3E6EB !important; } .raw .ui-ev::before, .raw .ui-now, .raw .ui-tick { background:#B0B7C2 !important; }
+  .raw .ui-hr { border-left-color:#E0E4EA !important; }
+  .raw .ui-sc { background:#C4CAD3 !important; }
+  .raw .ui-slant, .raw .ui-pill, .raw .ui-fcard .ic { background:#E3E6EB !important; }
   .raw .t { background:#C3C9D2 !important; border-radius:5px; }
-  .raw svg { stroke:#AEB5C0 !important; }
+  .raw svg *, .raw svg { stroke:#AEB5C0 !important; } .raw .fi, .raw .fi * { fill:#A9B0BB !important; stroke:none !important; }
   .raw .flag { background:#B0B7C2 !important; }
   `);
 }
+
+/* ---------- Gefüllte Rail-Icons (24×24) ---------- */
+const FI = {
+  home: '<path d="M12 2.8 2.6 11.2h2.6V20a1 1 0 0 0 1 1h4v-6h3.6v6h4a1 1 0 0 0 1-1v-8.8h2.6z"/>',
+  files: '<path d="M3 6.2A2.2 2.2 0 0 1 5.2 4h3.9c.6 0 1.1.2 1.5.6L12 6h7A2 2 0 0 1 21 8v9.8a2.2 2.2 0 0 1-2.2 2.2H5.2A2.2 2.2 0 0 1 3 17.8z"/>',
+  cal: '<path fill-rule="evenodd" d="M7 2.5a1 1 0 0 1 1 1V5h8V3.5a1 1 0 1 1 2 0V5h.5A2.5 2.5 0 0 1 21 7.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-11A2.5 2.5 0 0 1 5.5 5H6V3.5a1 1 0 0 1 1-1zM5 10v8.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V10z"/>',
+  contacts: '<path fill-rule="evenodd" d="M5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13A2.5 2.5 0 0 1 5.5 3zM12 6.8a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4zM7.4 17.2c0 .5.4.8.8.8h7.6c.4 0 .8-.3.8-.8 0-2-2.2-3.4-4.6-3.4s-4.6 1.4-4.6 3.4z"/>',
+  mail: '<path d="M3 7.2v-.7A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v.7l-9 5.8z"/><path d="M3 9.6v7.9A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V9.6l-9 5.8z"/>',
+  talk: '<path fill-rule="evenodd" d="M5.5 3.5h13A2.5 2.5 0 0 1 21 6v8a2.5 2.5 0 0 1-2.5 2.5H13L8.5 21v-4.5H5.5A2.5 2.5 0 0 1 3 14V6a2.5 2.5 0 0 1 2.5-2.5zM8 9.3a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zm4 0a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zm4 0a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2z"/>',
+  deck: '<path fill-rule="evenodd" d="M5.5 3.5h13A2.5 2.5 0 0 1 21 6v12a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18V6a2.5 2.5 0 0 1 2.5-2.5zM6.6 6.6v7.4h2.2V6.6zm4.4 0v10.2h2.2V6.6zm4.4 0v5h2.2v-5z"/>',
+  forms: '<path fill-rule="evenodd" d="M9 2.5h6a1 1 0 0 1 1 1V4.5h1.5A2.5 2.5 0 0 1 20 7v12.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 19.5V7a2.5 2.5 0 0 1 2.5-2.5H8V3.5a1 1 0 0 1 1-1zM7.5 10.2v1.6h9v-1.6zm0 3.6v1.6H14v-1.6z"/>',
+  support: '<path fill-rule="evenodd" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zm0 6.2a3.3 3.3 0 1 1 0 6.6 3.3 3.3 0 0 1 0-6.6z"/><path d="M5.3 5.3l3.9 3.9M18.7 5.3l-3.9 3.9M5.3 18.7l3.9-3.9M18.7 18.7l-3.9-3.9" stroke="var(--rc,#1E2430)" stroke-width="2.4" fill="none"/>',
+};
+const fi = (k, s = 26) => `<svg class="fi" viewBox="0 0 24 24" width="${s}" height="${s}" fill="currentColor">${FI[k]}</svg>`;
 
 /* ---------- Bausteine ---------- */
 export function buildUI(E) {
@@ -155,150 +265,202 @@ export function buildUI(E) {
   const ic = (n, s = 22, c = 'currentColor', w = 2) => h('span', { style: { display: 'inline-flex' }, html: icon(n, s, c, w) });
   const T = (cls, text, tag = 'span') => h(tag, { class: 't ' + cls, text });
   const lGlyph = '<svg viewBox="0 0 400 400"><path d="M139 100H176V270H277V300H139Z" fill="#1F2532"/></svg>';
+  const tick = () => h('span', { class: 'ui-tick' });
 
   /* Fenster inkl. Kopfleiste und Leiste links */
   function window_(opts = {}) {
-    const rail = [
-      ['house', 'Startseite'], ['folder', 'Dateien'], ['calendar', 'Kalender'], ['contact', 'Kontakte'], ['mail', 'E-Mail'], ['message-circle', 'Talk'],
-    ];
+    const rail = [['home', 'Startseite'], ['files', 'Dateien'], ['cal', 'Kalender'], ['contacts', 'Kontakte'], ['mail', 'E-Mail'], ['talk', 'Talk']];
     const top = h('div', { class: 'ui-top' },
-      h('div', { class: 'ui-grid' }, Array.from({ length: 9 }, () => h('i'))),
+      h('div', { class: 'ui-gridtile' }, Array.from({ length: 9 }, () => h('i'))),
       h('div', { class: 'ui-lbox', html: lGlyph }),
-      h('div', { class: 'sp' }),
-      ['sparkles', 'search', 'bell', 'building-2', 'globe'].map((n) => h('div', { class: 'ui-ti', html: icon(n, 22, 'currentColor', 2) })),
-      h('div', { class: 'ui-avatar', text: 'AM' }));
+      h('div', { class: 'ui-tir' },
+        ['sparkles', 'search', 'bell', 'contact', 'globe'].map((n) => h('div', { class: 'ui-ti', html: icon(n, 22, 'currentColor', 2) + (n === 'bell' ? '<i class="dot"></i>' : '') })),
+        h('div', { class: 'ui-avatar', text: 'A' })));
     const railEl = h('div', { class: 'ui-rail' });
     const items = {};
-    const mk = (id, name, label, y) => {
-      const el = h('div', { class: 'ui-ri', style: { top: y } }, h('span', { html: icon(name, 28, 'currentColor', 2) }), T('', label));
+    const mk = (id, glyph, label, y) => {
+      const el = h('div', { class: 'ui-ri', style: { top: y } }, h('span', { html: fi(glyph, 26) }), T('', label));
       railEl.append(el); items[id] = el; return el;
     };
-    rail.forEach(([n, l], i) => mk(l, n, l, 12 + i * 80));
-    mk('Appshop', 'store', 'Appshop', MAIN.h - 12 - 80 * 2);
-    mk('Support', 'life-buoy', 'Support', MAIN.h - 12 - 80);
+    rail.forEach(([g, l], i) => mk(l, g, l, 8 + i * 77));
+    railEl.append(h('div', { class: 'ui-rdiv', style: { top: MAIN.h - 8 - 72 - 10 } }));
+    mk('Support', 'support', 'Support', MAIN.h - 8 - 72);
     const main = h('div', { class: 'ui-main' });
     const el = h('div', { class: 'ui-win' + (opts.raw ? ' raw' : '') }, top, railEl, main);
     return { el, top, rail: railEl, main, items, mk, setActive(id) { for (const k in items) items[k].classList.toggle('on', k === id); } };
   }
 
-  /* Startseite mit Begrüßungsfläche + Tagesleiste */
-  function dashboard() {
+  /* Startseite „Ihr Tag“: Begrüßungsfläche + Tagesband */
+  function home() {
+    const search = h('div', { class: 'ui-search' }, ic('search', 21, '#6B6F78'), T('', 'Suchen: Datei, Person, Termin …'), h('span', { class: 'ui-caret', style: { display: 'none' } }), T('ui-kbd', '/'));
     const hero = h('div', { class: 'ui-hero' },
       h('div', { class: 'ui-hin' },
         T('ui-date', 'MITTWOCH, 14. OKTOBER 2026 · KW 42'),
-        h('h1', { class: 't ui-greet disp', text: 'Guten Morgen, Anna.', style: { margin: '14px 0 0' } }),
+        h('h1', { class: 't ui-greet disp', text: 'Guten Morgen, Anna.' }),
         T('ui-sub1', 'Alles Wichtige für heute auf einen Blick'),
-        T('ui-sub2', 'Nächster Termin in 47 Minuten: Teamtermin · Besprechungsraum 2'),
-        h('div', { class: 'ui-search' }, ic('search', 22, '#6B6F78'), T('', 'Suchen: Datei, Person, Termin …'), h('span', { class: 'ui-caret', style: { display: 'none' } }), T('ui-kbd', '/')),
-        h('div', { class: 'ui-btns' }, h('div', { class: 'ui-b' }, ic('calendar-days', 20), T('', 'Termin eintragen')), h('div', { class: 'ui-b' }, ic('message-square', 20), T('', 'Nachricht schreiben')))),
+        T('ui-sub2', 'Nächster Termin in 47 Minuten: Teamtermin · Besprechungsraum 2')),
+      h('div', { class: 'ui-row' }, search,
+        h('div', { class: 'ui-b' }, ic('calendar-days', 19, '#171A22', 2.2), T('', 'Termin eintragen')),
+        h('div', { class: 'ui-b' }, ic('message-square', 19, '#171A22', 2.2), T('', 'Nachricht schreiben'))),
       h('div', { class: 'ui-bigdate' }, T('d disp', '14'), h('span', { class: 't m', html: 'MI<br>OKT<br>KW 42' })));
-    const axis = h('div', { class: 'ui-axis' });
-    for (let i = 0; i < 12; i++) axis.append(h('div', { class: 'ui-hour', style: { left: i * 100 } }, T('', String(7 + i).padStart(2, '0'))));
-    axis.append(
-      h('div', { class: 'ui-ev', style: { left: 250, top: 22, width: 150, height: 96 } }, T('', '09:30 Teamtermin'), h('small', { class: 't', text: 'Besprechungsraum 2' })),
-      h('div', { class: 'ui-ev', style: { left: 450, top: 150, width: 200, height: 96 } }, T('', '11:00 Angebot'), h('small', { class: 't', text: 'Termin mit Kunde' })),
-      h('div', { class: 'ui-ev', style: { left: 760, top: 40, width: 260, height: 96 } }, T('', '14:00 Projektstand'), h('small', { class: 't', text: 'Talk-Raum Projekte' })),
-      h('div', { class: 'ui-now', style: { left: 124 } }, h('b', { class: 't', text: 'JETZT 08:13' })));
+
+    // Tagesband 08–17 Uhr, 120 px je Stunde (Band beginnt bei x=24)
+    const HW = 120, X = (hh) => (hh - 8) * HW;
+    const band = h('div', { class: 'ui-band' });
+    for (let i = 0; i < 11; i++) band.append(h('div', { class: 'ui-hr', style: { left: i * HW } }, T('', String(8 + i).padStart(2, '0'))));
+    const ev = (hh, mm, dur, label, sub, row) => h('div', { class: 'ui-ev', style: { left: X(hh + mm / 60) + 2, width: dur * HW / 60 - 4, top: 26 + row * 46 } }, h('b', { class: 't', text: label }), sub ? h('small', { class: 't', text: sub }) : null);
+    const events = [
+      ev(10, 0, 60, '10:00', 'Teamtermin', 0), ev(11, 30, 60, '11:30', 'Angebot besprechen', 1),
+      ev(13, 0, 45, '13:00', 'Mittag', 0), ev(14, 0, 100, '14:00', 'Projektstand · Talk', 0), ev(15, 30, 60, '15:30', 'Kundentermin', 1),
+    ];
+    const nowX = X(9 + 13 / 60);
+    const now = h('div', { class: 'ui-now', style: { left: nowX } }, h('b', { class: 't', text: 'JETZT 09:13' }));
+    band.append(...events, now, h('div', { class: 'ui-sc' }));
     const day = h('div', { class: 'ui-day' },
-      h('div', { class: 'ui-dayh' }, h('span', { class: 'cap' }, h('span', { class: 'flag' }), T('', 'IHR TAG')), T('dt', 'Mittwoch, 14. Oktober · heute'),
-        h('span', { style: { flex: 1 } }), h('div', { class: 'ui-seg' }, T('on', 'Tag', 'span'), T('', 'Woche', 'span'), T('', 'Monat', 'span')), h('div', { class: 'ui-seg' }, T('on', 'Band', 'span'), T('', 'Liste', 'span'))),
-      axis);
-    const el = h('div', { class: 'ui-view' }, hero, day);
-    return { el, hero, day, axis, search: hero.querySelector('.ui-search'), searchText: hero.querySelector('.ui-search .t'), caret: hero.querySelector('.ui-caret'), hin: hero.querySelector('.ui-hin') };
+      h('div', { class: 'ui-dayh' }, h('span', { class: 'ui-cap' }, tick(), T('', 'IHR TAG')), T('dt', 'Mittwoch, 14. Oktober · heute'),
+        h('span', { style: { flex: 1 } }),
+        h('div', { class: 'ui-ctl' }, T('', '‹')), h('div', { class: 'ui-ctl' }, T('', 'Heute')), h('div', { class: 'ui-ctl' }, T('', '›')),
+        h('div', { class: 'ui-seg' }, T('on', 'Tag', 'span'), T('', 'Woche', 'span'), T('', 'Monat', 'span')),
+        h('div', { class: 'ui-seg' }, T('on', 'Band', 'span'), T('', 'Liste', 'span')),
+        h('div', { class: 'ui-ctl' }, T('', 'Einstellen'))),
+      band);
+    band.style.top = '60px';
+
+    const tmpl = h('div', { class: 'ui-tmpl' }, T('', 'Vorlage „Tagesblick“ · Ihre eigene Anordnung'), h('div', { class: 'ui-adj' }, ic('sliders-horizontal', 17, '#171A22', 2.2), T('', 'Anpassen')));
+    const cap = (txt, left, top) => h('div', { class: 'ui-sec ui-cap', style: { left, top } }, tick(), T('', txt));
+    const nextCard = h('div', { class: 'ui-wcard', style: { left: 64, top: 566, width: 788, height: 126 } },
+      h('div', { class: 'ui-nrow' }, h('div', { class: 'ui-slant t', text: '10:00' }), h('div', {}, T('', 'Teamtermin'), h('small', { class: 't', text: 'Besprechungsraum 2 · 60 Min.' })), T('ui-pill', 'in 47 Min.')),
+      h('div', { class: 'ui-nrow' }, h('span', { style: { width: 46, display: 'flex', justifyContent: 'center' } }, ic('list-todo', 24, '#C76A19', 2.2)), h('div', {}, T('', 'Karte fällig: Angebot Hartmann prüfen'), h('small', { class: 't', text: 'Deck · Vertrieb' })), T('ui-pill', 'heute')));
+    const note = h('div', { class: 'ui-sec t', text: 'Oben steht, was gleich beginnt, was Sie persönlich betrifft und was heute fällig ist.', style: { left: 64, top: 702, font: '500 12.5px/1 var(--font-body)', color: '#5E6168' } });
+    const files = [['file-text', 'Angebot_Hartmann.pdf', 'gestern, 16:41 · Vertrieb'], ['file-spreadsheet', 'Preisliste_2026.xlsx', 'Montag · Projekte'], ['file-text', 'Protokoll_Teamtermin.docx', 'Montag · Team']];
+    const fcards = files.map(([n, a, b], i) => h('div', { class: 'ui-fcard', style: { left: 64 + i * 268, top: 762, width: 256 } }, h('span', { class: 'ic', html: icon(n, 18, 'currentColor', 2) }), h('div', {}, h('b', { class: 't', text: a }), h('small', { class: 't', text: b }))));
+    const news = h('div', { class: 'ui-wcard', style: { left: 880, top: 566, width: 452, height: 192, padding: '22px 26px' } },
+      h('div', { class: 't', text: 'Neu: Assistent in Ihrer Cloud', style: { font: '700 18px/1.2 var(--font-body)', color: '#171A22' } }),
+      h('div', { class: 't', html: 'Suchen, zusammenfassen, Fragen stellen –<br>direkt dort, wo Sie arbeiten. Aktivieren Sie ihn unter<br>Einstellungen › Assistent.', style: { font: '500 13.5px/1.6 var(--font-body)', color: '#2A2F3A', marginTop: '12px', display: 'block' } }),
+      h('div', { style: { position: 'absolute', left: 26, right: 26, bottom: 18, display: 'flex', alignItems: 'center', font: '500 12px/1 var(--font-body)', color: '#6B6F78' } }, T('', 'linkado-team · 14. Oktober'), h('span', { class: 't', text: 'Alle Neuigkeiten →', style: { marginLeft: 'auto', font: '700 13px/1 var(--font-body)', color: '#8A4A10' } })));
+    const el = h('div', { class: 'ui-view' }, hero, day, tmpl, cap('ALS NÄCHSTES', 64, 538), nextCard, note, cap('WEITER, WO SIE AUFGEHÖRT HABEN', 64, 734), ...fcards, cap('NEUES BEI LINKADO', 880, 538), news);
+    return { el, hero, day, band, events, now, search, searchText: search.querySelector('.t'), caret: search.querySelector('.ui-caret'), hin: hero.querySelector('.ui-hin'), nextCard, news, fcards };
   }
 
-  /* Suchergebnisse (Dropdown unter dem Suchfeld) */
+  /* Suchergebnisse (Dropdown unter dem Suchfeld) – erste Zeile: Assistent */
   function results(query = 'Angebot') {
     const rows = [
-      ['file-text', 'Angebot_Meyer_2026.pdf', 'Datei · Projekte / Vertrieb', false],
-      ['calendar-check', 'Angebot besprechen', 'Termin · heute 11:00', false],
-      ['user-round', 'Anna Meyer', 'Person · Vertrieb', false],
-      ['message-circle', 'Angebot für Kunde Hartmann', 'Talk · Projekte', false],
+      ['sparkles', 'Assistent fragen', '„Wie ist der Stand beim Angebot für Hartmann?“', 'ai'],
+      ['file-text', 'Angebot_Hartmann.pdf', 'Datei · Vertrieb · gestern', ''],
+      ['calendar-check', 'Angebot besprechen', 'Termin · heute 11:30', ''],
+      ['message-circle', 'Angebot Hartmann – Team Vertrieb', 'Talk · 3 neue Nachrichten', ''],
+      ['user-round', 'Lena Vogt', 'Person · Vertrieb', ''],
     ];
     const hl = (s) => { const i = s.toLowerCase().indexOf(query.toLowerCase()); return i < 0 ? s : s.slice(0, i) + '<mark class="ui-m">' + s.slice(i, i + query.length) + '</mark>' + s.slice(i + query.length); };
-    const rowEls = rows.map(([n, a, b], i) => h('div', { class: 'ui-rr' + (i === 0 ? ' on' : '') }, h('span', { class: 'ic' + (i === 0 ? ' o' : ''), html: icon(n, 22, 'currentColor', 2) }), h('div', {}, h('span', { class: 't', html: hl(a) }), h('small', { class: 't', text: b })), h('span', { class: 'go', html: icon('arrow-up-right', 20, 'currentColor', 2) })));
+    const rowEls = rows.map(([n, a, b, k], i) => h('div', { class: 'ui-rr' + (i === 0 ? ' on' : '') }, h('span', { class: 'ic ' + k, html: icon(n, 20, 'currentColor', 2) }), h('div', {}, h('span', { class: 't', html: hl(a) }), h('small', { class: 't', text: b })), h('span', { class: 'go', html: icon('arrow-up-right', 18, 'currentColor', 2) })));
     const el = h('div', { class: 'ui-res' }, h('span', { class: 'ui-rg t', text: 'TREFFER ÜBERALL' }), rowEls);
     return { el, rows: rowEls };
   }
 
-  /* Dateien-Ansicht */
-  function files() {
-    const side = h('div', { class: 'ui-fside' }, [['folder-open', 'Alle Dateien', true], ['user', 'Persönliche Dateien'], ['clock', 'Neueste'], ['star', 'Favoriten'], ['share-2', 'Freigaben'], ['users', 'Team-Ordner'], ['tag', 'Schlagworte']]
-      .map(([n, l, on]) => h('div', { class: 'ui-fi' + (on ? ' on' : '') }, ic(n, 20), T('', l))));
-    const rowsDef = [['folder', 'Freigaben', '–', 'vor 4 Minuten', true], ['folder', 'Projekte', '–', 'vor 4 Minuten', true], ['folder', 'Vertrieb', '–', 'gestern', true],
-      ['file-text', 'Angebot_Meyer_2026.pdf', '412 KB', 'gestern'], ['file-text', 'Protokoll_Teamtermin.docx', '86 KB', 'vor 2 Tagen'], ['file-spreadsheet', 'Preisliste.xlsx', '58 KB', 'vor 3 Tagen']];
-    const rowEls = rowsDef.map(([n, name, sz, md, folder], i) => h('div', { class: 'ui-frow', style: { top: 140 + i * 70 } },
-      h('div', { class: 'nm' }, h('span', { html: icon(n, 26, folder ? '#E67E22' : '#5B6272', 2) }), T('', name)), T('sz', sz), T('md', md),
-      h('div', { class: 'sh' }, h('span', { class: 'shr', html: icon('share-2', 22, 'currentColor', 2) }), h('span', { html: icon('ellipsis', 22, 'currentColor', 2) }))));
-    const main = h('div', { class: 'ui-fmain' },
-      h('div', { class: 'ui-ftool' }, h('div', { class: 'ui-new' }, ic('plus', 20, '#fff', 2.6), T('', 'Neu')), h('span', { class: 't', text: 'Alle Dateien' }), ic('chevron-right', 18, '#9A9690'), h('span', { class: 't', text: 'Projekte', style: { fontWeight: 800 } })),
-      h('div', { class: 'ui-fhead' }, h('span', { class: 't', text: 'Name', style: { width: 588 } }), h('span', { class: 't', text: 'Größe', style: { width: 140 } }), h('span', { class: 't', text: 'Geändert' })),
-      rowEls);
-    const el = h('div', { class: 'ui-view' }, side, main);
-    return { el, rows: rowEls, side, main };
-  }
-
-  /* Appshop */
+  /* Apps und Pakete (Linkado-Verwaltung): Spotlight-Karten + Paketliste mit Schaltern */
   const APPS = [
-    ['Formulare', 'Umfragen und Anmeldungen in Minuten', 'clipboard-list', '#E67E22'],
-    ['Deck', 'Aufgaben übersichtlich als Board', 'columns-3', '#3B6FD4'],
-    ['Notizen', 'Gedanken schnell festhalten', 'notebook-pen', '#2F9A68'],
-    ['Collectives', 'Wissen gemeinsam pflegen', 'book-open', '#8A5CD0'],
-    ['Umfragen', 'Termine gemeinsam finden', 'chart-bar', '#D1497A'],
-    ['Whiteboard', 'Gemeinsam skizzieren', 'pencil', '#1F2532'],
+    { id: 'Deck', name: 'Deck', ey: 'IM BLICKPUNKT · DECK', head: 'Aufgaben sichtbar machen.', p: 'Karten statt langer Listen: Ihr Team sieht auf einen Blick, was ansteht.', bg: '#F5DFC5', glyph: 'deck', ico: 'columns-3', col: '#C76A19' },
+    { id: 'Formulare', name: 'Formulare', ey: 'IM BLICKPUNKT · FORMULARE', head: 'Antworten sammeln.', p: 'Umfragen und Anmeldungen in Minuten – ohne Umweg über fremde Dienste.', bg: '#EFE6D6', glyph: 'forms', ico: 'clipboard-list', col: '#2F7D6B' },
+    { id: 'Talk', name: 'Talk', ey: 'IM BLICKPUNKT · TALK', head: 'Kurze Wege im Team.', p: 'Chat und Anrufe direkt in Ihrer Cloud, Gäste kommen per Link dazu.', bg: '#DDE6EC', glyph: 'talk', ico: 'message-circle', col: '#3B6FA0', active: true },
   ];
-  function appshop() {
-    const head = h('div', { class: 'ui-ahead' }, h('div', {}, h('span', { class: 't ui-atitle', text: 'Appshop' }), h('span', { class: 't ui-asub', text: 'Die passenden Werkzeuge für dein Team' })));
-    const seg = h('div', { class: 'ui-seg ui-abs', style: { left: 34, top: 112, height: 48, alignItems: 'stretch' } }, T('on', 'Entdecken', 'span'), T('', 'Meine Apps', 'span'));
-    seg.style.fontSize = '16px';
-    const chips = h('div', { class: 'ui-chips', style: { left: 330, top: 115 } }, ['Alle', 'Büro', 'Kommunikation', 'Projekte', 'Wissen'].map((c, i) => h('div', { class: 'ui-chip' + (i === 0 ? ' on' : '') }, T('', c))));
-    const cards = APPS.map(([name, desc, ico, col], i) => {
-      const aicon = h('div', { class: 'ai', style: { background: col }, html: icon(ico, 34, '#fff', 2) });
-      const idle = h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 8 } }, ic('plus', 20, '#fff', 2.6), T('', 'Hinzufügen'));
-      const done = h('span', { style: { display: 'none', alignItems: 'center', gap: 8 } }, ic('check', 20, '#2F9A68', 3), T('', 'Hinzugefügt'));
-      const btn = h('div', { class: 'ab' }, idle, done);
-      const el = h('div', { class: 'ui-card', style: { left: 34 + (i % 3) * 440, top: 206 + Math.floor(i / 3) * 226 } },
-        h('div', { style: { display: 'flex', gap: 18, alignItems: 'center' } }, aicon, h('div', {}, h('h5', { class: 't', text: name }), h('p', { class: 't', text: desc, style: { margin: '6px 0 0', maxWidth: 270 } }))), btn);
-      return { el, aicon, btn, idle, done, name, col, ico };
+  const PKG_ROWS = [['DE', 'Deck', 'Aufgaben und Projekte als Board', 0], ['FO', 'Formulare', 'Umfragen und Anmeldungen erstellen', 0], ['NO', 'Notizen', 'Gedanken schnell festhalten', 1], ['CO', 'Collectives', 'Wissen gemeinsam pflegen', 0], ['UM', 'Umfragen', 'Termine gemeinsam finden', 0]];
+  function apps() {
+    const menuItems = [['h', 'Persönlich'], ['user-round', 'Persönliche Informationen'], ['lock', 'Sicherheit'], ['bell', 'Benachrichtigungen'], ['share-2', 'Teilen'], ['sparkles', 'Assistent'], ['clock', 'Verfügbarkeit'], ['h', 'Administration'], ['sliders-horizontal', 'Übersicht'], ['settings', 'Grundeinstellungen'], ['share-2', 'Teilen'], ['layers', 'Linkado', true], ['lock', 'Sicherheit']];
+    const menu = h('div', { class: 'ui-amenu' }, menuItems.map(([n, l, on]) => n === 'h' ? h('div', { class: 'ui-amh' }, T('', l)) : h('div', { class: 'ui-ami' + (on ? ' on' : '') }, ic(n, 17, 'currentColor', 2), T('', l))));
+    const head = h('div', { class: 'ui-ahead' },
+      h('div', { style: { position: 'absolute', left: 36, top: 34 } }, h('span', { class: 'ui-cap' }, tick(), T('', 'LINKADO')), h('h1', { class: 't ui-atitle', text: 'Apps und Pakete', style: { margin: '12px 0 0' } }),
+        T('ui-adesc', 'Entdecken Sie Pakete für Ihr Team und kostenlose Apps. Verwalten Sie Ihre Apps und behalten Sie Buchungen im Blick.')),
+      h('div', { class: 'ui-tabs' }, T('on', 'Apps und Pakete', 'span'), T('', 'Meine Apps', 'span'), T('', 'Buchungen', 'span')));
+    const nApps = h('b', { class: 't', text: '59' });
+    const stat = h('div', { class: 'ui-astat' }, h('span', { class: 'ui-tick', style: { marginRight: -10, height: 20 } }), h('span', {}, h('b', { class: 't', text: '2' }), T('', 'Pakete gebucht')), h('span', {}, nApps, T('', 'Apps aktiv')), h('span', {}, h('b', { class: 't', text: '3' }), T('', 'Empfehlungen für Ihr Team')));
+    const search = h('div', { class: 'ui-field', style: { top: 304 } }, h('label', {}, T('', 'Suche')), h('div', { class: 'ui-input' }, T('', 'Apps oder Pakete suchen')));
+    const chips = h('div', { class: 'ui-chips', style: { left: 36, top: 380 } }, ['Alle', 'Dateien mit Office', 'Arbeitsplatz', 'Talk', 'Weitere Apps'].map((c, i) => h('div', { class: 'ui-chip' + (i === 0 ? ' on' : '') }, T('', c))));
+    const cnt = h('div', { class: 'ui-abs t', text: '24 von 24 Paketen und Apps', style: { left: 36, top: 440, font: '500 12px/1 var(--font-body)', color: '#5E6168' } });
+    const cards = APPS.map((a, k) => {
+      const left = 36 + k * 302;
+      const badge = h('span', { class: 'ui-badge' + (a.active ? '' : ' n') }, T('', a.active ? 'Aktiv' : 'Verfügbar'));
+      const stEl = h('div', { class: 'ui-st' }, badge, T('', 'Im Paket enthalten'));
+      const add = a.active ? h('div', { class: 'ui-more' }, T('', 'Mehr über Talk')) : h('div', { class: 'ui-add' }, ic('plus', 18, '#fff', 2.8), T('', 'Hinzufügen'));
+      const more = a.active ? null : h('div', { class: 'ui-more', style: { display: 'none' } }, T('', 'Mehr über ' + a.name));
+      const el = h('div', { class: 'ui-spot', style: { left, top: 476, background: a.bg } }, h('div', { class: 'ey t', text: a.ey }), h('h5', { class: 't', text: a.head }), h('p', { class: 't', text: a.p }), stEl, add, more);
+      return { el, badge, add, more, st: stEl, ...a };
     });
-    const list = APPS.concat([['Talk', 'Chat und Video', 'message-circle', '#E67E22'], ['Kalender', 'Termine und Räume', 'calendar', '#3B6FD4']]).map(([name, desc, ico, col], i) => {
+    const pkgs = [['Dateien mit Office', '7 Apps, 2 Dienste', 'Enthalten', false], ['Arbeitsplatz', '8 Apps', 'Gebucht', true], ['Talk', '3 Apps', 'Gebucht', false]];
+    const plist = h('div', { class: 'ui-plist', style: { top: LAY.apps.pk } }, pkgs.map(([a, b, c, on]) => h('div', { class: 'ui-pi' + (on ? ' on' : '') }, h('b', { class: 't', text: a }), h('small', { class: 't', text: b }), h('span', { class: 'ui-badge badge' }, T('', c)))));
+    const phead = h('div', { class: 'ui-abs', style: { left: 36, top: LAY.apps.pk - 38, width: 880, display: 'flex', alignItems: 'baseline' } }, h('b', { class: 't', text: 'Pakete', style: { font: '800 17px/1 var(--font-body)', color: '#171A22' } }), h('span', { class: 't', text: 'monatlich kündbar', style: { marginLeft: 'auto', font: '500 12px/1 var(--font-body)', color: '#5E6168' } }));
+    plist.style.left = '0px'; plist.style.width = '280px';
+    const rows = PKG_ROWS.map(([ini, name, desc, on], i) => {
       const tg = h('div', { class: 'ui-tg' }, h('i'));
-      const el = h('div', { class: 'ui-mrow', style: { top: 190 + i * 94 } }, h('div', { class: 'ai', style: { background: col }, html: icon(ico, 28, '#fff', 2) }), h('div', {}, h('span', { class: 't', text: name }), h('small', { class: 't', text: desc })), tg);
-      return { el, tg, name };
+      const lbl = h('span', { class: 'on t', text: on ? 'Aktiv' : 'Aus' });
+      const el = h('div', { class: 'ui-prow', style: { top: 100 + i * 76 } }, h('div', { class: 'ini t', text: ini }), h('div', {}, h('b', { class: 't', text: name }), h('small', { class: 't', text: desc }), h('span', { class: 'im t', text: 'Im Paket enthalten' })), tg, lbl, h('span', { class: 'hl t', text: 'Hilfe' }));
+      return { el, tg, lbl, name, on };
     });
-    const listWrap = h('div', { class: 'ui-abs', style: { inset: 0 } }, list.map((r) => r.el));
-    const cardsWrap = h('div', { class: 'ui-abs', style: { inset: 0 } }, cards.map((c) => c.el));
-    const el = h('div', { class: 'ui-view' }, head, seg, chips, cardsWrap, listWrap);
-    return { el, head, chips, cards, list, cardsWrap, listWrap, seg };
+    const pdet = h('div', { class: 'ui-pdet', style: { top: LAY.apps.pk } },
+      h('div', { class: 'k t', text: 'Erweiterung · 8 Apps' }), h('h6', { class: 't', text: 'Arbeitsplatz' }),
+      h('div', { class: 'ui-pbox t', text: 'In Ihrer Cloud enthalten. Jede App einzeln schaltbar.' }),
+      ...rows.map((r) => r.el));
+    // Detailbereich: Zeilen relativ zum Detailkopf (130 px unter Abschnittsbeginn)
+    rows.forEach((r, i) => { r.el.style.top = (130 + i * 76) + 'px'; });
+    const scroll = h('div', { class: 'ui-ascroll' }, head, stat, search, chips, cnt, ...cards.map((c) => c.el), phead, plist, pdet);
+    const reg = h('div', { class: 'ui-areg' }, scroll);
+    const el = h('div', { class: 'ui-view' }, menu, reg);
+    return { el, menu, head, stat, nApps, search, chips, cards, scroll, plist, pdet, rows, phead };
   }
 
-  /* Hilfe-Drawer (öffnet aus der Support-Leiste) mit Anleitung und Support-Chat */
-  function help() {
+  /* Support: Hilfe finden (mit Assistent-Antwort), Meine Anfragen, Hilfe und Kontakt */
+  function support() {
+    const menu = h('div', { class: 'ui-smenu' },
+      h('div', { class: 'ui-sm1' }, tick(), T('', 'Support')), T('ui-sm2', 'Ihr Arbeitsplatz'),
+      h('div', { class: 'ui-sbtn' }, ic('message-square', 18, '#171A22', 2), T('', 'Anfrage stellen')),
+      h('div', { style: { height: 14 } }),
+      [['house', 'Start', true], ['message-square', 'Anfragen'], ['book-open', 'Anleitungen'], ['user-round', 'Mein Konto']].map(([n, l, on]) => h('div', { class: 'ui-sni' + (on ? ' on' : '') }, ic(n, 18, 'currentColor', 2), T('', l))),
+      h('div', { style: { height: 1, background: '#E4DED6', margin: '22px 4px 0' } }), T('ui-slink', 'Zum IT-Bereich wechseln'));
+    const inp = h('div', { class: 'inp' }, h('span', { class: 'q t', text: 'z. B. Dateien, Kalender, Zugang', style: { color: '#7A7770' } }), h('span', { class: 'ui-caret', style: { display: 'none' } }));
+    const sin = h('div', { class: 'ui-scard' }, h('label', {}, T('', 'Anleitungen durchsuchen')), h('div', { class: 'ui-sin' }, inp, h('div', { class: 'go' }, T('', 'Suchen'))));
+    // Zone: Liste beliebter Anleitungen ↔ Assistent-Antwort
+    const arts = [['file-question', 'Wie teile ich einen Ordner?', '3 Min.'], ['calendar-days', 'Kalender mit dem Team teilen', '2 Min.'], ['key-round', 'Zugang auf dem Handy einrichten', '4 Min.']];
+    const artEls = arts.map(([n, a, b], i) => h('div', { class: 'ui-art', style: { top: 30 + i * 58, height: 52 } }, h('span', { class: 'ic', html: icon(n, 17, '#4A4F5C', 2) }), T('', a), T('', b, 'small')));
+    const artsLbl = h('div', { class: 'ui-abs ui-cap', style: { left: 0, top: 4 } }, T('', 'BELIEBTE ANLEITUNGEN'));
     const steps = ['Ordner anklicken', '„Teilen“ wählen', 'Link kopieren'].map((s, i) => {
-      const ck = h('span', { class: 'ck', html: icon('check', 20, '#fff', 3.2), style: { display: 'none' } });
+      const ck = h('span', { class: 'ck', html: icon('check', 15, '#fff', 3.4), style: { display: 'none' } });
       const dot = h('div', { class: 'ui-dot' }, h('span', { text: String(i + 1) }), ck);
       return { dot, ck, el: h('div', { class: 'ui-step' }, dot, T('', s)) };
     });
-    const typing = h('div', { class: 'ui-bub', style: { width: 92, position: 'absolute', left: 0, top: 0 } }, h('span', { class: 'td', html: '<i></i><i></i><i></i>' }));
-    const b1 = h('div', { class: 'ui-bub' }, T('', 'Hallo Anna! Wobei können wir helfen?'));
-    const b2 = h('div', { class: 'ui-bub me' }, T('', 'Wie lade ich Kollegen ein?'));
-    const b3 = h('div', { class: 'ui-bub', style: { marginBottom: 0 } }, T('', 'Zeigen wir dir gern – Schritt für Schritt.'));
-    const slot3 = h('div', { style: { position: 'relative', minHeight: 70 } }, b3, typing);
-    const el = h('div', { class: 'ui-help' },
-      h('div', { class: 'ui-hh' }, ic('life-buoy', 26, '#fff'), T('', 'Hilfe & Support'), h('span', { class: 'x', html: icon('x', 24, '#fff', 2.4) })),
-      h('div', { class: 'ui-hq' }, ic('search', 22, '#8A867D'), T('', 'Wie teile ich einen Ordner?')),
-      h('div', { class: 'ui-art' }, h('h4', { class: 't', text: 'Ordner teilen' }), h('p', { class: 't', text: 'In drei Schritten – direkt hier erklärt.' }), steps.map((s) => s.el)),
-      h('div', { class: 'ui-sup' },
-        h('div', { class: 'ui-sh' }, h('div', { class: 'ui-lbox', html: lGlyph, style: { width: 42, height: 42 } }), h('div', {}, T('', 'Linkado Support'), h('small', { class: 't', text: '● Online' }))),
-        b1, b2, slot3),
-      h('div', { class: 'ui-inp' }, T('', 'Nachricht schreiben …'), h('span', { style: { marginLeft: 'auto', color: '#E67E22' }, html: icon('send', 22, 'currentColor', 2.2) })));
-    E.style('.ui-bub .td i{display:inline-block;width:9px;height:9px;margin:0 4px;border-radius:50%;background:#9A9690}');
-    return { el, steps, b1, b2, b3, typing };
-  }
-
-  /* Kontext-Hinweis „Fragen zum Teilen?“ */
-  function hint(text = 'Fragen zum Teilen? Hier erklärt.') {
-    return { el: h('div', { class: 'ui-hint' }, h('span', { class: 'q', html: icon('circle-help', 24, '#fff', 2.4) }), h('span', { class: 't', text })) };
+    const ai = h('div', { class: 'ui-ai' },
+      h('div', { class: 'ui-aih' }, h('span', { class: 'ic', html: icon('sparkles', 17, '#fff', 2.2) }), T('', 'So teilen Sie einen Ordner'), T('', 'Antwort des Assistenten', 'small')),
+      h('div', { style: { height: 8 } }), steps.map((s) => s.el),
+      h('div', { class: 'ui-aif' }, ic('book-open', 14, '#8A6A44', 2), T('', 'Quelle: Anleitung „Ordner teilen“ · Hilfreich?')));
+    const zone = h('div', { class: 'ui-zone' }, artsLbl, ...artEls, ai);
+    const chips = h('div', { class: 'ui-schips' }, ['Zugang', 'Dateien', 'Kalender', 'Freigaben'].map((c) => h('div', { class: 'ui-sch' }, T('', c))));
+    const banner = h('div', { class: 'ui-banner' }, h('div', { class: 'ic', html: icon('user-round', 19, '#171A22', 2.2) }),
+      h('div', {}, h('div', { class: 'ui-cap', style: { fontWeight: 500, textTransform: 'none', letterSpacing: 0, fontSize: 12.5 } }, tick(), T('', 'Jetzt wichtig')), h('div', { class: 'bt t', text: 'Empfehlung: Schützen Sie Ihr Konto', style: { marginTop: 5 } }), h('small', { class: 't', text: 'Für Ihr Konto ist kein zweiter Faktor aktiviert.' })),
+      h('div', { class: 'go' }, T('', 'Sicherheitseinstellungen öffnen'), ic('arrow-right', 16, '#171A22', 2.4)));
+    // Anfragen
+    const reqh = h('div', { class: 'ui-reqh' }, h('span', { class: 'ui-h2 t', text: 'Meine Anfragen' }), h('span', { class: 'lk t', text: 'Anfragen ansehen' }));
+    const mkReq = (n, a, b, st, cls) => { const stEl = h('span', { class: 'ui-rst ' + cls }, T('', st)); const sub = h('small', { class: 't', text: b }); const el = h('div', { class: 'ui-req' }, h('span', { class: 'ic', html: icon(n, 17, '#4A4F5C', 2) }), h('div', {}, h('b', { class: 't', text: a }), sub), stEl); return { el, stEl, sub, stText: stEl.firstChild }; };
+    const rOld = mkReq('wrench', 'Drucker im 2. OG einrichten', 'Anfrage von Ihnen · vor 3 Tagen', 'Gelöst', 'g');
+    const rNew = mkReq('user-plus', 'Kollegen ins Team einladen', 'Anfrage von Ihnen · gerade eben', 'Eingegangen', '');
+    rNew.stText.textContent = 'Eingegangen';
+    const reply = h('div', { class: 't', text: '„Hallo Anna, hier ist Ihr Einladungslink.“', style: { font: '500 12.5px/1.35 var(--font-body)', color: '#8A4A10', marginTop: 5 } });
+    rNew.sub.after(reply);
+    // Karten rechts
+    const kto = h('div', { class: 'ui-rcard', style: { top: 236 } }, h('h6', {}, ic('user-round', 18, '#171A22', 2.2), T('', 'Mein Konto')),
+      T('', 'Für Ihr Konto ist eine E-Mail-Adresse hinterlegt.', 'p'), T('g', 'Empfehlung: Aktivieren Sie einen zweiten Faktor.', 'p'), h('div', { class: 'lk' }, T('', 'Mein Konto öffnen'), ic('arrow-right', 15, '#171A22', 2.4)));
+    const hk = h('div', { class: 'ui-rcard', style: { top: 436 } }, h('h6', {}, T('', 'Hilfe und Kontakt')),
+      T('g', 'Anleitungen finden Sie links – oder stellen Sie eine Anfrage.', 'p'), T('', 'Support-Zeiten: Mo–Fr 9–17 Uhr. Außerhalb: Meldung anlegen, wir antworten am nächsten Arbeitstag.', 'p'), h('div', { style: { marginTop: 14 } }, T('', 'Melden ohne Anmeldung', 'u')));
+    const sc = h('div', { class: 'ui-sc0' },
+      h('div', { class: 'ui-abs', style: { left: 0, top: 30 } }, h('span', { class: 'ui-cap', style: { fontWeight: 500, textTransform: 'none', letterSpacing: 0, fontSize: 12.5, color: '#6B6F78' } }, tick(), T('', 'Support'))),
+      h('h1', { class: 'ui-h1 t', text: 'Ihr Support auf einen Blick.' }),
+      h('div', { class: 'ui-abs t', text: 'Eine Antwort finden, Hilfe anfordern oder den Stand Ihrer Anfrage ansehen.', style: { left: 0, top: 98, font: '500 13.5px/1 var(--font-body)', color: '#5E6168' } }),
+      h('div', { class: 'ui-orange' }, ic('plus', 18, '#fff', 2.8), T('', 'Anfrage stellen')),
+      banner,
+      h('div', { class: 'ui-abs ui-h2 t', text: 'Hilfe finden', style: { left: 0, top: 236 } }),
+      sin, chips, zone, reqh, kto, hk);
+    // Anfragen-Zeilen als eigene Ebene
+    rOld.el.style.cssText += ';top:748px;height:54px'; rNew.el.style.cssText += ';top:684px;height:54px';
+    sc.append(rOld.el, rNew.el);
+    const el = h('div', { class: 'ui-view' }, menu, h('div', { class: 'ui-sreg' }, sc));
+    return { el, menu, sc, inp, input: inp.firstChild, caret: inp.querySelector('.ui-caret'), zone, arts: artEls, artsLbl, ai, steps, rOld, rNew, reply, banner, kto, hk, h1: sc.querySelector('.ui-h1') };
   }
 
   /* Cursor (Pfeil) und Klick-Welle */
@@ -308,5 +470,5 @@ export function buildUI(E) {
     return { el, rip };
   }
 
-  return { window: window_, dashboard, results, files, appshop, help, hint, cursor, APPS, MAIN, WIN, ic, T, lGlyph };
+  return { window: window_, home, results, apps, support, cursor, APPS, PKG_ROWS, MAIN, WIN, LAY, ic, T, lGlyph, fi };
 }

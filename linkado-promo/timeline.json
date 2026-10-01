@@ -18,11 +18,11 @@
   ],
 
   "scenes": [
-    { "id": "hook",      "start": 0.0,  "end": 2.0,  "bars": "1",     "text": "Digitale Zusammenarbeit heute." },
+    { "id": "hook",      "start": 0.0,  "end": 2.0,  "bars": "1",     "text": "Alles funktioniert. Nur nicht dazwischen." },
     { "id": "m365",      "start": 2.0,  "end": 6.0,  "bars": "2-3",   "text": "Microsoft 365 – bekannt, aber: abhängig von US-Konzernen · teuer · nicht zugeschnitten" },
     { "id": "opendesk",  "start": 6.0,  "end": 10.0, "bars": "4-5",   "text": "openDesk – deutsche Lösung, aber: nur Oberfläche & Login für fremde Open-Source-Software" },
     { "id": "nextcloud", "start": 10.0, "end": 14.0, "bars": "6-7",   "text": "Nextcloud – starke Open-Source-Basis, aber: oft nur das Nötigste gepflegt" },
-    { "id": "overwhelm", "start": 14.0, "end": 18.0, "bars": "8-9",   "text": "Noch ein Login. Noch ein Tab. Noch ein Tool. Noch eine Frage an die IT." },
+    { "id": "overwhelm", "start": 14.0, "end": 18.0, "bars": "8-9",   "text": "Fünf Blickwinkel: Noch ein Login (Mitarbeitende). Noch ein Tool (Teams). Noch ein Abo (Geschäftsführung). Noch eine KI (Datenschutz). Noch eine Frage an die IT." },
     { "id": "pause",     "start": 18.0, "end": 20.0, "bars": "10",    "text": "Es geht auch anders." },
 
     { "id": "reveal",    "start": 20.0, "end": 24.0, "bars": "11-12", "text": "Nextcloud als Basis. Linkado als Benutzererlebnis. – Technik verständlich und zugänglich machen." },
@@ -36,9 +36,9 @@
   ],
 
   "hits": [
-    { "t": 0.5,  "kind": "ping",    "voice": 0, "note": "Hook-Text beginnt" },
-    { "t": 1.0,  "kind": "ping",    "voice": 0 },
-    { "t": 1.5,  "kind": "ping",    "voice": 0 },
+    { "t": 0.5,  "kind": "ping",    "voice": 0, "note": "Hook: „funktioniert.“" },
+    { "t": 1.0,  "kind": "ping",    "voice": 0, "note": "Hook: „Nur nicht“" },
+    { "t": 1.5,  "kind": "ping",    "voice": 0, "note": "Hook: „dazwischen.“ (Buchstaben öffnen sich)" },
 
     { "t": 2.0,  "kind": "card",    "voice": 1, "note": "Microsoft-365-Karte schlägt ein" },
     { "t": 2.5,  "kind": "ping",    "voice": 1 },
@@ -58,10 +58,11 @@
     { "t": 11.5, "kind": "ping",    "voice": 3 },
 
     { "t": 14.0, "kind": "riser",   "end": 18.0, "note": "Überforderung: alles stapelt sich, Spannung steigt" },
-    { "t": 14.0, "kind": "text",    "note": "Noch ein Login." },
-    { "t": 15.0, "kind": "text",    "note": "Noch ein Tab." },
-    { "t": 16.0, "kind": "text",    "note": "Noch ein Tool." },
-    { "t": 17.0, "kind": "text",    "note": "Noch eine Frage an die IT." },
+    { "t": 14.0, "kind": "text",    "note": "Blickwinkel 1 · Mitarbeitende: Noch ein Login." },
+    { "t": 14.75,"kind": "text",    "note": "Blickwinkel 2 · Teams: Noch ein Tool (Tabs füllen sich)." },
+    { "t": 15.5, "kind": "text",    "note": "Blickwinkel 3 · Geschäftsführung: Noch ein Abo." },
+    { "t": 16.25,"kind": "text",    "note": "Blickwinkel 4 · Datenschutz: Noch eine KI." },
+    { "t": 17.0, "kind": "text",    "note": "Blickwinkel 5 · IT: Noch eine Frage an die IT." },
     { "t": 18.0, "kind": "cut",     "note": "harter Schnitt: Chaos-Stimmen stoppen, nur Hall-Schwanz + tiefer Puls bleiben" },
     { "t": 19.0, "kind": "text",    "note": "Es geht auch anders. – Pad schwillt an" },
 
@@ -74,17 +75,21 @@
     { "t": 24.5, "kind": "snap",    "note": "Widgets rasten ins Raster" },
     { "t": 26.4, "kind": "ping",    "voice": 0, "note": "Suchergebnisse erscheinen" },
 
+    { "t": 25.4, "kind": "click",   "note": "Suchfeld anklicken" },
     { "t": 28.0, "kind": "ping",    "voice": 0, "note": "Szene Appshop" },
     { "t": 30.0, "kind": "click",   "note": "App hinzufügen (1)" },
     { "t": 31.5, "kind": "click",   "note": "App hinzufügen (2)" },
-    { "t": 32.7, "kind": "ping",    "voice": 0, "note": "Apps verwalten (Schalter)" },
+    { "t": 32.7, "kind": "ping",    "voice": 0, "note": "Apps verwalten (Scroll zu den Paketen)" },
+    { "t": 33.2, "kind": "click",   "note": "App-Schalter (Collectives)" },
 
     { "t": 34.0, "kind": "ping",    "voice": 0, "note": "Szene Hilfe" },
-    { "t": 35.5, "kind": "click",   "note": "Hilfe-Button" },
+    { "t": 34.0, "kind": "click",   "note": "Support in der Leiste" },
+    { "t": 35.5, "kind": "click",   "note": "Suchfeld „Anleitungen durchsuchen“" },
     { "t": 36.3, "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 1" },
     { "t": 36.9, "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 2" },
     { "t": 37.5, "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 3" },
-    { "t": 38.0, "kind": "ping",    "voice": 0, "note": "Support-Nachricht" },
+    { "t": 37.85,"kind": "click",   "note": "Anfrage stellen" },
+    { "t": 38.0, "kind": "ping",    "voice": 0, "note": "Anfrage erscheint; 38.8 Antwort vom Support" },
 
     { "t": 41.0, "kind": "snap",    "note": "Kettenglied 1: Oberfläche" },
     { "t": 42.0, "kind": "snap",    "note": "Kettenglied 2: Erweiterungen" },
