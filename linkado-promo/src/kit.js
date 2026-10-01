@@ -26,6 +26,10 @@ function ensureCss(E) {
   .a2-title em { font-style:normal; color:var(--orange-deep); }
   .a2-sub { margin:30px 0 0; font-size:36px; line-height:1.4; color:var(--text-2); font-weight:400; max-width:720px; }
   .a2-title .mu { color:var(--warm-gray); }
+  .a2-role { display:inline-flex; align-items:center; gap:14px; margin-top:34px; padding:10px 18px 10px 10px; border-radius:99px; background:#fff; border:1.5px solid rgba(31,37,50,.12); box-shadow:0 10px 24px rgba(31,37,50,.1); font:700 20px/1 var(--font-body); letter-spacing:.12em; color:var(--navy); white-space:nowrap; }
+  .a2-role .ic { width:40px; height:40px; border-radius:50%; background:var(--navy); display:flex; align-items:center; justify-content:center; }
+  .a2-role s { font-weight:500; letter-spacing:.02em; color:#9A9387; text-decoration-color:var(--orange); text-decoration-thickness:2px; }
+  .a2-role .ck { width:30px; height:30px; border-radius:50%; background:#3FBF8A; display:flex; align-items:center; justify-content:center; }
   `);
 }
 
@@ -59,6 +63,16 @@ export function headline(E, root, opts) {
       el.style.display = (t < tIn - 0.05 || t > tOut) ? 'none' : 'block';
     },
   };
+}
+
+/** Rollen-Pille („Aus dem Chaos aufgelöst“): Rolle aus Akt I, die durchgestrichene Klage, ein grüner Haken.
+ *  Hängt unter dem Untertitel eines Headline-Blocks; update(t, t0) blendet sie ein. */
+export function rolePill(E, head, { ico, role, said }) {
+  ensureCss(E);
+  const { h, tf, tw, ease, icon } = E;
+  const el = h('div', { class: 'a2-role' }, h('span', { class: 'ic', html: icon(ico, 22, '#fff', 2.2) }), h('span', { text: role }), h('s', { text: said }), h('span', { class: 'ck', html: icon('check', 18, '#fff', 3) }));
+  const wrap = h('div', {}, el); head.el.append(wrap);
+  return { el, update(t, t0, tOut = 1e9) { const p = tw(t, t0, t0 + 0.5, ease.ui), q = 1 - tw(t, tOut - 0.3, tOut, ease.in2); tf(el, { y: 16 * (1 - p), o: p * q }); el.style.display = p > 0.001 ? 'inline-flex' : 'none'; } };
 }
 
 /** Kleine orange Flagge (Marken-Glyphe) als HTML-String */

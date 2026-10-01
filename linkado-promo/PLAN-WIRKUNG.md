@@ -7,6 +7,35 @@ Alles bleibt überprüfbar (keine erfundenen Zahlen, keine Fake-Testimonials, ke
 
 ---
 
+## 0. Stand der Umsetzung (Fassung 76 s)
+
+| Punkt | Status |
+|---|---|
+| Orange-Strich in der Lücke von „DAZWI SCHEN“ | umgesetzt (`act1.js`) |
+| Callback „Alles funktioniert. *Auch* dazwischen.“ vor dem Kristall | umgesetzt (`finale.js`) |
+| Kette (05) mit den Symbolen aus 02/03/04 | umgesetzt (`act2b.js`) |
+| Rollen-Pillen mit Haken (Teams · IT · Geschäftsführung; Datenschutz bewusst offen) | umgesetzt (`kit.js` `rolePill`, 03/04/05) |
+| Lesezeit Szene 02 | durch den neuen Geräte-Beat davor entschärft (kein Umbau nötig) |
+| Erfolgs-Chime = Sonic-Logo-Ton | nicht nötig – der Chime (E6 → A6) *ist* bereits der Schluss des Sonic Logos |
+| **Neu:** Geräte-Beat „Ein Browser genügt“ (Zoom aus dem Gerät, 1 Tab, Handy) | umgesetzt (`devices.js`, `act2.js`) |
+| **Neu:** eigene Kamerabewegung je Alltagsmoment in Akt I | umgesetzt (`act1.js`) |
+| Entscheidungen (Du/Sie, „Daten bleiben in deiner Cloud“, Zahl für „mehr Zeit“, Stimme, Fotos) | offen – Abschnitt 7 |
+
+### Perspektivwechsel und Kamera – Einschätzung
+
+* **Ja, aber als Rhythmus, nicht als Dauerzustand.** Akt I ist eine flache Collage, Akt II eine Produktführung. Variation entsteht dort, wo die Kamera *etwas bedeutet*: Schub = „schau hin“, Rückzug = „so groß ist das Bild“, Schwenk = „es gibt mehr daneben“.
+* **Genau fünf bewusste Blickwechsel im ganzen Film:** (1) Schub in den ersten Moment, (2) Rückzug im zweiten, (3) Schwenk im dritten, (4) der große **Rückzug aus dem Gerät** im Browser-Beat, (5) der Zoom ins Fenster zu 02. Mehr würde den entschleunigten Anfang wieder kippen.
+* **Bewusst nicht gebaut (Ideen für eine zweite Runde):** 3D-Neigung der Geräte (Parallax), Draufsicht auf den Schreibtisch, „Handy-POV“ für die Talk-Szene (Hochkant im Querformat), Split-Screen Laptop | Handy bei der Suche. Jede dieser Ideen kostet etwa einen halben Tag und lohnt sich eher für die 9:16-Fassung.
+
+### Browser-Beat – warum so
+
+* Botschaft: **„Ein Browser genügt.“** – sie widerspricht direkt dem Chaos („36 TABS“, fünf Logins). Deshalb steht dort „1 TAB“ in Orange, genau an der Stelle, an der vorher die rote Zahl stand.
+* Er kommt **nach** dem Wechsel Nextcloud → Linkado (01), weil der Satz erst dann etwas beweist: erst die Oberfläche, dann der Rahmen.
+* Ohne Installationsversprechen formuliert („läuft im Browser – auf jedem Gerät“), damit nichts zugesagt wird, was nicht belegt ist.
+* Alternativen, falls ihr es anders möchtet: (a) Beat *vor* 01 (Zoom aus dem Tab, danach Wechsel Nextcloud → Linkado) – wirkt direkter, verschiebt aber den Nextcloud-Satz nach hinten; (b) statt Laptop + Handy ein Tablet im Hochformat (mehr Gerätevielfalt, mehr Aufwand).
+
+---
+
 ## 1. Was im Kopf bleiben soll (und woran man es misst)
 
 Nach einmaligem Sehen sollen drei Dinge sitzen – in dieser Reihenfolge:

@@ -1,11 +1,11 @@
 # Linkado-Werbefilm – Konzept (Stand v3)
 
-**72 Sekunden · 16:9 · 30 fps · deutsch · ruhiger Techno, der sich Schritt für Schritt aufbaut.**
+**76 Sekunden · 16:9 · 30 fps · deutsch · ruhiger Techno, der sich Schritt für Schritt aufbaut.**
 Idee: **Alles funktioniert – nur nicht dazwischen. Linkado verbindet das Dazwischen, und am Ende kristallisiert das Logo heraus.**
 Weiterführende Konzepte (Cutdowns, 9:16, KI-Ebene, Faden als Bildelement, Ton): [`KONZEPTE-WEITERDENKEN.md`](KONZEPTE-WEITERDENKEN.md).
 Feinheiten für Wirkung und Erinnerung (Marke, Funktionen, Oberfläche): [`PLAN-WIRKUNG.md`](PLAN-WIRKUNG.md).
 
-## Dramaturgie (36 Takte à 2 s bei 120 BPM)
+## Dramaturgie (38 Takte à 2 s bei 120 BPM)
 
 | Takte | Zeit | Szene | Bild | Ton |
 |---|---|---|---|---|
@@ -16,24 +16,31 @@ Feinheiten für Wirkung und Erinnerung (Marke, Funktionen, Oberfläche): [`PLAN-
 | 9–11 | 17,5–22 s | Überforderung in **fünf Blickwinkeln** (Raster 0,75 s) | Mitarbeitende: *Noch ein Login.* · Teams: *Noch ein Tool.* (Tabs füllen sich) · Geschäftsführung: *Noch ein Abo.* · Datenschutz: *Noch eine KI.* („Wohin gehen die Daten?“) · IT: *Noch eine Frage an die IT.* | fünf Akkord-Stabs Am – F – C – G – Am, 16tel-Arpeggio, Rim-Wirbel, Riser, Tape-Stop |
 | 12 | 22–24 s | Atempause → **Sog in den Drop** | harter Schnitt, „Es geht auch anders.“ – der **orange Faden** erscheint, glüht auf und lässt Licht wachsen; 80 ms „Einatmen“ vor 24.0 | Herzschlag-Kick wird lauter, A–C–E-Motiv der drei Inseln steigt, Rim-Wirbel, Riser, Vakuum |
 | 13–14 | 24–28 s | **01** Nextcloud als Basis · Linkado als Benutzererlebnis | **Drop-Schlag:** Lichtblitz, zwei Druckwellen, Funkenkranz, Lichtflut; das graue Basis-Fenster wird zur Linkado-Startseite | **Drop:** Crash, breiter Akkord, Sonic Logo (Moll) A – C – E – A, Groove sofort voll (Kick, Bass, Hats, Clap) |
-| 15–16 | 28–32 s | **02** Mehr Übersicht im Arbeitsalltag | Startseite „Ihr Tag“ rastet ein, das **große Menü** öffnet sich über dem Raster-Symbol (Favoriten, Bereiche Start / Kommunikation / Organisation), die Suche „Was möchten Sie tun?“ findet Assistent-Antwort, Datei, Termin, Talk, Person | UI-Klicks, Tippen, Offbeat-Hats, Bass |
-| 17–19 | 32–38 s | **03** Passende Werkzeuge an einem Ort | „Apps und Pakete“: Deck und Formulare hinzufügen (Icons fliegen in die Leiste), Scroll zu den Paketen, Schalter | Add-Klänge, Arpeggio, Dub-Akkorde |
-| 20–24 | 38–48 s | **04** Hilfe direkt in der Cloud (10 s) | Support: Frage tippen → Antwort des Assistenten in drei Schritten → „Im Chat fragen“ → **Talk**: Chat mit dem Support (Einladungslink), „Anruf starten“ → Anrufansicht, Teilnehmende treten bei | Chime bei der Antwort, Klingeln, Beitritts-Klänge, Arpeggio dunkler |
-| 25–27 | 48–54 s | **05** Ein stimmiges Gesamtpaket | drei Kettenglieder greifen ineinander | zweite Arpeggio-Stimme, drei Glockentöne, Einrasten |
-| 28–31 | 54–62 s | **06** Mehr Zeit fürs Wesentliche (8 s, ruhiger Takt) | „Dein Arbeitstag“: Blöcke erscheinen und halten, Technik-Reibung schrumpft, Wesentliches wächst, danach hält das Bild; gemeinsam im Dokument; Auflösung in Knoten | „ruhiger Höhepunkt“, Schimmern |
-| 32 | 62–64 s | Aufbau | alles löst sich in Knoten, der Faden verbindet sie | Riser, Fill, Halbtakt-Drop-out |
-| 33–36 | 64–72 s | **Finale** | Kristall → LINKADO · *Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.* · Tagline · ein CTA · Lichtreflex im Endbild | Aufhellung A-Moll → A-Dur, **Sonic Logo A – C♯ – E – A**, Ausklang |
+| 15–16 | 28–32 s | **Ein Browser genügt** (Geräte-Beat) | Die Kamera **zieht aus dem Linkado-Fenster zurück**: ein Laptop mit **einem einzigen Browser-Tab** („1 TAB“ – das Gegenstück zu den „36 TABS“ aus dem Chaos), daneben ein Handy mit derselben Oberfläche. Zeilen: *Ein Browser. Ein Login. Alle Geräte.* – *Ein Tab genügt: Linkado läuft im Browser – auf jedem Gerät.* Danach fährt die Kamera zurück ins Fenster | Whoosh, drei Marimba-Töne auf den Zeilen, Swipe beim Handy |
+| 17–18 | 32–36 s | **02** Mehr Übersicht im Arbeitsalltag | Startseite „Ihr Tag“ rastet ein, das **große Menü** öffnet sich über dem Raster-Symbol (Favoriten, Bereiche Start / Kommunikation / Organisation), die Suche „Was möchten Sie tun?“ findet Assistent-Antwort, Datei, Termin, Talk, Person | UI-Klicks, Tippen, Offbeat-Hats, Bass |
+| 19–21 | 36–42 s | **03** Passende Werkzeuge an einem Ort | „Apps und Pakete“: Deck und Formulare hinzufügen (Icons fliegen in die Leiste), Scroll zu den Paketen, Schalter | Add-Klänge, Arpeggio, Dub-Akkorde |
+| 22–26 | 42–52 s | **04** Hilfe direkt in der Cloud (10 s) | Support: Frage tippen → Antwort des Assistenten in drei Schritten → „Im Chat fragen“ → **Talk**: Chat mit dem Support (Einladungslink), „Anruf starten“ → Anrufansicht, Teilnehmende treten bei | Chime bei der Antwort, Klingeln, Beitritts-Klänge, Arpeggio dunkler |
+| 27–29 | 52–58 s | **05** Ein stimmiges Gesamtpaket | drei Kettenglieder greifen ineinander | zweite Arpeggio-Stimme, drei Glockentöne, Einrasten |
+| 30–33 | 58–66 s | **06** Mehr Zeit fürs Wesentliche (8 s, ruhiger Takt) | „Dein Arbeitstag“: Blöcke erscheinen und halten, Technik-Reibung schrumpft, Wesentliches wächst, danach hält das Bild; gemeinsam im Dokument; Auflösung in Knoten | „ruhiger Höhepunkt“, Schimmern |
+| 34 | 66–68 s | Aufbau | alles löst sich in Knoten, der Faden verbindet sie | Riser, Fill, Halbtakt-Drop-out |
+| 35–38 | 68–76 s | **Finale** | Kristall → LINKADO · *Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.* · Tagline · ein CTA · Lichtreflex im Endbild | Aufhellung A-Moll → A-Dur, **Sonic Logo A – C♯ – E – A**, Ausklang |
 
-Das Schlussbild (Logo, Zeilen, Tagline, CTA) steht **ab 67.0 s volle 5 Sekunden** (ein sanfter Lichtreflex läuft einmal über das Logo); es gibt **genau eine** Handlungsaufforderung.
+Das Schlussbild (Logo, Zeilen, Tagline, CTA) steht **ab 71.0 s volle 5 Sekunden** (ein sanfter Lichtreflex läuft einmal über das Logo); es gibt **genau eine** Handlungsaufforderung.
 
 ## Was sich gegenüber v2 geändert hat
+
+* **„Ein Browser genügt“ (neu, Szene direkt nach 01, 4 s):** Nach dem Wechsel Nextcloud → Linkado zieht die Kamera aus dem Fenster zurück und zeigt, *wo* das läuft: in **einem** Browser-Tab (Adresse erfunden: `cloud.ihre-firma.de`), am Laptop und am Handy mit derselben Oberfläche. Es greift die „36 TABS“ aus dem Chaos auf – jetzt steht dort „1 TAB“. Technisch: Die Zeit der Oberfläche steht in diesem Beat still (`map` in `engine.js`), die Geräte sind in Fensterkoordinaten gezeichnet und laufen mit der Kamera mit (`src/scenes/devices.js`).
+* **Kamerabewegung als Reiz, sparsam:** Jeder der drei Alltagsmomente bekommt eine eigene Bewegung (Schub · Rückzug · Schwenk), und im Geräte-Beat gibt es den einen großen Rückzug aus dem Gerät. Weitere Blickwechsel (Draufsicht, 3D-Neigung, Handy-Ansicht) bewusst *nicht* eingebaut, damit der ruhigere Takt erhalten bleibt – siehe `PLAN-WIRKUNG.md`.
+* **Der Faden zeigt sich früh:** In der Lücke von „DAZWI SCHEN“ erscheint ein dünner oranger Strich (erste Markenfarbe im Film, noch ohne Namen). Kurz vor dem Kristall schließt der **Callback** „Alles funktioniert. *Auch* dazwischen.“ die offene Frage des Hooks.
+* **Rollen kehren zurück:** In 03, 04 und 05 hängt unter dem Untertitel eine kleine Pille mit der Rolle aus dem Chaos, der durchgestrichenen Klage und einem grünen Haken (*Teams ~~Noch ein Tool.~~ ✓*, *IT ~~Noch eine Frage an die IT.~~ ✓*, *Geschäftsführung ~~Noch ein Abo.~~ ✓*). „Datenschutz/KI“ bleibt bewusst ohne Haken, bis bestätigt ist, was zugesagt werden darf.
+* **Kette (05)** nutzt dieselben Symbole wie die Szenen davor (Raster, Puzzle, Rettungsring).
 
 * **Anfang: entschleunigt, länger lesbar, Alltag statt Aufzählung.** Der Hook dauert 4 s, das letzte Wort („dazwischen.“) steht 1,6 s; jeder der drei Alltagsmomente hat 4,5 s (Sätze im 0,9-s-Abstand), die Überforderung 4,5 s. Akt I ist damit 24 s lang (12 Takte), der Drop liegt bei 24.0 s. Die drei Ansätze sind keine Stichpunktlisten mehr, sondern **drei Alltagsmomente**: Titel + Stärke, darunter **Sätze von Kolleg*innen mit Profilbild** („Und wenn der Anbieter die Regeln ändert?“), daneben ein **Laptop und/oder ein Handy** mit Apps bzw. mit einer ganz anderen Oberfläche. Im Hintergrund füllen unterschiedliche Fenster nach und nach den Bildschirm. Die Basis von Akt I (Hook → drei Ansätze → fünf Blickwinkel → Pause) ist unverändert.
 * **Echte Menschen, wo Profilbilder hingehören:** In Talk gibt es jetzt den typischen **1:1-Anruf** (ein großes Gesicht, Selbstbild unten rechts) und dann das **2 × 2-Raster** (zwei oben, zwei unten, Sprechende mit Rahmen und Namensband); auch in der Startseite (Teamkarten, Zuständige, Nachrichten), im Menü (Personentreffer), im Support (Mein Konto, „Gelöst von …“), im Chat und im Dokument der Szene 06 erscheinen Profilbilder. **Wichtig:** Die Menschen sind *illustrierte* Porträts (sieben erfundene Personen, `PEOPLE` in `src/ui.js`) – keine Fotos und keine Echtpersonen. Wer Fotos möchte, kann lizenzierte Aufnahmen (Stock oder Team-Shooting mit Einverständnis) als Bildquelle in `portraitSVG()` einsetzen; die Layouts bleiben gleich.
 
 * **Talk ist eingebaut** (Szene 04): Der Support ist nicht nur eine Seite, sondern ein Gespräch – Chat mit „Linkado Support“ (Konversationsliste, Nachrichten, Einladungslink), dann Anruf mit Teilnehmenden. Gebaut nach euren Screenshots (Konversationsliste, Chat, dunkle Anrufansicht), **ohne** Echtpersonen: Alle Teilnehmenden (Mira, Jonas, Anna) sind erfunden und als illustrierte Porträts gezeichnet (kein Foto, kein Webcam-Bild).
 
-* **Mehr Luft am Ende:** Szene 06 („Dein Arbeitstag“) hat 8 statt 6 Sekunden – jeder Zustand bleibt mindestens 1,3 s stehen, das Dokument erscheint erst, wenn die Blöcke fertig sind. Das Schlussbild steht 5 statt 3 Sekunden. Der Film ist dadurch **72 s** lang (36 Takte; mit Talk in Szene 04 und dem ruhigeren Akt I).
+* **Mehr Luft am Ende:** Szene 06 („Dein Arbeitstag“) hat 8 statt 6 Sekunden – jeder Zustand bleibt mindestens 1,3 s stehen, das Dokument erscheint erst, wenn die Blöcke fertig sind. Das Schlussbild steht 5 statt 3 Sekunden. Der Film ist dadurch **76 s** lang (38 Takte; mit Talk in Szene 04, dem ruhigeren Akt I und dem Geräte-Beat).
 
 * **Kein Name-Calling:** Im Chaos-Teil kommen keine Produkt- oder Firmennamen vor. Drei **allgemeine Ansätze** stehen für das, was jede*r kennt – *Der Allrounder*, *Das fertige Portal*, *Die offene Basis* –
   jeweils „erst die Stärke, dann das Aber“, ohne jemanden schlecht zu machen. Auch die Bilder sind neutral (kein Logo, keine Marken-UI).
@@ -67,7 +74,7 @@ Das Schlussbild (Logo, Zeilen, Tagline, CTA) steht **ab 67.0 s volle 5 Sekunden*
 | Geplante Funktionen gekennzeichnet | „SNEAK PEEK“-Marke in allen Oberflächen-Szenen |
 | Pro Einstellung eine kurze Aussage (3–7 Wörter), gut lesbar | Titel 74–80 px, Untertitel 36 px, Aussagen exakt aus dem Briefing |
 | Übergänge aus vorhandenen Formen | Das Fenster wird zur Rohfassung und zurück; Kettenglieder; Kartenform löst sich in Knoten, aus denen das Logo kristallisiert |
-| Schluss ≥ 3 s, genau ein CTA | ab 67.0 s (5 s); CTA „Linkado entdecken“ + Adresse |
+| Schluss ≥ 3 s, genau ein CTA | ab 71.0 s (5 s); CTA „Linkado entdecken“ + Adresse |
 | Ton ohne Sprache verständlich, Sounddesign sparsam | alles als Schrift im Bild; wenige tonale Klicks; optionaler Sprechertext liegt bei |
 | 4K-Master, Web-Fassung | 3840×2160 und 1920×1080 |
 
@@ -77,7 +84,7 @@ eine eingebaute Sprecherstimme (keine natürliche deutsche Stimme in dieser Umge
 
 ## Ton
 
-120 BPM, A-Moll (Am9 – Fmaj7 – Cmaj7 – Gadd9), ab 64.0 s A-Dur (Amaj9). Act I: weicher Kick, Uhr-Ticks, Achtel-Hats, Offbeat-Bass, hohle Quinte A–E als Drone, die drei Stimmen
+120 BPM, A-Moll (Am9 – Fmaj7 – Cmaj7 – Gadd9), ab 68.0 s A-Dur (Amaj9). Act I: weicher Kick, Uhr-Ticks, Achtel-Hats, Offbeat-Bass, hohle Quinte A–E als Drone, die drei Stimmen
 verzahnen sich im 16tel-Raster zur Figur A – C – E – A – E – C. Bei 20.0 s löst sich alles im Drop auf (Sub, Breite, Konsonanz). Schichten kommen nacheinander:
 Kick → Pad/Sub → Offbeat-Hats/Rim/Bass → Arpeggio → Dub-Akkorde → zweite Stimme → Schimmern; vor dem Kristall ein halber Takt Drop-out.
 Alle Bild-Akzente stehen in `timeline.json` und werden vom Ton-Skript zur Laufzeit gelesen (auch Klicks, Tippen, Swipes, Flüge, Chime).

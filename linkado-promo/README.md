@@ -1,4 +1,4 @@
-# Linkado – Werbefilm (72 s)
+# Linkado – Werbefilm (76 s)
 
 Ein Werbefilm für **Linkado**, den europäischen digitalen Arbeitsplatz auf Nextcloud-Basis:
 **Chaos der Insellösungen → Klarheit → das Linkado-Logo kristallisiert heraus.** Mit ruhigem, schrittweise
@@ -30,13 +30,14 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 ## Aufbau
 
 ```
-timeline.json            Zeitplan: 36 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
+timeline.json            Zeitplan: 38 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
   scenes/act1.js           Chaos: Hook (4 s), drei Alltagsmomente (je 4,5 s) (ohne Namen; Sätze mit Profilbild, Laptop/Handy), Überforderung in fünf Blickwinkeln, Pause/Sog in den Drop
   scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
   scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
+  scenes/devices.js        Geräte-Beat „Ein Browser genügt“: Laptop-Rahmen, Browser-Leiste mit einem Tab, Handy mit derselben Oberfläche
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
 audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
@@ -71,7 +72,7 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 ## Qualitätssicherung
 
 * Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
-* Ton: exakt 3 456 000 Samples (72 s), −14 LUFS, Spitzen ≤ −1 dBFS, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
+* Ton: exakt 3 648 000 Samples (76 s), −14 LUFS, Spitzen ≤ −1 dBFS, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
   Struktur im Spektrogramm (`audio/spektrogramm.png`).
 * Lesbarkeit: Titel 74–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
 

@@ -4,10 +4,12 @@
 //   01 Nextcloud als Basis, Linkado als Benutzererlebnis   (20–24)
 //   02 Mehr Übersicht im Arbeitsalltag                      (24–28)
 //   03 Passende Werkzeuge an einem Ort (Appshop)            (28–34)
-//   04 Hilfe direkt in der Cloud                            (34–40)
+//   04 Hilfe direkt in der Cloud                            (34–44)
+//   dazwischen der Geräte-Beat „Ein Browser genügt“ (lokal 24–28): die Zeit der Oberfläche steht still, die Kamera zieht zurück
 // Kamera-Zooms führen den Blick; Aktionen landen auf den hits der timeline.json.
 // ============================================================
 import { buildUI, LAY } from '../ui.js';
+import { buildDevices } from './devices.js';
 
 export const THREAD_Y = 700;   // Höhe des orangenen Fadens in der Pause (Act I) – hier übernimmt er
 
@@ -15,6 +17,8 @@ export default function register(E) {
   const { h, tf, tw, ease, prog, clamp, lerp, show } = E;
   const K = E.kit;
   const SH2 = E.T('reveal').start - 20.0;      // alle Zeiten in dieser Datei sind für den Drop bei 20.0 geschrieben; Szenen laufen um SH2 verschoben
+  const BEAT0 = 24.0, BEATN = E.T('browser').end - E.T('browser').start;   // Geräte-Beat: lokal 24.0 … 28.0, die Oberflächen-Zeit steht dabei still
+  const mapT = (g) => { const l = g - SH2; return l < BEAT0 ? l : l < BEAT0 + BEATN ? BEAT0 : l - BEATN; };
 
   const mixHex = (a, b, p) => {
     const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
@@ -24,7 +28,7 @@ export default function register(E) {
 
   /* ---------------------------------------------------------------- Hintergrund + Lichtflut */
   E.scene({
-    id: 'a2-bg', start: 20, end: 58, shift: SH2, z: 10,
+    id: 'a2-bg', start: 20, end: 58 + BEATN, shift: SH2, z: 10,
     build(root) {
       const flood = h('div', { class: 'abs', style: { inset: 0, background: 'var(--cream)' } });
       // Drop-Schlag bei 20.0: Lichtblitz, zwei Druckwellen und ein Funkenkranz aus der Bildmitte (rein dekorativ, Marken-Orange/Navy/Creme)
@@ -62,7 +66,7 @@ export default function register(E) {
     return NODE_X(6);
   };
   E.scene({
-    id: 'a2-ov', start: 20, end: 58.8, shift: SH2, z: 45,
+    id: 'a2-ov', start: 20, end: 58.8 + BEATN, shift: SH2, map: mapT, z: 45,
     build(root) {
       const fade = h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 0, height: 120, background: 'linear-gradient(to top, var(--cream) 55%, rgba(250,246,239,0))' } });
       const pill = h('div', { class: 'abs', style: { left: 110, top: 54, display: 'flex', alignItems: 'center', gap: 14, padding: '11px 26px 11px 20px', borderRadius: 999, background: 'rgba(31,37,50,.07)' } },
@@ -116,6 +120,14 @@ export default function register(E) {
     return { s: A.s * Math.pow(B.s / A.s, p) * (a === b || A === B ? drift : 1), px: lerp(A.px, B.px, p), py: lerp(A.py, B.py, p) };
   }
 
+  /* Geräte-Beat: Kamera zieht aus dem Fenster zurück (Laptop mit EINEM Tab + Handy), hält, und fährt wieder in die Pose von 02 hinein */
+  const DEV_POSE = { s: 0.5, px: 945, py: 302 };
+  function beatCam(u) {
+    const C0 = camAt(BEAT0);
+    const q = ease.uiInOut(prog(u, 0.0, 1.5)) * (1 - ease.uiInOut(prog(u, BEATN - 1.5, BEATN)));
+    return { s: C0.s * Math.pow(DEV_POSE.s / C0.s, q), px: lerp(C0.px, DEV_POSE.px, q), py: lerp(C0.py, DEV_POSE.py, q) };
+  }
+
   // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: siehe CLICKS (stehen auch als hits in timeline.json)
   const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85, 40.2, 43.5];
   const B0 = LAY.apps.btn(0), B1 = LAY.apps.btn(1), TG = LAY.apps.toggle(3), SUP = LAY.rail.support, SIN = LAY.support.input;
@@ -136,7 +148,7 @@ export default function register(E) {
   const rowOn = (r, v) => { r.tg.style.background = mixHex('#CBC7BF', '#E67E22', v); r.tg.firstChild.style.left = (3 + 22 * v) + 'px'; r.lbl.textContent = v > 0.5 ? 'Aktiv' : 'Aus'; };
 
   E.scene({
-    id: 'a2-ui', start: 20, end: 45, shift: SH2, z: 20,
+    id: 'a2-ui', start: 20, end: 45 + BEATN, shift: SH2, map: mapT, z: 20,
     build(root) {
       const ui = buildUI(E);
       const outer = h('div', { class: 'abs', style: { inset: 0 } });
@@ -161,6 +173,7 @@ export default function register(E) {
       const flyer = h('div', { class: 'abs', style: { width: 68, height: 68, borderRadius: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 60, boxShadow: '0 16px 34px rgba(31,37,50,.35)' } });
       const cur = ui.cursor();
       cam.append(trailSvg, flyer, cur.rip, cur.el);
+      const dev = buildDevices(E, cam, raw.el);
       outer.append(cam); root.append(outer);
 
       // Beschriftung der Rohfassung (Bildschirmraum)
@@ -175,15 +188,20 @@ export default function register(E) {
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
+      const pills = [K.rolePill(E, heads[2], { ico: 'users', role: 'TEAMS', said: 'Noch ein Tool.' }), K.rolePill(E, heads[3], { ico: 'headphones', role: 'IT', said: 'Noch eine Frage an die IT.' })];
+      const beatHead = K.headline(E, root, { num: '', size: 84, y: 300, lines: ['EIN <em>BROWSER.</em>', 'EIN LOGIN.', 'ALLE GERÄTE.'], delays: [0, 0.4, 0.8], subDelay: 0.5, sub: 'Ein Tab genügt: Linkado läuft im Browser – auf jedem Gerät.' });
+      beatHead.el.querySelector('.a2-num').style.display = 'none';
       const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
-      return { sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      return { pills, dev, beatHead, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
-    update(t, s) {
+    update(t, s, _E, tGlobal) {
       const { cam, outer, raw, win, dash, shop, sup, talk, menu, dim, gridTile, cur } = s;
+      const tg = tGlobal - SH2;                                       // „Film-Zeit“ der Oberfläche inkl. Geräte-Beat (lokal 24–28)
+      const beat = tg >= BEAT0 && tg < BEAT0 + BEATN, u = tg - BEAT0;
 
       /* ---- Kamera + Fenster-Auftritt/Abgang ---- */
-      const c = camAt(t);
+      const c = beat ? beatCam(u) : camAt(t);
       cam.style.transform = `translate(${c.px.toFixed(2)}px,${c.py.toFixed(2)}px) scale(${c.s.toFixed(4)})`;
       const wi = tw(t, 20.25, 20.95, ease.ui), wo = tw(t, 43.9, 44.8, ease.in3);
       outer.style.opacity = wi * (1 - wo);
@@ -202,8 +220,20 @@ export default function register(E) {
       tf(s.capLk, { o: tw(t, 21.45, 21.85, ease.out2) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 21.45, 21.85, ease.ui)) });
 
       /* ---- Überschriften ---- */
-      s.heads[0].update(t, 20.25, 24.0); s.heads[1].update(t, 24.0, 28.0); s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
+      s.pills[0].update(t, 29.5); s.pills[1].update(t, 35.2, 37.9);
+      s.heads[0].update(tg, 20.25, 24.6); s.beatHead.update(tg, 24.4, 26.9); s.heads[1].update(t, 24.0, 28.0); if (beat) s.heads[1].el.style.display = 'none'; s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
       s.sub2.style.display = (t >= 37.95 && t < 44.0) ? 'block' : 'none'; tf(s.sub2, { y: 20 * (1 - tw(t, 38.0, 38.6, ease.ui)), o: tw(t, 38.0, 38.5, ease.out2) * (1 - tw(t, 43.6, 44.0, ease.in2)) });
+
+      /* ---- Geräte-Beat „Ein Browser genügt“ ---- */
+      {
+        const D = s.dev, on = beat && u > 0.02, fin = tw(u, 0.15, 0.95, ease.ui) * (1 - tw(u, BEATN - 1.0, BEATN - 0.35, ease.in2));
+        [D.back, D.chrome, D.phone].forEach((el) => show(el, on));
+        D.back.style.opacity = fin.toFixed(3);
+        tf(D.chrome, { y: -14 * (1 - tw(u, 0.15, 0.95, ease.ui)), o: fin });
+        const pp = tw(u, 1.0, 1.4, ease.outBack); tf(D.pill, { s: 0.4 + 0.6 * pp, o: clamp(pp * 2) });
+        const ph = tw(u, 1.3, 2.0, ease.ui) * (1 - tw(u, BEATN - 1.0, BEATN - 0.4, ease.in2));
+        tf(D.phone, { x: 200 * (1 - ph), y: 110 * (1 - ph), r: 5 * (1 - ph), s: 1.25, o: clamp(ph * 1.6) });
+      }
 
       /* ---- 02: Übersicht – Widgets rasten ein, Suche mit Assistent ---- */
       const loose = tw(t, 23.2, 23.95, ease.out3) * (1 - ease.snap(prog(t, 24.0, 24.55)));

@@ -3,8 +3,8 @@
 //   hook 0–4 (letztes Wort steht 1,6 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (+0.8)
 //   Alle Zeiten kommen aus timeline.json (Karten, Pings, Shoves, Texte, Cut, Drop) – nur Feinheiten sind relativ dazu notiert.
 //   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
-// Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Lücken – die Chips poppen auf den
-// ping-hits der timeline.json. Linkado-Orange kommt hier NICHT vor (außer Faden+Flagge in der Pause).
+// Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Alltagssätze – sie poppen auf den
+// ping-hits der timeline.json. Linkado-Orange kommt hier kaum vor: nur der erste Faden-Strich im Hook und Faden+Flagge in der Pause.
 // ============================================================
 import { buildUI, avatarHTML, PEOPLE } from '../ui.js';
 import { laptop, phone, mini, quote } from './act1-bits.js';
@@ -105,6 +105,9 @@ export default function register(E) {
       const w1 = word('Alles', DIM), w2 = word('funktioniert.', DIM), w3 = word('Nur nicht', DIM);
       // „dazwischen.“ – die beiden Hälften öffnen sich: das Dazwischen wird sichtbar
       const hl = h('span', { text: 'dazwi', style: { display: 'inline-block' } }), hr = h('span', { text: 'schen.', style: { display: 'inline-block' } });
+      // der Faden zeigt sich zum ersten Mal: ein dünner oranger Strich in der Lücke (noch ohne Namen, ohne Logo)
+      const stroke = h('i', { style: { position: 'absolute', left: '0px', top: '16px', width: '4px', height: '84px', borderRadius: '2px', background: '#E67E22', boxShadow: '0 0 22px rgba(230,126,34,.85)', opacity: 0, display: 'block' } });
+      hr.style.position = 'relative'; hr.append(stroke);
       const w4 = h('span', { class: 'w' }, h('span', { style: { color: CREAM } }, hl, hr));
       const hook = h('div', { class: 'a1-hook' }, h('div', {}, w1, ' ', w2), h('div', {}, w3, ' ', w4));
       root.append(hook);
@@ -119,7 +122,7 @@ export default function register(E) {
         g.append(name, ok, ...qs);
         const vis = cfg.visual(g);
         root.append(g);
-        return { id: cfg.id, g, name, ok, qs, qrot: cfg.qrot, vis, t0: T0[cfg.id], pings: PING[cfg.id], shove: SHOVE[cfg.id], pile: PILE[cfg.id] };
+        return { id: cfg.id, g, name, ok, qs, qrot: cfg.qrot, vis, t0: T0[cfg.id], pings: PING[cfg.id], shove: SHOVE[cfg.id], pile: PILE[cfg.id], cam: cfg.cam };
       };
       const APPCOL = ['#2F6FDE', '#1E9E6A', '#E5565B', '#36A9E8', '#7B6CF6', '#14A8A8', '#4C5BD4', '#D1497A'];
       const APPICO = ['file-text', 'table-2', 'presentation', 'mail', 'calendar', 'message-square', 'cloud', 'users'];
@@ -210,13 +213,13 @@ export default function register(E) {
       const cfgs = [
         { id: 'm365', name: 'DER ALLROUNDER', size: 84, ok: 'ALLES AUS EINER HAND.', acc: ACC.m365, visual: vSuite,
           quotes: [['anna', 'Vertrieb', 'Und wenn der Anbieter die Regeln ändert?'], ['jonas', 'Einkauf', 'Jede Erweiterung kostet extra – und die nächste auch.'], ['lena', 'Projekte', 'Wir passen uns der Software an. Nicht umgekehrt.']],
-          qpos: [[110, 380], [200, 540], [130, 700]], qw: [640, 700, 680], qrot: [-1, 0.8, -0.6] },
+          qpos: [[110, 380], [200, 540], [130, 700]], qw: [640, 700, 680], qrot: [-1, 0.8, -0.6], cam: { s0: 0, s1: 0.05, x0: 0, x1: -34, y0: 0, y1: -8 } },
         { id: 'opendesk', name: 'DAS FERTIGE PORTAL', size: 68, ok: 'OFFEN UND LOKAL GEDACHT.', acc: ACC.opendesk, visual: vPortal,
           quotes: [['tom', 'Geschäftsführung', 'Ein Login, schön. Dahinter ist alles anders.'], ['aylin', 'Büro', 'Die Mail sieht anders aus als der Chat – und der anders als die Dateien.'], ['ben', 'Buchhaltung', 'Es fühlt sich nicht wie ein Ganzes an.']],
-          qpos: [[110, 380], [190, 540], [130, 730]], qw: [660, 720, 620], qrot: [0.8, -0.8, 0.6] },
+          qpos: [[110, 380], [190, 540], [130, 730]], qw: [660, 720, 620], qrot: [0.8, -0.8, 0.6], cam: { s0: 0.06, s1: 0, x0: 24, x1: 0, y0: 10, y1: 0 } },
         { id: 'nextcloud', name: 'DIE OFFENE BASIS', size: 76, ok: 'MÄCHTIG UND FREI.', acc: ACC.nextcloud, visual: vBase,
           quotes: [['ben', 'Buchhaltung', 'Das Update spielen wir natürlich selbst ein.'], ['lena', 'Projekte', 'Mächtig, ja. Im Alltag sieht es noch roh aus.'], ['tom', 'Geschäftsführung', 'Für die Kolleg*innen ist das einfach zu technisch.']],
-          qpos: [[110, 380], [200, 540], [120, 700]], qw: [650, 660, 700], qrot: [-0.8, 0.8, -0.6] },
+          qpos: [[110, 380], [200, 540], [120, 700]], qw: [650, 660, 700], qrot: [-0.8, 0.8, -0.6], cam: { s0: 0.015, s1: 0.015, x0: 44, x1: -44, y0: 0, y1: 0 } },
       ];
       const groups = cfgs.map(mkGroup);
 
@@ -261,7 +264,7 @@ export default function register(E) {
       // Sog in den Drop: der Faden glüht auf, ein orangenes Licht wächst aus der Linie, kurz vor 20.0 „atmet alles ein“
       const pGlow = h('div', { class: 'abs', style: { left: 60, top: THREAD_Y - 900, width: 1800, height: 1800, background: 'radial-gradient(closest-side, rgba(230,126,34,.55), rgba(230,126,34,.18) 45%, rgba(230,126,34,0) 100%)', zIndex: 36 } }); root.append(pGlow);
 
-      return { pGlow, bgw, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
+      return { stroke, pGlow, bgw, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
     },
 
     update(t, s) {
@@ -296,7 +299,8 @@ export default function register(E) {
       /* ---- Hook (0–4): ruhig gesetzt, „dazwischen.“ landet bei 2,4 und steht 1,6 s, bevor der Schnitt kommt ---- */
       const hk = (el, t0) => tf(el.firstChild, { y: 130 * (1 - tw(t, t0, t0 + 0.9, ease.ui)) });
       hk(s.w1, 0.3); hk(s.w2, 0.8); hk(s.w3, 1.8); hk(s.w4, 2.4);
-      const gap = 34 * tw(t, 2.6, 3.5, ease.out3); tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
+      const gq = tw(t, 2.6, 3.5, ease.out3), gap = 34 * gq; tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
+      s.stroke.style.left = (-gap / 2 - 2).toFixed(2) + 'px'; s.stroke.style.opacity = (gq * (0.75 + 0.25 * Math.sin(t * 5))).toFixed(3);
       const hx = tw(t, T_HOOK - 0.2, T_HOOK, ease.in3);                // harter Schnitt auf den Karten-Schlag
       show(s.hook, t < T_HOOK + 0.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
       s.hookBadges.forEach((b, k) => { const t0 = [0.8, 1.8, 2.4][k], p = tw(t, t0, t0 + 0.45, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
@@ -310,7 +314,8 @@ export default function register(E) {
         const slam = tw(a, 0, 0.5, ease.snap), sh = tw(t, G.shove, G.shove + 0.55, ease.uiInOut);
         const grow = 1 + 0.1 * prog(t, OV, CUT - 0.2) * sh;
         const P = G.pile;
-        const sc = lerp(1, P.s, sh) * grow, tx = lerp(0, P.x, sh), ty = lerp(0, P.y, sh), rot = lerp(-1.2, P.r, sh) + Math.sin(t * 0.8 + gi) * 0.6 * sh;
+        const cq = ease.io2(prog(t, G.t0, G.shove)), cm = G.cam, cf = 1 - sh;          // jeder Moment bekommt seine eigene Kamerabewegung (Schub · Rückzug · Schwenk)
+        const sc = lerp(1, P.s, sh) * grow * (1 + lerp(cm.s0, cm.s1, cq) * cf), tx = lerp(0, P.x, sh) + lerp(cm.x0, cm.x1, cq) * cf, ty = lerp(0, P.y, sh) + lerp(cm.y0, cm.y1, cq) * cf, rot = lerp(-1.2, P.r, sh) + Math.sin(t * 0.8 + gi) * 0.6 * sh;
         const sl = 1.09 - 0.09 * slam;
         tf(G.g, { x: tx, y: ty + 34 * (1 - slam) * (1 - sh), s: sc * (sh > 0 ? 1 : sl), r: rot, o: clamp(slam * 2) * (1 - 0.8 * sh * (t < OV ? 1 : 1 - 0.15 * prog(t, OV, CUT - 1))) });
         G.g.style.zIndex = String(10 + gi + (sh > 0.5 ? -8 : 0));

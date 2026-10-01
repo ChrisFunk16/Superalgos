@@ -379,8 +379,10 @@ def render():
     B['fx'].add(suck, DROP - len(suck) / SR, 0.55)
 
     # ------------------------------------------------------------------ ACT II – Klarheit (20–52 s) + ACT III
-    S2 = DROP - 20.0; NB2 = int(round(S2 / BAR))                               # Akt II ist für den Drop bei 20.0 (Takt 11) geschrieben: +4 s = +2 Takte
-    PK = [sc['start'] for sc in TL['scenes'] if sc['id'] == 'package'][0]        # Szene 05 (Kettenglieder)
+    S2 = DROP - 20.0; NB2 = int(round(S2 / BAR))                               # Akt II ist für den Drop bei 20.0 (Takt 11) geschrieben: +4 s = +2 Takte (Groove-Start)
+    SC0 = {sc['id']: sc['start'] for sc in TL['scenes']}
+    NBS = int(round((SC0['appshop'] - 28.0) / BAR))                              # Takte, um die Szene 03 gegenüber der Urfassung (Szene 03 bei 28 s = Takt 15) verschoben ist: Drop-Verschiebung + Geräte-Beat = 4
+    PK = SC0['package']                                                           # Szene 05 (Kettenglieder)
     cut_a, cut_b = hits('cut')[1]['t'], hits('cut')[1]['end']                 # halber Takt Drop-out vor dem Kristall
     CRY = hits('crystal')[0]['t']                                             # 56.0
     END_GROOVE = CRY + 4.0                                                    # 60.0: danach nur noch Glocken und Pad (Endbild)
@@ -396,7 +398,7 @@ def render():
     def bass_active(tt):
         if tt < DROP or tt >= END_GROOVE: return False
         if cut_a <= tt < cut_b: return False
-        if DROP + 14 <= tt < DROP + 16: return False                            # Variation: ein Takt ohne Bass (Szene 04 beginnt)
+        if SC0['help'] <= tt < SC0['help'] + 2: return False                      # Variation: ein Takt ohne Bass (Szene 04 beginnt)
         return True
     # liegender Sub in den ersten zwei Takten des Groove
     B['bass'].add(sub_boom(55.0, 2.6, 0.9), DROP, 0.38)
@@ -416,7 +418,7 @@ def render():
             open_ = (s % 4 == 2)
             if open_:
                 B['hats'].add(hat(True, 0.9), tt + hum(0.002), 0.9, pan=0.25)
-            elif bar >= 15 + NB2 and s % 2 == 1 or (bar >= 15 + NB2 and s % 4 == 0 and s % 8 != 0):
+            elif bar >= 15 + NBS and s % 2 == 1 or (bar >= 15 + NBS and s % 4 == 0 and s % 8 != 0):
                 thin = (cut_a - 3.5) <= tt < (cut_a - 1.5) or bar >= CB
                 B['hats'].add(hat(False, (0.55 + 0.35 * ((s * 5) % 3 == 0)) * (0.5 if thin else 1)), tt + hum(0.002), 0.7, pan=-0.2 if s % 4 == 1 else 0.3)
     # Rim / Clap auf 2 und 4
@@ -438,7 +440,7 @@ def render():
     # Finale-Pad (A-Dur, hell) – setzt beim Kristall ein und klingt bis zum Ende aus
     pc = pad_chord(CH['Amaj9']['pad'] + [69], 8.0, attack=0.25, release=2.6, cutoff=4200.0, spread=0.7); B['pad'].add(pc, CRY, 1.15)
     # Stabs (Dub-Akkord auf dem Offbeat der Zählzeit 2) – Takte 15–17 und 19–23 sowie 28–29
-    def stab_bar(bar): return (15 + NB2 <= bar <= 17 + NB2) or (19 + NB2 <= bar <= 25 + NB2) or bar in (CB, CB + 1)
+    def stab_bar(bar): return (15 + NBS <= bar <= 17 + NBS) or (19 + NBS <= bar <= 25 + NBS) or bar in (CB, CB + 1)
     for bar in range(11 + NB2, CB + 2):
         if not stab_bar(bar): continue
         tt = bar_t(bar, 2) + BEAT / 2 + hum(0.002); ch = chord_at(tt)
@@ -454,17 +456,17 @@ def render():
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b): continue
             if bar == 12 + NB2 and s % 4 != 0: continue
-            if bar < 15 + NB2 and s % 2 == 1: continue
+            if bar < 15 + NBS and s % 2 == 1: continue
             if bar >= CB - 1 and tt < CRY and tt >= cut_a - 1.5 and s % 2 == 1: continue
             ch = chord_at(tt); notes = CH[ch]['arp']
             if bar >= CB:
                 notes = CH['Amaj9']['arp']
             note = notes[P1[s] % len(notes)] + (12 if (bar >= CB and s % 4 == 3) else 0)
-            vel = V[s] * (0.7 + 0.3 * prog(tt, DROP + 8, DROP + 24)) * (0.85 if bar == 18 + NB2 else 1.0)
-            bright = (0.3 if bar == 18 + NB2 else 0.55 + 0.45 * prog(tt, DROP + 8, DROP + 28)) + (0.25 if bar >= CB else 0)
+            vel = V[s] * (0.7 + 0.3 * prog(tt, DROP + 8, DROP + 28)) * (0.85 if bar == 18 + NBS else 1.0)
+            bright = (0.3 if bar == 18 + NBS else 0.55 + 0.45 * prog(tt, DROP + 8, DROP + 32)) + (0.25 if bar >= CB else 0)
             B['arp'].add(pluck(midi(note), 0.30, vel, bright), tt + hum(0.0025), 0.9, pan=(-1) ** s * (0.3 + 0.2 * (s % 4 == 0)))
     # Zweite Stimme: eine Oktave höher, auf den Off-16teln, ab Takt 21
-    for bar in range(21 + NB2, CB + 2):
+    for bar in range(21 + NBS, CB + 2):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b) or s % 4 != 3 and s % 8 != 6: continue

@@ -17,12 +17,13 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | 17,5–22 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine Frage an die IT.“ |
 | 23–24 | Pause | „Es geht auch anders.“ |
 | 24–28 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
-| 28–32 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |
-| 32–38 | 03 | „Passende Werkzeuge an einem Ort: Apps über den Linkado-Appshop auswählen und verwalten.“ |
-| 38–48 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen. Und wenn es persönlich sein soll: per Chat oder Anruf.“ |
-| 48–54 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
-| 54–62 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
-| 64–72 | Logo | „Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.“ |
+| 28–32 | Ein Browser genügt | „Ein Browser. Ein Login. Alle Geräte.“ (oder ohne Sprache: nur die Zeilen im Bild) |
+| 32–36 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |
+| 36–42 | 03 | „Passende Werkzeuge an einem Ort: Apps über den Linkado-Appshop auswählen und verwalten.“ |
+| 42–52 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen. Und wenn es persönlich sein soll: per Chat oder Anruf.“ |
+| 52–58 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
+| 58–66 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
+| 68–76 | Logo | „Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.“ |
 
-Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 17,5–22 s, 23 s, 24–28 s und 64–72 s sprechen
+Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 17,5–22 s, 23 s, 24–28 s, 28–32 s und 68–76 s sprechen
 und die übrigen Szenen allein über Bild und Musik tragen lassen.

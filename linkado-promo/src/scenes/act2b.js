@@ -62,15 +62,16 @@ export default function register(E) {
       const svg = h('svg', { class: 'abs', width: 1920, height: 1080, viewBox: '0 0 1920 1080', style: { left: 0, top: 0 } }, defs, links[0], links[1], links[2], over0, over1, shineRect);
       const glow = h('div', { class: 'abs', style: { left: 1350 - 600, top: CY - 300, width: 1200, height: 600, background: 'radial-gradient(closest-side, rgba(230,126,34,.30), rgba(230,126,34,0))', opacity: 0 } });
       const rings = CX.map((cx, i) => h('div', { class: 'abs', style: { left: (i === 0 ? cx : cx - 130) - 70, top: CY - 70, width: 140, height: 140, borderRadius: '50%', border: `4px solid ${['#1F2532', '#E67E22', '#E67E22'][i]}` } }));
-      const icons = [['palette', '#1F2532'], ['puzzle', '#E67E22'], ['headphones', '#1F2532']].map(([n, c], i) => h('div', { class: 'a2b-ico', style: { left: CX[i], top: CY }, html: icon(n, 56, c, 2.2) }));
+      const icons = [['layout-grid', '#1F2532'], ['puzzle', '#E67E22'], ['life-buoy', '#1F2532']].map(([n, c], i) => h('div', { class: 'a2b-ico', style: { left: CX[i], top: CY }, html: icon(n, 56, c, 2.2) }));
       const labs = [['Oberfläche', 'klar und vertraut'], ['Erweiterungen', 'passende Apps'], ['Betreuung', 'Hilfe in der Cloud']].map(([a, b], i) => h('div', { class: 'a2b-lab', style: { left: CX[i], top: i === 1 ? CY + H / 2 + 54 : CY - H / 2 - 74 } }, a, h('small', { text: b })));
       const grp = h('div', { class: 'abs', style: { inset: 0 } }, glow, svg, ...rings, ...icons, ...labs);
       root.append(grp);
       const head = K.headline(E, root, { num: '05', size: 80, y: 330, lines: ['EIN STIMMIGES', '<em>GESAMTPAKET.</em>'], sub: 'Oberfläche, Erweiterungen und Betreuung greifen ineinander.' });
-      return { CX, CY, W, H, links, o0, o1, shineRect, glow, rings, icons, labs, grp, head, svg };
+      const pill = K.rolePill(E, head, { ico: 'banknote', role: 'GESCHÄFTSFÜHRUNG', said: 'Noch ein Abo.' });
+      return { pill, CX, CY, W, H, links, o0, o1, shineRect, glow, rings, icons, labs, grp, head, svg };
     },
     update(t, s) {
-      s.head.update(t, 44.2, 50.0);
+      s.head.update(t, 44.2, 50.0); s.pill.update(t, 46.2);
       const OFF = [[-760, 0], [720, -70], [760, 90]], tS = SNAP;
       const pos = [];
       s.links.forEach((g, i) => {
