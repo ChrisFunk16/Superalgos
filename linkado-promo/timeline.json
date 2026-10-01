@@ -4,24 +4,24 @@
     "width": 1920,
     "height": 1080,
     "fps": 30,
-    "duration": 60.0,
+    "duration": 64.0,
     "bpm": 120,
     "beat": 0.5,
     "bar": 2.0,
-    "note": "1 Takt = 2,0 s, 30 Takte = 60 s. Alle Szenengrenzen liegen auf Taktgrenzen. Dieses File ist der Vertrag zwischen Bild (src/) und Ton (audio/)."
+    "note": "1 Takt = 2,0 s, 32 Takte = 64 s (Szene 06 und das Schlussbild haben mehr Luft als in der 60-s-Fassung). Alle Szenengrenzen liegen auf Taktgrenzen. Dieses File ist der Vertrag zwischen Bild (src/) und Ton (audio/)."
   },
 
   "acts": [
     { "id": "chaos",   "start": 0.0,  "end": 20.0, "bars": "1-10",  "idea": "Drei Insellösungen, die nicht zusammenpassen. Spannung baut sich auf, dann Atempause." },
-    { "id": "clarity", "start": 20.0, "end": 52.0, "bars": "11-26", "idea": "Linkado: sechs Nutzenversprechen, die nacheinander einrasten. Ruhiger Groove wächst Schicht für Schicht." },
-    { "id": "finale",  "start": 52.0, "end": 60.0, "bars": "27-30", "idea": "Alles kristallisiert zum Linkado-Logo. Abschlusszeile, Ausklang." }
+    { "id": "clarity", "start": 20.0, "end": 54.0, "bars": "11-27", "idea": "Linkado: sechs Nutzenversprechen, die nacheinander einrasten. Ruhiger Groove wächst Schicht für Schicht." },
+    { "id": "finale",  "start": 54.0, "end": 64.0, "bars": "28-32", "idea": "Alles kristallisiert zum Linkado-Logo. Abschlusszeile, Ausklang." }
   ],
 
   "scenes": [
     { "id": "hook",      "start": 0.0,  "end": 2.0,  "bars": "1",     "text": "Alles funktioniert. Nur nicht dazwischen." },
-    { "id": "m365",      "start": 2.0,  "end": 6.0,  "bars": "2-3",   "text": "Microsoft 365 – bekannt, aber: abhängig von US-Konzernen · teuer · nicht zugeschnitten" },
-    { "id": "opendesk",  "start": 6.0,  "end": 10.0, "bars": "4-5",   "text": "openDesk – deutsche Lösung, aber: nur Oberfläche & Login für fremde Open-Source-Software" },
-    { "id": "nextcloud", "start": 10.0, "end": 14.0, "bars": "6-7",   "text": "Nextcloud – starke Open-Source-Basis, aber: oft nur das Nötigste gepflegt" },
+    { "id": "m365",      "start": 2.0,  "end": 6.0,  "bars": "2-3",   "text": "Der Allrounder – alles aus einer Hand, aber: abhängig vom Anbieter · Kosten wachsen mit · nicht auf dich zugeschnitten" },
+    { "id": "opendesk",  "start": 6.0,  "end": 10.0, "bars": "4-5",   "text": "Das fertige Portal – offen und lokal gedacht, aber: nur Oberfläche und Anmeldung · Werkzeuge bleiben einzeln · kein durchgängiges Erlebnis" },
+    { "id": "nextcloud", "start": 10.0, "end": 14.0, "bars": "6-7",   "text": "Die offene Basis – mächtig und frei, aber: Pflege bleibt bei dir · roh im Alltag · viel Technik, wenig Erlebnis" },
     { "id": "overwhelm", "start": 14.0, "end": 18.0, "bars": "8-9",   "text": "Fünf Blickwinkel: Noch ein Login (Mitarbeitende). Noch ein Tool (Teams). Noch ein Abo (Geschäftsführung). Noch eine KI (Datenschutz). Noch eine Frage an die IT." },
     { "id": "pause",     "start": 18.0, "end": 20.0, "bars": "10",    "text": "Es geht auch anders." },
 
@@ -30,9 +30,9 @@
     { "id": "appshop",   "start": 28.0, "end": 34.0, "bars": "15-17", "text": "Passende Werkzeuge an einem Ort. – Apps über den Linkado-Appshop auswählen und verwalten." },
     { "id": "help",      "start": 34.0, "end": 40.0, "bars": "18-20", "text": "Hilfe direkt in der Cloud. – Anleitungen und Support dort, wo Fragen entstehen." },
     { "id": "package",   "start": 40.0, "end": 46.0, "bars": "21-23", "text": "Ein stimmiges Gesamtpaket. – Oberfläche, Erweiterungen und Betreuung greifen ineinander." },
-    { "id": "time",      "start": 46.0, "end": 52.0, "bars": "24-26", "text": "Mehr Zeit fürs Wesentliche. – Weniger mit Technik beschäftigen, leichter zusammenarbeiten." },
+    { "id": "time",      "start": 46.0, "end": 54.0, "bars": "24-27", "text": "Mehr Zeit fürs Wesentliche. – Weniger mit Technik beschäftigen, leichter zusammenarbeiten." },
 
-    { "id": "finale",    "start": 52.0, "end": 60.0, "bars": "27-30", "text": "Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag. – Der offene Arbeitsplatz." }
+    { "id": "finale",    "start": 54.0, "end": 64.0, "bars": "28-32", "text": "Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag. – Der offene Arbeitsplatz." }
   ],
 
   "hits": [
@@ -40,19 +40,19 @@
     { "t": 1.0,  "kind": "ping",    "voice": 0, "note": "Hook: „Nur nicht“" },
     { "t": 1.5,  "kind": "ping",    "voice": 0, "note": "Hook: „dazwischen.“ (Buchstaben öffnen sich)" },
 
-    { "t": 2.0,  "kind": "card",    "voice": 1, "note": "Microsoft-365-Karte schlägt ein" },
+    { "t": 2.0,  "kind": "card",    "voice": 1, "note": "Karte „Der Allrounder“ schlägt ein (Ton A)" },
     { "t": 2.5,  "kind": "ping",    "voice": 1 },
     { "t": 3.0,  "kind": "ping",    "voice": 1 },
     { "t": 3.5,  "kind": "ping",    "voice": 1 },
     { "t": 5.5,  "kind": "shove",   "voice": 1, "note": "Karte wird nach hinten geschoben" },
 
-    { "t": 6.0,  "kind": "card",    "voice": 2, "note": "openDesk-Karte" },
+    { "t": 6.0,  "kind": "card",    "voice": 2, "note": "Karte „Das fertige Portal“ (Ton C)" },
     { "t": 6.5,  "kind": "ping",    "voice": 2 },
     { "t": 7.0,  "kind": "ping",    "voice": 2 },
     { "t": 7.5,  "kind": "ping",    "voice": 2 },
     { "t": 9.5,  "kind": "shove",   "voice": 2 },
 
-    { "t": 10.0, "kind": "card",    "voice": 3, "note": "Nextcloud-Karte" },
+    { "t": 10.0, "kind": "card",    "voice": 3, "note": "Karte „Die offene Basis“ (Ton E)" },
     { "t": 10.5, "kind": "ping",    "voice": 3 },
     { "t": 11.0, "kind": "ping",    "voice": 3 },
     { "t": 11.5, "kind": "ping",    "voice": 3 },
@@ -65,8 +65,10 @@
     { "t": 17.0, "kind": "text",    "note": "Blickwinkel 5 · IT: Noch eine Frage an die IT." },
     { "t": 18.0, "kind": "cut",     "note": "harter Schnitt: Chaos-Stimmen stoppen, nur Hall-Schwanz + tiefer Puls bleiben" },
     { "t": 19.0, "kind": "text",    "note": "Es geht auch anders. – Pad schwillt an" },
+    { "t": 19.0, "kind": "build",   "end": 19.92, "note": "Sog in den Drop: Herzschlag, A–C–E-Motiv, Rim-Wirbel, Riser; der Faden glüht auf" },
+    { "t": 19.92,"kind": "vacuum",  "end": 20.0, "note": "kurzes Einatmen (80 ms Stille) direkt vor dem Drop" },
 
-    { "t": 20.0, "kind": "drop",    "note": "Lichtflut: Groove startet (Kick), Linkado-Fenster erscheint" },
+    { "t": 20.0, "kind": "drop",    "note": "Drop: Lichtblitz, Druckwellen, Crash, Sonic Logo (Moll), Groove startet sofort voll (Kick, Bass, Hats, Clap)" },
     { "t": 20.25,"kind": "text",    "note": "Nextcloud als Basis." },
     { "t": 21.0, "kind": "whoosh",  "end": 22.2, "note": "Kristall-Front verwandelt das graue Fenster in das Linkado-Erlebnis" },
     { "t": 21.5, "kind": "text",    "note": "Linkado als Benutzererlebnis." },
@@ -74,10 +76,11 @@
     { "t": 24.0, "kind": "ping",    "voice": 0, "note": "Szene Übersicht" },
     { "t": 24.0, "kind": "swipe",   "note": "Ansicht rastet ein (Widgets)" },
     { "t": 24.5, "kind": "snap",    "note": "Widgets rasten ins Raster" },
-    { "t": 26.4, "kind": "ping",    "voice": 0, "note": "Suchergebnisse erscheinen" },
+    { "t": 26.4, "kind": "ping",    "voice": 0, "note": "Treffer im Menü erscheinen (erste Zeile: Assistent)" },
 
-    { "t": 25.4, "kind": "click",   "variant": "tap",    "note": "Suchfeld anklicken" },
-    { "t": 25.62,"kind": "type",    "end": 26.32, "n": 7,  "note": "„Angebot“ wird getippt" },
+    { "t": 25.0, "kind": "click",   "variant": "tap",    "note": "Raster-Symbol: das große Menü öffnet sich" },
+    { "t": 25.0, "kind": "swipe",   "note": "Menü fährt von links ein" },
+    { "t": 25.7, "kind": "type",    "end": 26.4, "n": 7,  "note": "„Angebot“ wird in „Was möchten Sie tun?“ getippt" },
     { "t": 28.0, "kind": "ping",    "voice": 0, "note": "Szene Appshop" },
     { "t": 28.0, "kind": "swipe",   "note": "Ansicht wechselt zu Apps und Pakete" },
     { "t": 30.0, "kind": "click",   "variant": "add",    "note": "App hinzufügen (1): Deck" },
@@ -110,13 +113,13 @@
     { "t": 46.0, "kind": "ping",    "voice": 0, "note": "Szene Mehr Zeit" },
     { "t": 46.0, "kind": "swipe",   "note": "Zeitleiste fährt ein" },
 
-    { "t": 52.0, "kind": "riser",   "end": 54.0, "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren" },
-    { "t": 53.5, "kind": "cut",     "end": 54.0, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
-    { "t": 54.0, "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Harmonie hellt auf (Moll -> Dur)" },
-    { "t": 54.5, "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
-    { "t": 54.75,"kind": "tagline", "note": "Die Möglichkeiten von Nextcloud." },
-    { "t": 56.0, "kind": "tagline", "note": "Einfach für deinen Alltag." },
-    { "t": 57.0, "kind": "tagline", "note": "Logo-Tagline + genau ein CTA; ab hier ≥ 3 s volles Endbild" },
-    { "t": 60.0, "kind": "end" }
+    { "t": 54  , "kind": "riser",   "end": 56, "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren" },
+    { "t": 55.5, "kind": "cut",     "end": 56, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
+    { "t": 56  , "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Harmonie hellt auf (Moll -> Dur)" },
+    { "t": 56.5, "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
+    { "t": 56.75,"kind": "tagline", "note": "Die Möglichkeiten von Nextcloud." },
+    { "t": 58  , "kind": "tagline", "note": "Einfach für deinen Alltag." },
+    { "t": 59  , "kind": "tagline", "note": "Logo-Tagline + genau ein CTA; ab hier 5 s volles Endbild" },
+    { "t": 64  , "kind": "end" }
   ]
 }

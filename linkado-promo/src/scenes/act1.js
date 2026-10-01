@@ -104,17 +104,17 @@ export default function register(E) {
         const g = h('div', { class: 'abs', style: { left: 0, top: 0, width: 1920, height: 1080, transformOrigin: '960px 540px', zIndex: 10 + i } });
         const card = h('div', { class: 'a1-card', style: { '--acc': cfg.acc } });
         const gaps = cfg.gaps.map(([ico, txt]) => h('div', { class: 'a1-gap', style: { '--acc': cfg.acc } }, h('span', { class: 'ic', html: icon(ico, 30, '#fff', 2.2) }), h('span', { html: txt })));
-        card.append(h('div', { class: 'a1-acc', style: { background: cfg.acc } }), h('div', { class: 'a1-name', text: cfg.name }),
+        card.append(h('div', { class: 'a1-acc', style: { background: cfg.acc } }), h('div', { class: 'a1-name', text: cfg.name, style: { fontSize: cfg.size + 'px' } }),
           h('div', { class: 'a1-ok', style: { '--acc': cfg.acc } }, h('span', { class: 'ck', html: icon('check', 20, '#3FBF8A', 3) }), h('span', { text: cfg.ok }), h('b', { text: 'ABER:' })),
           h('div', { class: 'a1-gaps' }, gaps),
-          h('div', { class: 'a1-foot' }, [0, 1, 2].map((k) => h('i', { style: { background: k === i ? cfg.acc : '' } })), h('span', { text: `LÖSUNG ${i + 1} VON 3`, style: { marginLeft: 8 } })));
+          h('div', { class: 'a1-foot' }, [0, 1, 2].map((k) => h('i', { style: { background: k === i ? cfg.acc : '' } })), h('span', { text: `ANSATZ ${i + 1} VON 3`, style: { marginLeft: 8 } })));
         g.append(card);
         const vis = cfg.visual(g);
         root.append(g);
         return { id: cfg.id, g, card, gaps, ok: card.querySelector('.a1-ok'), name: card.querySelector('.a1-name'), vis, t0: T0[cfg.id], pings: PING[cfg.id], shove: SHOVE[cfg.id], pile: PILE[cfg.id] };
       };
 
-      /* Visual 1 – Microsoft 365: „App-Raster von der Stange“ + Kostenschilder */
+      /* Visual 1 – Allrounder: „App-Raster von der Stange“ + Kostenschilder */
       const vM365 = (g) => {
         const win = h('div', { class: 'a1-win', style: { left: 1030, top: 280 } },
           h('div', { class: 'tb' }, h('i'), h('i'), h('i'), h('b', { text: 'Alle Apps' })),
@@ -139,7 +139,7 @@ export default function register(E) {
         };
       };
 
-      /* Visual 2 – openDesk: Portal-Fassade klappt auf, dahinter uneinheitliche Fenster */
+      /* Visual 2 – Fertiges Portal: Fassade klappt auf, dahinter uneinheitliche Fenster */
       const vOpenDesk = (g) => {
         const wrap = h('div', { class: 'abs', style: { left: 1030, top: 280, width: 780, height: 520, perspective: '1600px' } });
         const styles = [
@@ -168,14 +168,14 @@ export default function register(E) {
         };
       };
 
-      /* Visual 3 – Nextcloud: nacktes Wireframe + Update-Balken „nur das Nötigste“ */
+      /* Visual 3 – Offene Basis: nacktes Wireframe + Update-Balken */
       const vNextcloud = (g) => {
         const ui = buildUI(E);
         const w = ui.window({ raw: true }); w.setActive('Startseite'); w.main.append(ui.home().el);
         w.el.style.transformOrigin = '0 0';
         const frame = h('div', { class: 'abs', style: { left: 1030, top: 270, width: 780, height: 470 } }); frame.append(w.el); g.append(frame);
         const bar = h('div', { class: 'abs', style: { left: 1030, top: 770, width: 780, height: 70, borderRadius: 16, background: '#1B2335', border: '1.5px solid rgba(255,255,255,.14)', display: 'flex', alignItems: 'center', gap: 18, padding: '0 24px' } },
-          h('span', { html: icon('triangle-alert', 30, '#36A9E8', 2.4) }), h('span', { text: 'UPDATES: NUR DAS NÖTIGSTE', style: { font: '700 20px/1 var(--font-body)', letterSpacing: '.1em', color: CREAM, whiteSpace: 'nowrap' } }),
+          h('span', { html: icon('triangle-alert', 30, '#36A9E8', 2.4) }), h('span', { text: 'UPDATES: SELBST ERLEDIGEN', style: { font: '700 20px/1 var(--font-body)', letterSpacing: '.1em', color: CREAM, whiteSpace: 'nowrap' } }),
           h('div', { style: { flex: 1, height: 14, borderRadius: 7, background: 'rgba(255,255,255,.12)', position: 'relative', overflow: 'hidden' } }, h('div', { class: 'fillbar', style: { position: 'absolute', left: 0, top: 0, bottom: 0, width: '0%', background: '#36A9E8', borderRadius: 7 } })));
         g.append(bar);
         const tools = ['wrench', 'server', 'hammer'].map((n, k) => { const el = h('div', { class: 'abs', style: { left: 1030 + 90 + k * 280, top: 250, width: 76, height: 76, borderRadius: 20, background: '#36A9E8', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 18px rgba(0,0,0,.45)', zIndex: 6 }, html: icon(n, 40, '#fff', 2.2) }); g.append(el); return el; });
@@ -191,15 +191,16 @@ export default function register(E) {
         };
       };
 
+      // Bewusst ohne Produkt- oder Firmennamen: drei Ansätze, die jeder kennt – erst die Stärke, dann das „Aber“.
       const cfgs = [
-        { id: 'm365', name: 'MICROSOFT 365', ok: 'BEKANNT UND VERBREITET.', acc: ACC.m365, gaps: [['globe-lock', 'ABHÄNGIG VON<br>US-KONZERNEN'], ['euro', 'TEUER'], ['shirt', 'NICHT<br>ZUGESCHNITTEN']], visual: vM365 },
-        { id: 'opendesk', name: 'OPENDESK', ok: 'DEUTSCHE LÖSUNG.', acc: ACC.opendesk, gaps: [['panels-top-left', 'NUR OBERFLÄCHE<br>UND LOGIN'], ['blocks', 'FÜR FREMDE<br>OPEN-SOURCE-SOFTWARE'], ['unplug', 'KEIN DURCHGÄNGIGES<br>ERLEBNIS']], visual: vOpenDesk },
-        { id: 'nextcloud', name: 'NEXTCLOUD', ok: 'STARKE OPEN-SOURCE-BASIS.', acc: ACC.nextcloud, gaps: [['history', 'OFT NUR AUF DEM<br>NÖTIGSTEN STAND'], ['hammer', 'ROH UND UNFERTIG<br>IM ALLTAG'], ['server', 'VIEL TECHNIK,<br>WENIG ERLEBNIS']], visual: vNextcloud },
+        { id: 'm365', name: 'DER ALLROUNDER', size: 84, ok: 'ALLES AUS EINER HAND.', acc: ACC.m365, gaps: [['globe-lock', 'ABHÄNGIG VOM<br>ANBIETER'], ['euro', 'KOSTEN<br>WACHSEN MIT'], ['shirt', 'NICHT AUF DICH<br>ZUGESCHNITTEN']], visual: vM365 },
+        { id: 'opendesk', name: 'DAS FERTIGE PORTAL', size: 68, ok: 'OFFEN UND LOKAL GEDACHT.', acc: ACC.opendesk, gaps: [['panels-top-left', 'NUR OBERFLÄCHE<br>UND ANMELDUNG'], ['blocks', 'WERKZEUGE<br>BLEIBEN EINZELN'], ['unplug', 'KEIN DURCHGÄNGIGES<br>ERLEBNIS']], visual: vOpenDesk },
+        { id: 'nextcloud', name: 'DIE OFFENE BASIS', size: 76, ok: 'MÄCHTIG UND FREI.', acc: ACC.nextcloud, gaps: [['history', 'PFLEGE BLEIBT<br>BEI DIR'], ['hammer', 'ROH<br>IM ALLTAG'], ['server', 'VIEL TECHNIK,<br>WENIG ERLEBNIS']], visual: vNextcloud },
       ];
       const groups = cfgs.map(mkGroup);
 
       /* ---- Überforderung (14–18): fünf Blickwinkel – Login · Tool · Abo · KI · IT ---- */
-      const logins = [[120, 120, '#E5565B', 'Microsoft-Konto'], [1480, 150, '#7B6CF6', 'Portal-Login'], [1360, 700, '#36A9E8', 'Cloud-Zugang'], [150, 700, '#8E97AE', 'VPN']].map(([x, y, c, ttl], k) => {
+      const logins = [[120, 120, '#E5565B', 'Firmen-Konto'], [1480, 150, '#7B6CF6', 'Portal-Login'], [1360, 700, '#36A9E8', 'Cloud-Zugang'], [150, 700, '#8E97AE', 'VPN']].map(([x, y, c, ttl], k) => {
         const el = h('div', { class: 'a1-login', style: { borderTop: `6px solid ${c}` } }, h('h6', { text: ttl }), h('div', { class: 'f', text: 'Benutzername' }), h('div', { class: 'f', text: '••••••••' }), h('div', { class: 'bt', style: { background: c }, text: 'Anmelden' }));
         root.append(el); return { el, x, y, c, rot: [-6, 5, -4, 7][k] };
       });
@@ -236,8 +237,10 @@ export default function register(E) {
       const thrFlag = h('span', { class: 'flag abs', style: { width: 28, height: 14, zIndex: 51 } });
       root.append(ask, thr, thrFlag);
       const dark = h('div', { class: 'abs', style: { inset: 0, background: '#0E131E', zIndex: 35 } }); root.append(dark);
+      // Sog in den Drop: der Faden glüht auf, ein orangenes Licht wächst aus der Linie, kurz vor 20.0 „atmet alles ein“
+      const pGlow = h('div', { class: 'abs', style: { left: 60, top: THREAD_Y - 900, width: 1800, height: 1800, background: 'radial-gradient(closest-side, rgba(230,126,34,.55), rgba(230,126,34,.18) 45%, rgba(230,126,34,0) 100%)', zIndex: 36 } }); root.append(pGlow);
 
-      return { glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
+      return { pGlow, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
     },
 
     update(t, s) {
@@ -329,6 +332,11 @@ export default function register(E) {
       s.askLetters.forEach((el, k) => { const p = tw(t, ASK + k * 0.035, ASK + k * 0.035 + 0.45, ease.out3); tf(el, { y: 26 * (1 - p), o: p, blur: 0 }); });
       const thrP = ease.io2(prog(t, ASK, 20.0));
       show(s.thr, inPause && t >= ASK); s.thr.firstChild.setAttribute('x2', (1860 * thrP).toFixed(1));
+      const pg = tw(t, ASK, 19.9, ease.in2), inh = tw(t, 19.86, 19.99, ease.in2);          // Aufbau → kurzes Einatmen direkt vor dem Drop
+      s.thr.firstChild.setAttribute('stroke-width', (4 + 8 * pg).toFixed(2));
+      show(s.pGlow, inPause && t >= ASK); tf(s.pGlow, { s: (0.25 + 0.75 * pg) * (1 - 0.35 * inh), o: 0.95 * pg * (1 - 0.5 * inh) });
+      tf(s.ask, { s: 1 + 0.03 * pg - 0.05 * inh });
+      if (inPause) s.grid.style.opacity = 0.4 + 0.5 * pg;
       show(s.thrFlag, inPause && t >= ASK); Object.assign(s.thrFlag.style, { left: (1860 * thrP - 2) + 'px', top: (THREAD_Y - 7) + 'px' });
       // alles andere ist ab dem Schnitt aus
       [s.hook].forEach((el) => { if (!pre) show(el, false); });

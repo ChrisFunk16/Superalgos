@@ -14,6 +14,7 @@ const MAIN = { w: WIN.w - WIN.rail, h: WIN.h - WIN.top };   // 1396 × 844
 export const LAY = {
   rail: { x: 42, y: (i) => WIN.top + 8 + i * 77 + 36, support: [42, WIN.top + MAIN.h - 8 - 36] },
   home: { search: [WIN.rail + 64, WIN.top + 184, 520, 50] },
+  menu: { grid: [33, 28], input: [WIN.rail + 160, WIN.top + 85], row: (i) => [WIN.rail + 150, WIN.top + 150 + i * 56] },
   apps: {
     x0: WIN.rail + 232, scroll: 590, pk: 778,
     card: (k) => [WIN.rail + 232 + 36 + k * 302, WIN.top + 476, 276, 236],
@@ -213,6 +214,36 @@ export function installUiCss(E) {
   .ui-rcard p.g { color:#6B6F78; }
   .ui-rcard .lk { margin-top:12px; font:700 12.5px/1 var(--font-body); color:#171A22; display:flex; align-items:center; gap:8px; }
   .ui-rcard u { font:500 12.5px/1 var(--font-body); color:#171A22; }
+
+  /* --- Großes Menü (Seitenleiste über dem Raster-Symbol) --- */
+  .ui-gridtile.on { background:rgba(255,255,255,.22); }
+  .ui-dim { position:absolute; inset:0; background:rgba(18,22,34,.46); z-index:11; }
+  .ui-menu { position:absolute; left:0; top:0; bottom:0; width:332px; background:#fff; z-index:12; box-shadow:18px 0 60px rgba(0,0,0,.34); overflow:hidden; font-family:var(--font-body); color:#171A22; }
+  .ui-mhead { position:absolute; left:0; top:0; right:0; height:120px; background:#1E2430; overflow:hidden; }
+  .ui-mhead::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(100deg, transparent 0 17px, rgba(255,255,255,.055) 17px 18.5px); }
+  .ui-mlogo { position:absolute; left:16px; top:12px; font:700 40px/1 var(--font-display); color:#fff; letter-spacing:-.01em; }
+  .ui-mx { position:absolute; right:18px; top:22px; color:#fff; opacity:.9; }
+  .ui-msearch { position:absolute; left:12px; right:12px; top:64px; height:46px; border-radius:9px; background:#fff; display:flex; align-items:center; gap:11px; padding:0 10px 0 13px; font:500 15px/1 var(--font-body); color:#6B6F78; box-shadow:0 0 0 3px rgba(255,255,255,.28); }
+  .ui-msearch .kbd { margin-left:auto; border:1.5px solid #D2D2D2; border-radius:6px; padding:3px 7px; font:600 11.5px/1 var(--font-body); color:#8A8A8A; white-space:nowrap; }
+  .ui-mbody { position:absolute; left:0; right:0; top:120px; bottom:50px; overflow:hidden; }
+  .ui-mcap { display:flex; align-items:center; gap:9px; padding:0 18px; height:30px; margin-top:8px; font:700 12px/1 var(--font-body); letter-spacing:.12em; color:#2A2F3A; }
+  .ui-favs { display:flex; gap:10px; padding:0 12px 0 14px; }
+  .ui-fav { width:96px; height:98px; border-radius:10px; border:1px solid #ECE5DC; padding:12px 12px 0; background:#fff; }
+  .ui-fav .ic { width:42px; height:42px; border-radius:9px; background:#FBEBDD; display:flex; align-items:center; justify-content:center; color:#171A22; margin-bottom:14px; }
+  .ui-fav b { font:700 13.5px/1 var(--font-body); }
+  .ui-mhint { padding:10px 18px 4px; font:500 11.5px/1.45 var(--font-body); color:#5E6168; } .ui-mhint u { color:#171A22; }
+  .ui-mi { position:relative; height:42px; margin:0 10px 0 12px; border-radius:8px; display:flex; align-items:center; gap:12px; padding:0 10px 0 12px; font:500 15px/1 var(--font-body); color:#171A22; white-space:nowrap; }
+  .ui-mi small { font:500 11.5px/1 var(--font-body); color:#6B6F78; margin-left:2px; }
+  .ui-mi.on { background:#FCEBDD; } .ui-mi.on::before { content:""; position:absolute; left:-8px; top:11px; width:5px; height:20px; background:var(--orange); transform:skewX(-14deg); }
+  .ui-mfoot { position:absolute; left:0; right:0; bottom:0; height:50px; background:#fff; border-top:1px solid #EEE8DF; display:flex; align-items:center; justify-content:space-between; padding:0 18px; font:500 12.5px/1 var(--font-body); color:#2A2F3A; }
+  .ui-mfoot span { display:inline-flex; align-items:center; gap:8px; }
+  .ui-mres { position:absolute; left:0; right:0; top:0; bottom:0; background:#fff; padding:6px 10px; }
+  .ui-mrr { height:56px; border-radius:9px; display:flex; align-items:center; gap:12px; padding:0 10px; font:600 14.5px/1.2 var(--font-body); color:#171A22; }
+  .ui-mrr.on { background:#FCEFDD; }
+  .ui-mrr .ic { width:34px; height:34px; border-radius:8px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; flex:none; color:#171A22; }
+  .ui-mrr .ic.ai { background:linear-gradient(135deg,#E67E22,#C76A19); color:#fff; }
+  .ui-mrr small { display:block; font:500 12px/1.3 var(--font-body); color:#6F6C66; margin-top:2px; white-space:nowrap; }
+  .ui-mrr .tx { overflow:hidden; }
 
   /* --- Cursor & Klick --- */
   .ui-cur { position:absolute; left:0; top:0; width:34px; height:34px; z-index:50; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.35)); }
@@ -463,6 +494,36 @@ export function buildUI(E) {
     return { el, menu, sc, inp, input: inp.firstChild, caret: inp.querySelector('.ui-caret'), zone, arts: artEls, artsLbl, ai, steps, rOld, rNew, reply, banner, kto, hk, h1: sc.querySelector('.ui-h1') };
   }
 
+  /* Großes Menü: Suche „Was möchten Sie tun?“, Favoriten, Bereiche; bei Eingabe wird die Liste durch Treffer ersetzt (erste Zeile: Assistent) */
+  function menu(query = 'Angebot') {
+    const item = (g, title, sub, on) => h('div', { class: 'ui-mi' + (on ? ' on' : '') }, g.startsWith('fi:') ? h('span', { html: fi(g.slice(3), 20) }) : ic(g, 20, 'currentColor', 2), T('', title, 'span'), sub ? h('small', { class: 't', text: sub }) : null);
+    const cap = (txt) => h('div', { class: 'ui-mcap' }, tick(), T('', txt));
+    const favs = h('div', { class: 'ui-favs' }, [['fi:talk', 'Talk'], ['fi:cal', 'Kalender']].map(([g, l]) => h('div', { class: 'ui-fav' }, h('div', { class: 'ic', html: fi(g.slice(3), 22) }), h('b', { class: 't', text: l }))));
+    const cats = h('div', {},
+      cap('FÜR SIE'), favs, h('div', { class: 'ui-mhint t', html: 'Ihre Favoriten, dann was Sie oft öffnen.<br>Gezählt wird nur in dieser Cloud. <u>Einstellen</u>' }),
+      h('div', { style: { height: 8 } }),
+      item('fi:home', 'Startseite', 'Ihr Tag auf einen Blick', true), item('layout-grid', 'Übersicht', 'Kacheln und Widgets'),
+      cap('START'), item('history', 'Aktivität', 'Wer hat was geändert'), item('fi:files', 'Dateien'), item('image', 'Fotos'),
+      cap('KOMMUNIKATION'), item('fi:mail', 'E-Mail'), item('messages-square', 'Forum', 'Fragen und Diskussionen'), item('fi:talk', 'Talk', 'Chat und Videoanruf'), item('bell', 'Ankündigungen', 'Aushänge für alle'),
+      cap('ORGANISATION'), item('fi:cal', 'Kalender', 'Termine und Urlaub'), item('fi:contacts', 'Kontakte'), item('square-check', 'Aufgaben'), item('notebook-pen', 'Notizen'));
+    const rows = [
+      ['sparkles', 'Assistent fragen', '„Stand beim Angebot Hartmann?“', 'ai'], ['file-text', 'Angebot_Hartmann.pdf', 'Datei · Vertrieb · gestern', ''], ['calendar-check', 'Angebot besprechen', 'Termin · heute 11:30', ''],
+      ['message-circle', 'Angebot Hartmann – Team', 'Talk · 3 neue Nachrichten', ''], ['user-round', 'Lena Vogt', 'Person · Vertrieb', ''],
+    ];
+    const hl = (t_) => { const i = t_.toLowerCase().indexOf(query.toLowerCase()); return i < 0 ? t_ : t_.slice(0, i) + '<mark class="ui-m">' + t_.slice(i, i + query.length) + '</mark>' + t_.slice(i + query.length); };
+    const rowEls = rows.map(([n, a, b, k], i) => h('div', { class: 'ui-mrr' + (i === 0 ? ' on' : '') }, h('span', { class: 'ic ' + k, html: icon(n, 18, 'currentColor', 2) }), h('div', { class: 'tx' }, h('span', { class: 't', html: hl(a) }), h('small', { class: 't', text: b }))));
+    const res = h('div', { class: 'ui-mres' }, h('div', { class: 'ui-mcap', style: { margin: '6px 0 4px', padding: '0 8px' } }, T('', 'TREFFER ÜBERALL')), rowEls);
+    const input = h('span', { class: 't', text: 'Was möchten Sie tun?' });
+    const caret = h('span', { class: 'ui-caret', style: { display: 'none', height: 20 } });
+    const search = h('div', { class: 'ui-msearch' }, ic('search', 20, '#6B6F78', 2), input, caret, h('span', { class: 'kbd t', text: 'Strg K' }));
+    const head = h('div', { class: 'ui-mhead' }, h('div', { class: 'ui-mlogo t', text: 'LINKADO' }), h('span', { class: 'ui-mx', html: icon('x', 22, '#fff', 2.4) }), search);
+    const scroll = h('div', {}, cats);
+    const body = h('div', { class: 'ui-mbody' }, scroll, res);
+    const foot = h('div', { class: 'ui-mfoot' }, h('span', {}, h('span', { html: fi('support', 17) }), T('', 'Hilfe')), h('span', {}, ic('sliders-horizontal', 16, 'currentColor', 2), T('', 'Anpassen')), h('span', {}, ic('palette', 16, 'currentColor', 2), T('', 'Menü gestalten')));
+    const el = h('div', { class: 'ui-menu' }, head, body, foot);
+    return { el, input, caret, search, cats, scroll, res, rows: rowEls };
+  }
+
   /* Cursor (Pfeil) und Klick-Welle */
   function cursor() {
     const el = h('div', { class: 'ui-cur', html: '<svg viewBox="0 0 34 34" width="34" height="34"><path d="M5 3 L5 26 L11 21 L15 30 L19 28 L15 20 L23 20 Z" fill="#fff" stroke="#1F2532" stroke-width="2" stroke-linejoin="round"/></svg>' });
@@ -470,5 +531,5 @@ export function buildUI(E) {
     return { el, rip };
   }
 
-  return { window: window_, home, results, apps, support, cursor, APPS, PKG_ROWS, MAIN, WIN, LAY, ic, T, lGlyph, fi };
+  return { window: window_, home, results, menu, apps, support, cursor, APPS, PKG_ROWS, MAIN, WIN, LAY, ic, T, lGlyph, fi };
 }

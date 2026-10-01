@@ -1,5 +1,5 @@
 // ============================================================
-// Finale – Kristallisation (52–60 s)
+// Finale – Kristallisation (54–64 s; Zeiten unten in der Beschreibung noch auf die 60-s-Fassung bezogen: +2 s)
 // Alles, was Linkado verbindet, kristallisiert zum Logo:
 //  51.5–53.0  die Knoten aus Szene 06 (handoffDots) bekommen Gesellschaft; der orange FADEN
 //             (setzt den Fortschrittsfaden von unten fort) verbindet sie zu einem Netz
@@ -19,9 +19,10 @@ const CTA_URL = 'linkado.de';
 export default function register(E) {
   const { h, tf, tw, ease, prog, clamp, lerp, show, rng, icon, LOGO } = E;
   const hit = (kind) => E.hits(kind).map((x) => x.t);
-  const T_CRYSTAL = hit('crystal')[0];                       // 54.0
-  const T_WEDGE = hit('snap').filter((x) => x > 54)[0];      // 54.5
-  const T_LINES = hit('tagline');                            // 54.75, 56.0, 57.0
+  const T_CRYSTAL = hit('crystal')[0];                       // 56.0
+  const SH = T_CRYSTAL - 54.0;                               // Verschiebung gegenüber der 60-s-Fassung (Szene 06 hat 2 s mehr Luft): 2.0
+  const T_WEDGE = hit('snap').filter((x) => x > T_CRYSTAL - 0.5)[0];      // 56.5
+  const T_LINES = hit('tagline');                            // 56.75, 58.0, 59.0
   const NAVY = '#1F2532', OR = '#E67E22';
   const K = 1000 / LOGO.viewBox[2];                          // Logo-Maßstab (Breite 1000 px)
   const LW = 1000, LH = LOGO.viewBox[3] * K;
@@ -42,7 +43,7 @@ export default function register(E) {
   `);
 
   E.scene({
-    id: 'finale', start: 52, end: 60, pre: 0.5, z: 40,
+    id: 'finale', start: E.T('finale').start, end: E.T('finale').end, pre: 0.5, z: 40,
     build(root) {
       root.style.background = 'var(--cream)';
       const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -62,6 +63,9 @@ export default function register(E) {
       const shine = h('div', { class: 'abs', style: { top: 0, width: 150, height: LH + 120, background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.9))', transform: `skewX(${-SKEW}deg)` } });
       const edge = h('div', { class: 'abs', style: { top: 0, width: 5, height: LH + 120, background: OR, boxShadow: '0 0 30px rgba(230,126,34,.8)', transform: `skewX(${-SKEW}deg)` } });
       edgeWrap.append(shine, edge);
+      // sanfter Lichtreflex über das Logo im ruhigen Endbild (hält die 5 s lebendig)
+      const glint = h('div', { class: 'abs', style: { left: -300, top: -20, width: 170, height: LH + 40, background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55) 50%, rgba(255,255,255,0))', transform: 'skewX(-18deg)', display: 'none', pointerEvents: 'none', zIndex: 6 } });
+      logoWrap.append(glint);
       root.append(logoWrap, facetCv, edgeWrap);
       // wandernder Flaggen-Steg (Kopf des Fadens)
       const wedge = h('div', { class: 'abs', style: { left: -25.5 * K, top: -13.5 * K, width: 51 * K, height: 27 * K, zIndex: 3 } });
@@ -86,8 +90,8 @@ export default function register(E) {
       loops.forEach((lp) => { const b = targets.length; lp.pts.forEach((q) => targets.push(q)); lp.pts.forEach((_, i) => tEdges.push([b + i, b + ((i + 1) % lp.pts.length)])); });
 
       /* ---------- Knoten: Übergabe aus Szene 06 + Gesellschaft ---------- */
-      const r = rng(23), base = handoffDots(E).map((d) => ({ x: d.x, y: d.y, c: d.c, r: d.r, t: 51.0 }));
-      for (let i = 0; i < 130; i++) base.push({ x: r.range(60, 1860), y: r.range(70, 1010), c: r.pick(['#1F2532', '#8B837A', '#E67E22', '#343D56', '#B8B0A2']), r: r.range(3, 6.5), t: 52.0 + r.range(0, 1.0) });
+      const r = rng(23), base = handoffDots(E).map((d) => ({ x: d.x, y: d.y, c: d.c, r: d.r, t: 51.0 + SH }));
+      for (let i = 0; i < 130; i++) base.push({ x: r.range(60, 1860), y: r.range(70, 1010), c: r.pick(['#1F2532', '#8B837A', '#E67E22', '#343D56', '#B8B0A2']), r: r.range(3, 6.5), t: 52.0 + SH + r.range(0, 1.0) });
       const N = base.length, T = targets.length;
       const order = base.map((_, i) => i).sort((a, b) => base[a].x - base[b].x || base[a].y - base[b].y);
       const taken = new Array(T).fill(-1);
@@ -129,7 +133,7 @@ export default function register(E) {
       const tagEl = h('div', { class: 'fn-tag', style: { top: LOGO_TOP_FINAL + LH + 30 }, text: TAGLINE });
       const cta = h('div', { class: 'fn-cta' }, h('div', { class: 'btn', style: { padding: '28px 58px 28px 42px', fontSize: 34, letterSpacing: '.06em' } }, h('span', { text: CTA_LABEL }), h('span', { html: icon('arrow-up-right', 30, '#fff', 2.6) })), h('div', { class: 'u', text: CTA_URL }));
       root.append(line1, line2, uline, tagEl, cta);
-      return { thread, partPaths, cv, g, dpr, spot, logoWrap, logoSvg, flagPart, facetCv, fg, edgeWrap, shine, edge, wedge, flash, base, N, T, targets, tEdges, edges, facets, line1, line2, uline, tagEl, cta };
+      return { glint, thread, partPaths, cv, g, dpr, spot, logoWrap, logoSvg, flagPart, facetCv, fg, edgeWrap, shine, edge, wedge, flash, base, N, T, targets, tEdges, edges, facets, line1, line2, uline, tagEl, cta };
     },
 
     update(t, s) {
@@ -149,21 +153,21 @@ export default function register(E) {
       const netA = t < T_CRYSTAL + 0.9 ? 1 : 0;
       if (netA) {
         // Knotenpositionen
-        const cont = (n) => ease.uiInOut(prog(t, 53.0 + n.delay, 53.85 + n.delay * 0.4));
+        const cont = (n) => ease.uiInOut(prog(t, 53.0 + SH + n.delay, 53.85 + SH + n.delay * 0.4));
         const pos = base.map((n, i) => {
           const c = cont(n), tg = targets[n.ti];
           const dx = Math.sin(t * 0.9 + i) * 7 * (1 - c), dyv = Math.cos(t * 0.8 + i * 1.3) * 7 * (1 - c);
-          const still = t >= 53.5 && t < T_CRYSTAL ? 0.55 : 1;
+          const still = t >= 53.5 + SH && t < T_CRYSTAL ? 0.55 : 1;
           return [lerp(n.x + dx * still, tg[0], c), lerp(n.y + dyv * still, tg[1], c)];
         });
         // dünne Nachbarschaftskanten (wachsen heran, lösen sich beim Zusammenziehen)
-        const eFade = 1 - tw(t, 53.2, 53.8);
+        const eFade = 1 - tw(t, 53.2 + SH, 53.8 + SH);
         if (eFade > 0.01) {
           g.lineWidth = 1.4;
           edges.forEach((e) => { const p = prog(t, e.t, e.t + 0.7); if (p <= 0) return; const A = pos[e.a], B = pos[e.b]; g.strokeStyle = `rgba(31,37,50,${(0.2 * eFade).toFixed(3)})`; g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(lerp(A[0], B[0], ease.out3(p)), lerp(A[1], B[1], ease.out3(p))); g.stroke(); });
         }
         // Umriss-Kanten des Logos (Konstellation)
-        const oA = tw(t, 53.45, 53.95) * (crystalOn ? 1 - tw(t, T_CRYSTAL + 0.05, T_CRYSTAL + 0.6) : 1);
+        const oA = tw(t, 53.45 + SH, 53.95 + SH) * (crystalOn ? 1 - tw(t, T_CRYSTAL + 0.05, T_CRYSTAL + 0.6) : 1);
         if (oA > 0.01) {
           g.lineWidth = 1.6; g.strokeStyle = `rgba(31,37,50,${(0.55 * oA).toFixed(3)})`; g.beginPath();
           s.tEdges.forEach(([a, b]) => { g.moveTo(targets[a][0], targets[a][1] + 0); g.lineTo(targets[b][0], targets[b][1]); }); g.stroke();
@@ -171,15 +175,15 @@ export default function register(E) {
         // Faden entlang der festen Kurve
         const spl = thread;
         const uFade = 1 - tw(t, T_WEDGE + 0.05, T_WEDGE + 0.4);
-        const uP = ease.io2(prog(t, 52.0, T_WEDGE - 0.05)), uDraw = uP * (spl.length - 1);
+        const uP = ease.io2(prog(t, 52.0 + SH, T_WEDGE - 0.05)), uDraw = uP * (spl.length - 1);
         const full = Math.floor(uDraw), frac = uDraw - full;
         let head = spl[0];
-        if (uFade > 0.01 && t >= 52.0) {
+        if (uFade > 0.01 && t >= 52.0 + SH) {
           g.lineWidth = 3.6; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = `rgba(230,126,34,${uFade.toFixed(3)})`; g.beginPath(); g.moveTo(spl[0][0], spl[0][1]);
           for (let i = 1; i <= full; i++) g.lineTo(spl[i][0], spl[i][1]);
           if (full < spl.length - 1) { head = [lerp(spl[full][0], spl[full + 1][0], frac), lerp(spl[full][1], spl[full + 1][1], frac)]; g.lineTo(head[0], head[1]); } else head = spl[spl.length - 1];
           g.stroke();
-        } else head = t < 52.0 ? spl[0] : FLAG_C;
+        } else head = t < 52.0 + SH ? spl[0] : FLAG_C;
         // Knoten
         base.forEach((n, i) => {
           const p = pos[i], appear = tw(t, n.t, n.t + 0.5, ease.out3);
@@ -195,23 +199,25 @@ export default function register(E) {
         g.globalAlpha = 1;
         // Flaggen-Steg wandert mit der Fadenspitze
         const travel = t < T_WEDGE;
-        show(s.wedge, travel && t >= 52.0);
-        const wsc = lerp(0.5, 1, ease.in2(prog(t, 53.6, T_WEDGE)));
-        tf(s.wedge, { x: head[0], y: head[1], s: wsc, o: tw(t, 52.0, 52.3) });
+        show(s.wedge, travel && t >= 52.0 + SH);
+        const wsc = lerp(0.5, 1, ease.in2(prog(t, 53.6 + SH, T_WEDGE)));
+        tf(s.wedge, { x: head[0], y: head[1], s: wsc, o: tw(t, 52.0 + SH, 52.3 + SH) });
       } else show(s.wedge, false);
 
       /* ---- Kristall: Lichtblitz, Kante, Buchstaben, Facetten ---- */
       const fl = t >= T_CRYSTAL - 0.12 && t < T_CRYSTAL + 0.5 ? (t < T_CRYSTAL ? tw(t, T_CRYSTAL - 0.12, T_CRYSTAL, ease.in3) : 1 - tw(t, T_CRYSTAL, T_CRYSTAL + 0.5, ease.out3)) : 0;
       show(s.flash, fl > 0.001); s.flash.style.opacity = (0.8 * fl).toFixed(3);
-      s.spot.style.opacity = tw(t, T_CRYSTAL, T_CRYSTAL + 1.0) * 0.9 + tw(t, 53.3, T_CRYSTAL) * 0.25;
+      s.spot.style.opacity = tw(t, T_CRYSTAL, T_CRYSTAL + 1.0) * 0.9 + tw(t, 53.3 + SH, T_CRYSTAL) * 0.25;
       // Logo-Buchstaben (ohne Flaggen-Steg) hinter der Kante sichtbar machen
       const lw = s.logoWrap;
       lw.style.top = logoY + 'px';
       const edgeLocalX = xf - (CX - LW / 2), clipTop = -60, clipBot = LH + 60;
       lw.style.clipPath = !crystalOn ? 'polygon(0 0,0 0,0 0)' : sweep >= 1 ? 'none' : `polygon(-120px ${clipTop}px, ${(edgeLocalX + sl).toFixed(1)}px ${clipTop}px, ${(edgeLocalX - sl).toFixed(1)}px ${clipBot}px, -120px ${clipBot}px)`;
       s.flagPart.style.opacity = t >= T_WEDGE ? 1 : 0;
-      const breathe = t > 55.5 ? 1 + 0.003 * Math.sin((t - 55.5) * 1.6) : 1;
+      const breathe = t > 55.5 + SH ? 1 + 0.003 * Math.sin((t - 55.5 - SH) * 1.6) : 1;
       lw.style.transform = `scale(${(0.985 + 0.015 * tw(t, T_CRYSTAL, T_CRYSTAL + 0.9, ease.out3)) * breathe})`;
+      const gT = T_LINES[2] + 1.8, gp = prog(t, gT, gT + 1.0);
+      show(s.glint, gp > 0 && gp < 1); s.glint.style.left = lerp(-260, LW + 140, ease.uiInOut(gp)).toFixed(1) + 'px'; s.glint.style.opacity = (0.95 * Math.sin(Math.PI * gp)).toFixed(3);
       // Kante
       const edgeOn = crystalOn && sweep < 1;
       show(s.edgeWrap, edgeOn); s.edgeWrap.style.top = (logoY - 60) + 'px';
@@ -251,7 +257,7 @@ export default function register(E) {
       const cg = tw(t, T_LINES[2] + 0.25, T_LINES[2] + 0.95, ease.ui);
       tf(s.cta, { y: 20 * (1 - cg), o: cg });
       // Hintergrund erst sanft einblenden (Szene 06 liegt bis 52.0 darunter)
-      s.logoWrap.parentNode.style.opacity = tw(t, 51.5, 51.62);
+      s.logoWrap.parentNode.style.opacity = tw(t, 51.5 + SH, 51.62 + SH);
     },
   });
 

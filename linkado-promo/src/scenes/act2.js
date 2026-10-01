@@ -1,5 +1,5 @@
 // ============================================================
-// Act II – Klarheit (20–52 s): Hintergrund + Lichtflut, Overlay (Sneak Peek + Faden),
+// Act II – Klarheit (20–54 s): Hintergrund + Lichtflut, Overlay (Sneak Peek + Faden),
 // und die vier Oberflächen-Szenen 01–04 in EINEM durchgehenden Linkado-Fenster:
 //   01 Nextcloud als Basis, Linkado als Benutzererlebnis   (20–24)
 //   02 Mehr Übersicht im Arbeitsalltag                      (24–28)
@@ -23,26 +23,45 @@ export default function register(E) {
 
   /* ---------------------------------------------------------------- Hintergrund + Lichtflut */
   E.scene({
-    id: 'a2-bg', start: 20, end: 52, z: 10,
-    build(root) { const flood = h('div', { class: 'abs', style: { inset: 0, background: 'var(--cream)' } }); root.append(flood); return { flood }; },
+    id: 'a2-bg', start: 20, end: 54, z: 10,
+    build(root) {
+      const flood = h('div', { class: 'abs', style: { inset: 0, background: 'var(--cream)' } });
+      // Drop-Schlag bei 20.0: Lichtblitz, zwei Druckwellen und ein Funkenkranz aus der Bildmitte (rein dekorativ, Marken-Orange/Navy/Creme)
+      const mkRing = (col, w, z) => h('div', { class: 'abs', style: { left: 960, top: 540, borderRadius: '50%', border: `${w}px solid ${col}`, zIndex: z } });
+      const ring = mkRing('#E67E22', 12, 3), ring2 = mkRing('#FFFFFF', 7, 4);
+      const r = E.rng(5);
+      const dots = Array.from({ length: 34 }, (_, k) => {
+        const a = (k / 34) * Math.PI * 2 + r.range(-0.1, 0.1), d0 = r.range(120, 260), d1 = r.range(640, 1280), sz = r.range(9, 26);
+        const el = h('div', { class: 'abs', style: { left: 960 - sz / 2, top: 540 - sz / 2, width: sz, height: sz, borderRadius: k % 3 === 0 ? '3px' : '50%', background: ['#E67E22', '#E67E22', '#1F2532', '#F7DDBF'][k % 4], zIndex: 5 } });
+        root.append(el); return { el, a, d0, d1, sz };
+      });
+      const flash = h('div', { class: 'abs', style: { inset: 0, background: '#fff', zIndex: 6, opacity: 0 } });
+      root.append(flood, ring, ring2, flash);
+      return { flood, ring, ring2, dots, flash };
+    },
     update(t, s) {
-      const p = tw(t, 20.0, 20.8, ease.out4);
-      s.flood.style.clipPath = p >= 1 ? 'none' : `circle(${(1400 * p).toFixed(1)}px at 50% 50%)`;
+      const p = tw(t, 20.0, 20.6, ease.out4);
+      s.flood.style.clipPath = p >= 1 ? 'none' : `circle(${(1500 * p).toFixed(1)}px at 50% 50%)`;
+      const a = t - 20.0;
+      const ringAt = (el, t0, dur, R1) => { const q = tw(a, t0, t0 + dur, ease.out4), R = 40 + R1 * q; show(el, a >= t0 && a < t0 + dur + 0.02); Object.assign(el.style, { width: 2 * R + 'px', height: 2 * R + 'px', marginLeft: -R + 'px', marginTop: -R + 'px', opacity: (1 - tw(a, t0 + 0.2 * dur, t0 + dur, ease.in2)).toFixed(3) }); };
+      ringAt(s.ring, 0.0, 0.9, 1500); ringAt(s.ring2, 0.07, 0.8, 1250);
+      s.dots.forEach((d) => { const q = ease.out4(prog(a, 0, 1.0)), dist = lerp(d.d0, d.d1, q); show(d.el, a >= 0 && a < 1.05); tf(d.el, { x: Math.cos(d.a) * dist, y: Math.sin(d.a) * dist, s: 1 - 0.55 * q, o: 1 - tw(a, 0.5, 1.0, ease.in2) }); });
+      show(s.flash, a >= 0 && a < 0.45); s.flash.style.opacity = (0.9 * (1 - tw(a, 0.0, 0.32, ease.out3))).toFixed(3);
     },
   });
 
   /* ---------------------------------------------------------------- Overlay: Sneak Peek + Faden */
-  const NODE_T = [20.25, 24.0, 28.0, 34.0, 40.0, 46.0, 52.0];
+  const NODE_T = [20.25, 24.0, 28.0, 34.0, 40.0, 46.0, 54.0];
   const NODE_X = (i) => 110 + i * (1700 / 6);       // 110 … 1810 (Index 6 = Ziel: Linkado)
   const BAR_Y = 1044;
-  const ovOut0 = (t) => 1 - tw(t, 52.0, 52.7);
+  const ovOut0 = (t) => 1 - tw(t, 54.0, 54.7);
   const progressX = (t) => {
     if (t < NODE_T[0]) return NODE_X(0);
     for (let i = 0; i < 6; i++) if (t < NODE_T[i + 1]) return lerp(NODE_X(i), NODE_X(i + 1), ease.io2(prog(t, NODE_T[i] + 0.35, NODE_T[i + 1] - 0.1)));
     return NODE_X(6);
   };
   E.scene({
-    id: 'a2-ov', start: 20, end: 52.8, z: 45,
+    id: 'a2-ov', start: 20, end: 54.8, z: 45,
     build(root) {
       const fade = h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 0, height: 120, background: 'linear-gradient(to top, var(--cream) 55%, rgba(250,246,239,0))' } });
       const pill = h('div', { class: 'abs', style: { left: 110, top: 54, display: 'flex', alignItems: 'center', gap: 14, padding: '11px 26px 11px 20px', borderRadius: 999, background: 'rgba(31,37,50,.07)' } },
@@ -61,17 +80,17 @@ export default function register(E) {
       const L = progressX(t);
       const y = lerp(THREAD_Y, BAR_Y, e), x0 = lerp(0, 110, e), x1 = lerp(1860, L, e);
       Object.assign(s.fill.style, { left: x0 + 'px', top: (y - 2) + 'px', width: Math.max(0, x1 - x0) + 'px', opacity: ovOut0(t) });
-      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: t < 51.9 ? 1 : 1 - tw(t, 51.9, 52.25) });
-      const ovOut = 1 - tw(t, 52.0, 52.7);
-      s.track.style.opacity = e * ovOut; s.fade.style.opacity = e * (1 - tw(t, 50.6, 51.2));
+      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: t < 53.9 ? 1 : 1 - tw(t, 53.9, 54.25) });
+      const ovOut = 1 - tw(t, 54.0, 54.7);
+      s.track.style.opacity = e * ovOut; s.fade.style.opacity = e * (1 - tw(t, 52.6, 53.2));
       s.nodes.forEach((n, i) => {
         const a = t - NODE_T[i], on = a >= 0;
         const pop = on ? 1 + 0.5 * Math.sin(Math.PI * clamp(a / 0.5)) * (1 - clamp(a / 0.5) * 0.4) : 1;
         n.style.background = on ? 'var(--orange)' : 'var(--cream)';
         n.style.borderColor = on ? 'var(--orange)' : 'rgba(31,37,50,.30)';
-        n.style.opacity = e * (1 - tw(t, 51.6, 52.4)); n.style.transform = `scale(${pop})`;
+        n.style.opacity = e * (1 - tw(t, 53.6, 54.4)); n.style.transform = `scale(${pop})`;
       });
-      s.goal.style.opacity = e * (1 - tw(t, 52.2, 52.7)); s.goal.style.transform = `scale(${1 + 0.12 * Math.sin(t * 3)})`;
+      s.goal.style.opacity = e * (1 - tw(t, 54.2, 54.7)); s.goal.style.transform = `scale(${1 + 0.12 * Math.sin(t * 3)})`;
     },
   });
 
@@ -79,7 +98,7 @@ export default function register(E) {
   /* ---------------------------------------------------------------- Das Linkado-Fenster: 01 – 04 */
   const POSE = {
     full:   { s: 0.70, px: 872, py: 214 },
-    search: { s: 1.08, px: 870, py: 132 },
+    search: { s: 0.95, px: 868, py: 116 },              // Menü-Pose: großes Menü links im Fenster
     shop:   { s: 0.86, px: 862, py: 118 },
     help:   { s: 0.86, px: 862, py: 104 },
     away:   { s: 0.52, px: 1060, py: 300 },
@@ -96,10 +115,10 @@ export default function register(E) {
   }
 
   // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: siehe CLICKS (stehen auch als hits in timeline.json)
-  const CLICKS = [25.4, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85];
+  const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85];
   const B0 = LAY.apps.btn(0), B1 = LAY.apps.btn(1), TG = LAY.apps.toggle(3), SUP = LAY.rail.support, SIN = LAY.support.input;
   const CUR = [
-    [24.70, 980, 640], [25.35, 330, 268], [26.85, 330, 268], [27.30, 520, 380], [28.30, 760, 560],
+    [24.40, 980, 640], [24.98, LAY.menu.grid[0] + 4, LAY.menu.grid[1] + 4], [25.50, LAY.menu.grid[0] + 4, LAY.menu.grid[1] + 4], [25.95, 210, 95], [26.75, 210, 95], [27.05, LAY.menu.row(0)[0] + 20, LAY.menu.row(0)[1]], [27.55, LAY.menu.row(0)[0] + 20, LAY.menu.row(0)[1]], [28.30, 760, 560],
     [29.95, B0[0], B0[1]], [30.45, B0[0], B0[1]], [31.45, B1[0], B1[1]], [31.95, B1[0], B1[1]],
     [32.40, 900, 520], [33.15, TG[0], TG[1]], [33.35, TG[0], TG[1]],
     [33.98, SUP[0], SUP[1]], [34.30, SUP[0], SUP[1]],
@@ -126,7 +145,8 @@ export default function register(E) {
       const win = ui.window(); win.setActive('Startseite');
       const dash = ui.home(), shop = ui.apps(), sup = ui.support();
       win.main.append(dash.el, shop.el, sup.el);
-      const res = ui.results('Angebot'); Object.assign(res.el.style, { left: '64px', top: '246px' }); dash.el.append(res.el);
+      const menu = ui.menu('Angebot'); const dim = h('div', { class: 'ui-dim', style: { display: 'none' } }); win.main.append(dim, menu.el);
+      const gridTile = win.top.querySelector('.ui-gridtile');
       const rDeck = win.mk('Deck', 'deck', 'Deck', 8 + 6 * 77);
       const rFor = win.mk('Formulare', 'forms', 'Formulare', 8 + 7 * 77);
       // Welle (Nextcloud → Linkado): Glanzband + orange Kante, nur innerhalb des Fensters sichtbar
@@ -143,7 +163,7 @@ export default function register(E) {
 
       // Beschriftung der Rohfassung (Bildschirmraum)
       const capStyle = { position: 'absolute', left: 874, top: 150, display: 'flex', alignItems: 'center', gap: 14, font: '700 24px/1 var(--font-body)', letterSpacing: '.13em' };
-      const capRaw = h('div', { style: { ...capStyle, color: 'var(--warm-gray)' } }, h('span', { class: 'flag', style: { background: '#B0B7C2' } }), 'NEXTCLOUD · STANDARD');
+      const capRaw = h('div', { style: { ...capStyle, color: 'var(--warm-gray)' } }, h('span', { class: 'flag', style: { background: '#B0B7C2' } }), 'NEXTCLOUD · BASIS');
       const capLk = h('div', { style: { ...capStyle, color: 'var(--navy)' } }, h('span', { class: 'flag' }), h('span', { html: 'LINKADO · <span style="color:var(--orange-deep)">ERLEBNIS</span>' }));
       root.append(capRaw, capLk);
 
@@ -153,18 +173,19 @@ export default function register(E) {
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
-      return { ui, outer, cam, raw, win, dash, shop, sup, res, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      return { ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s) {
-      const { cam, outer, raw, win, dash, shop, sup, res, cur } = s;
+      const { cam, outer, raw, win, dash, shop, sup, menu, dim, gridTile, cur } = s;
 
       /* ---- Kamera + Fenster-Auftritt/Abgang ---- */
       const c = camAt(t);
       cam.style.transform = `translate(${c.px.toFixed(2)}px,${c.py.toFixed(2)}px) scale(${c.s.toFixed(4)})`;
       const wi = tw(t, 20.25, 20.95, ease.ui), wo = tw(t, 39.9, 40.8, ease.in3);
       outer.style.opacity = wi * (1 - wo);
-      outer.style.transform = `translateY(${(36 * (1 - wi) - 30 * wo).toFixed(2)}px)`;
+      const wsc = 0.94 + 0.06 * tw(t, 20.2, 21.0, ease.outBack);          // Fenster „landet“ nach dem Drop-Schlag mit leichtem Nachfedern
+      outer.style.transform = `translateY(${(36 * (1 - wi) - 30 * wo).toFixed(2)}px) scale(${wsc.toFixed(4)})`;
 
       /* ---- 01: Rohfassung → Linkado (Welle 21.0–22.2) ---- */
       const we = ease.uiInOut(prog(t, 21.0, 22.2));
@@ -185,16 +206,19 @@ export default function register(E) {
       tf(dash.hero, { x: -14 * loose, y: 10 * loose, r: -1.0 * loose }); tf(dash.day, { x: 16 * loose, y: -8 * loose, r: 1.0 * loose });
       tf(dash.nextCard, { x: -12 * loose, y: 14 * loose }); tf(dash.news, { x: 14 * loose, y: 10 * loose });
       dash.fcards.forEach((f, i) => tf(f, { y: (10 + 4 * i) * loose }));
-      const focus = t >= 25.38 && t < 27.6;
-      dash.search.style.boxShadow = focus ? '0 0 0 4px rgba(255,255,255,.75), 0 0 0 7px rgba(23,26,34,.55)' : '';
-      const typed = Math.floor(clamp((t - 25.62) / 0.7) * 7 + 0.001);
-      dash.searchText.textContent = t < 25.4 ? 'Suchen: Datei, Person, Termin …' : 'Angebot'.slice(0, typed);
-      dash.searchText.style.color = t < 25.4 ? '' : '#171A22';
-      dash.caret.style.display = (t >= 25.4 && t < 27.3 && (t < 26.5 || Math.floor(t * 2) % 2 === 0)) ? 'inline-block' : 'none';
-      const rp = tw(t, 26.4, 26.75, ease.ui), rq = tw(t, 27.55, 27.95, ease.in2);
-      show(res.el, t >= 26.38 && t < 28.0);
-      tf(res.el, { y: -14 * (1 - rp), o: rp * (1 - rq) });
-      res.rows.forEach((r, i) => { const p = tw(t, 26.45 + i * 0.08, 26.9 + i * 0.08, ease.ui); tf(r, { y: 10 * (1 - p), o: p }); });
+      /* Das große Menü öffnet sich über dem Raster-Symbol (25.0), die Suche „Was möchten Sie tun?“ findet alles an einem Ort (Treffer 26.4), das Menü schließt (27.55–28.0) */
+      const mo = tw(t, 25.02, 25.55, ease.ui), mc = tw(t, 27.55, 28.0, ease.in2), mv = mo * (1 - mc);
+      show(menu.el, t >= 25.0 && t < 28.05); tf(menu.el, { x: -352 * (1 - mv) });
+      show(dim, t >= 25.0 && t < 28.05); dim.style.opacity = (mv).toFixed(3);
+      gridTile.classList.toggle('on', t >= 25.0 && t < 27.9);
+      const typed = Math.floor(clamp((t - 25.7) / 0.7) * 7 + 0.001);
+      menu.input.textContent = t < 25.68 ? 'Was möchten Sie tun?' : 'Angebot'.slice(0, typed);
+      menu.input.style.color = t < 25.68 ? '' : '#171A22';
+      menu.caret.style.display = (t >= 25.1 && t < 27.4 && (t < 26.5 || Math.floor(t * 2) % 2 === 0)) ? 'inline-block' : 'none';
+      menu.search.style.boxShadow = (t >= 25.1 && t < 27.5) ? '0 0 0 3px rgba(255,255,255,.9)' : '';
+      const rp = tw(t, 26.4, 26.8, ease.ui);
+      show(menu.res, rp > 0.001); menu.res.style.opacity = rp; tf(menu.scroll, { o: 1 - rp });
+      menu.rows.forEach((r, i) => { const p = tw(t, 26.45 + i * 0.08, 26.9 + i * 0.08, ease.ui); tf(r, { y: 10 * (1 - p), o: p }); });
 
       /* ---- Ansichtswechsel Startseite → Apps und Pakete → Support ---- */
       const act = t < 28.0 ? 'Startseite' : t < 34.0 ? '' : 'Support';

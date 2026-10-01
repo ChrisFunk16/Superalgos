@@ -8,18 +8,18 @@ Status: **✔ umgesetzt** (steckt im aktuellen Film) · **◐ vorbereitet** (Str
 ## 1. Leitidee „Dazwischen“ ✔
 
 **Idee.** Die schärfste Aussage der Marke steht schon auf eurer Website: *„Ihre Programme funktionieren. Aber funktioniert Ihre Arbeit auch **dazwischen**?“*
-Der Film erzählt genau das: Jede Lösung (Microsoft 365, openDesk, Nextcloud) funktioniert – ein *Aber* bleibt immer im Zwischenraum. Linkado verbindet dieses Dazwischen.
+Der Film erzählt genau das: Jeder gängige Ansatz (der Allrounder, das fertige Portal, die offene Basis) funktioniert – ein *Aber* bleibt immer im Zwischenraum. Linkado verbindet dieses Dazwischen.
 
 **Wie sie durch den Film läuft.**
 
 | Moment | Ausdruck der Idee |
 |---|---|
 | 0–2 s Hook | „Alles funktioniert. Nur nicht dazwischen.“ – das Wort *dazwischen* öffnet sich in der Mitte |
-| 2–14 s | je Lösung eine Stärke, dann *ABER:* – die Lücken sind das Dazwischen |
+| 2–14 s | je Ansatz eine Stärke, dann *ABER:* – die Lücken sind das Dazwischen (bewusst ohne Produkt- oder Firmennamen) |
 | 14–18 s | fünf Blickwinkel, in denen die Lücke wehtut (Login, Tool, Abo, KI, IT) |
 | 18–20 s | der **Faden** erscheint als erstes Verbindendes |
 | 40–46 s „Gesamtpaket“ | drei Kettenglieder greifen *ineinander* – das Dazwischen ist gefüllt |
-| 52–60 s Finale | der Faden wird zum Steg im „A“ des Logos |
+| 54–64 s Finale | der Faden wird zum Steg im „A“ des Logos |
 
 **Alternative Hooks** (Konstante in `src/scenes/act1.js`, Abschnitt *Hook*; Hits in `timeline.json`):
 
@@ -71,7 +71,7 @@ jeweils mit **eigener Bildidee** und eigenem Akkord:
 
 | Szene | Choreografie |
 |---|---|
-| 02 Suche | Cursor zieht den Faden vom Suchfeld → Datei → Termin → Talk (vier Treffer werden nacheinander verbunden), Faden bleibt als dünne Linie stehen |
+| 02 Menü-Suche | Cursor zieht den Faden vom Suchfeld des großen Menüs → Datei → Termin → Talk (vier Treffer werden nacheinander verbunden), Faden bleibt als dünne Linie stehen |
 | 03 Apps | Beim Hinzufügen läuft der Faden von der Karte in die Leiste und bleibt dort als orange Kante des Eintrags (heute fliegt nur das Icon) |
 | 04 Support | Faden verbindet Frage → Antwortkarte → Anfrage; die Antwort des Supports „rastet“ ans Ende des Fadens |
 | 05 Gesamtpaket | die Kette wird vom Faden durchzogen (Faden = Gelenk) |
@@ -145,7 +145,8 @@ Alle Texte stehen in den Szenendateien (`act1.js`, `act2.js`, `act2b.js`, `final
 ### 8.1 Umgesetzt (v3)
 
 * **Allgemeinerer Aufbau:** klassisch in A-Moll, keine Clash-Intervalle, kein Polymeter.
-* **Insel-Töne:** M365 = A, openDesk = C, Nextcloud = E → erst der Drop ergibt den Akkord (Sonic Logo in Moll, 20.0 s).
+* **Insel-Töne:** Allrounder = A, fertiges Portal = C, offene Basis = E → erst der Drop ergibt den Akkord (Sonic Logo in Moll, 20.0 s).
+* **Übergang in den Drop:** Herzschlag-Kick ab 18.5 s, das A–C–E-Motiv steigt in der Pause, Rim-Wirbel und Riser, 80 ms Vakuum (auch der Hall atmet ein), dann Crash, breiter Akkord, Sonic Logo und voller Groove ab Takt 11.
 * **Sonic Logo** (Signatur, Wiedererkennung): **A5 – C♯6 – E6 – A6**, vier Glockentöne im Abstand von 0,25 s, der letzte klingt aus; erscheint beim Kristall (54.0–54.75 s) und als Schlusssignatur (57.0–57.75 s).
 * **UI-Klangebene:** Tap, Add (zwei steigende Marimba-Töne), Toggle (zwei Blips), Swipe (Filter-Rauschen), Flug, Landung, Tippen (Tastenticks), Chime bei „Antwort vom Support“.
 * **Breite:** Seitenanteil von Pad, Arps, Stabs, Glocken, UI angehoben (Korrelation oberhalb 400 Hz 0,55).
@@ -156,7 +157,7 @@ Alle Texte stehen in den Szenendateien (`act1.js`, `act2.js`, `act2b.js`, `final
 
 * **Echte Sprecherstimme + Ducking:** Sidechain der Stems auf die Stimme (Pad/Arps −6 dB).
 * **Audio-Logo-Version solo** (3 s) für Intros/Outros anderer Videos: `audio/sonic-logo.wav` aus dem Skript exportieren.
-* **Loop-fähige Messefassung:** 60 s mit sanftem Ausklang → Einstieg (Crossfade 2 s).
+* **Loop-fähige Messefassung:** 64 s mit sanftem Ausklang → Einstieg (Crossfade 2 s).
 
 ---
 
@@ -176,4 +177,4 @@ Alle Texte stehen in den Szenendateien (`act1.js`, `act2.js`, `act2b.js`, `final
 3. **Tagline im Logo:** „Der europäische digitale Arbeitsplatz“ (steht jetzt, entspricht dem Logo) oder „Der offene Arbeitsplatz“ (Briefing).
 4. **Oberfläche:** Demo-Daten sind erfunden; bitte prüfen, ob Funktionen, die nur als *Sneak Peek* laufen (Assistent-Antwort, Anfrage-Flow), so gezeigt werden dürfen.
 5. **Reihenfolge der Fassungen:** erst 30 s und 15 s (Social-Reichweite) oder 9:16?
-6. **Aussagen zu Microsoft 365 / openDesk / Nextcloud** rechtlich/inhaltlich freigeben (alle als „Stärke, dann Aber“ formuliert).
+6. **Aussagen zu den drei Ansätzen** (Allrounder, fertiges Portal, offene Basis) inhaltlich freigeben – sie sind allgemein gehalten und nennen niemanden.

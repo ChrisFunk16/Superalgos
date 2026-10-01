@@ -67,7 +67,7 @@ es fehlte der Kontrast, die „Erlösung“.
 ## 3. Marke und Inhalt absichern
 
 * Original-Logo (SVG) und exakte Farbwerte einsetzen (S). Schluss-Tagline entscheiden: „Der europäische digitale Arbeitsplatz“ (Logo) oder „offener Arbeitsplatz“ (Briefing).
-* Aussagen zu Microsoft 365 / openDesk / Nextcloud rechtlich/inhaltlich freigeben; Nextcloud-Zeile entschärft oder entfernen (S).
+* Aussagen zu den drei allgemeinen Ansätzen im Chaos-Teil inhaltlich freigeben (keine Produkt- oder Firmennamen mehr) (S).
 * Appshop-/Hilfe-Ansichten gegen den echten Funktionsstand prüfen; was nicht existiert, bleibt als „Sneak Peek/Ausblick“ markiert (S).
 * Kundenstimme oder Kennzahl nur, wenn belegbar (nicht erfunden).
 

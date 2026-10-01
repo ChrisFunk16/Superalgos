@@ -1,8 +1,8 @@
 // ============================================================
-// Act II, Teil 2: 05 Ein stimmiges Gesamtpaket (40–46) · 06 Mehr Zeit fürs Wesentliche (46–52)
+// Act II, Teil 2: 05 Ein stimmiges Gesamtpaket (40–46) · 06 Mehr Zeit fürs Wesentliche (46–54)
 //  05: drei Kettenglieder (Oberfläche · Erweiterungen · Betreuung) greifen ineinander – snap 41/42/43, lock 44
 //  06: ein Arbeitstag als Zeitleiste: Technik-Reibung schrumpft, Wesentliches wächst; gemeinsam im Dokument.
-//      Ab ~50.8 löst sich alles in Knoten auf (Übergabe ans Finale, siehe handoffDots).
+//      Ab ~53.2 löst sich alles in Knoten auf (Übergabe ans Finale, siehe handoffDots).
 // ============================================================
 
 /** Knoten, aus denen das Finale das Netz aufbaut (gleiche Positionen wie die Auflösung hier). */
@@ -141,40 +141,41 @@ export default function register(E) {
       return { card, blocks, doc, lineEls, avs, dots, head };
     },
     update(t, s) {
-      s.head.update(t, 46.2, 51.0);
-      // Karte: Auftritt (46.0) und Auflösung (50.8–51.3)
-      const cin = tw(t, 46.0, 46.7, ease.ui), cout = tw(t, 50.75, 51.3, ease.in2);
-      show(s.card, t < 51.35);
+      // Ruhiger Takt (8 s statt 6 s): jeder Zustand bleibt ≥ 1,3 s stehen – Blöcke erscheinen (46.4), kurz halten, schrumpfen/wachsen (48.0–50.0),
+      // halten, Dokument (50.2), Cursor tippen (50.8–52.7), halten, Auflösung in Knoten (53.2) – Übergabe ans Finale bei 54.0
+      s.head.update(t, 46.2, 53.4);
+      const cin = tw(t, 46.0, 46.8, ease.ui), cout = tw(t, 53.2, 53.7, ease.in2);
+      show(s.card, t < 53.75);
       tf(s.card, { x: 80 * (1 - cin), y: 20 * (1 - cin), o: cin * (1 - cout), s: 1 - 0.02 * cout });
       // Zeitleiste: Blöcke erscheinen, dann schrumpfen die grauen
       let x = 60;
       s.blocks.forEach((b, i) => {
-        const pin = tw(t, 46.4 + i * 0.07, 46.9 + i * 0.07, ease.ui);
-        const st = b.g ? 48.0 + (i % 3) * 0.12 : 48.2;                     // graue schrumpfen gestaffelt, bunte wachsen
-        const e = ease.uiInOut(prog(t, st, st + 1.5));
+        const pin = tw(t, 46.4 + i * 0.09, 46.95 + i * 0.09, ease.ui);
+        const st = b.g ? 48.0 + (i % 3) * 0.14 : 48.2;                     // graue schrumpfen gestaffelt, bunte wachsen
+        const e = ease.uiInOut(prog(t, st, st + 1.8));
         const w = lerp(b.w0, b.w1, e);
         Object.assign(b.el.style, { left: x + 'px', width: Math.max(0, w - 4) + 'px', opacity: pin * (b.g ? clamp(1 - (e - 0.7) / 0.3) : 1), display: w < 3 ? 'none' : 'flex' });
         b.el.firstChild.style.opacity = b.g ? clamp((w - 40) / 60) : 1;
         x += w;
       });
       // Dokument + Cursor
-      const din = tw(t, 48.8, 49.4, ease.ui);
+      const din = tw(t, 50.2, 50.9, ease.ui);
       tf(s.doc, { y: 40 * (1 - din), o: din });
       s.lineEls.forEach((L, i) => {
-        const tt = 49.2 + i * 0.35, p = ease.out2(prog(t, tt, tt + 1.1));
+        const tt = 50.8 + i * 0.4, p = ease.out2(prog(t, tt, tt + 1.1));
         L.bar.style.width = (L.w * p) + 'px'; L.bar2.style.width = (L.w * 0.62 * ease.out2(prog(t, tt + 0.5, tt + 1.4))) + 'px';
-        const cx = 28 + L.w * p, vis = t >= tt - 0.1 && t < 50.9;
+        const cx = 28 + L.w * p, vis = t >= tt - 0.1 && t < 53.0;
         show(L.caret, vis); show(L.flag, vis);
         L.caret.style.left = cx + 'px'; L.caret.style.opacity = (Math.floor(t * 2.2 + i) % 2 === 0 || p < 1) ? 1 : 0.15;
         L.flag.style.left = (cx + 6) + 'px';
       });
-      s.avs.forEach((a, i) => { const p = tw(t, 49.3 + i * 0.12, 49.7 + i * 0.12, ease.snap); tf(a, { s: 0.4 + 0.6 * p, o: clamp(p * 2) }); });
+      s.avs.forEach((a, i) => { const p = tw(t, 50.9 + i * 0.14, 51.3 + i * 0.14, ease.snap); tf(a, { s: 0.4 + 0.6 * p, o: clamp(p * 2) }); });
       // Auflösung in Knoten (Übergabe ans Finale)
       s.dots.forEach((d, i) => {
-        const p = tw(t, 50.8 + (i % 7) * 0.02, 51.2, ease.out2), q = tw(t, 51.55, 52.0, ease.in2);
+        const p = tw(t, 53.2 + (i % 7) * 0.025, 53.6, ease.out2), q = tw(t, 53.6, 54.0, ease.in2);
         const dd = DOTS[i], dr = Math.hypot(dd.x - 1350, dd.y - 540);
-        const drift = 14 * tw(t, 51.0, 52.0, ease.out2);
-        show(d, p > 0 && t < 52.05);
+        const drift = 14 * tw(t, 53.4, 54.0, ease.out2);
+        show(d, p > 0 && t < 54.05);
         tf(d, { x: dd.x + ((dd.x - 1350) / (dr + 1)) * drift, y: dd.y + ((dd.y - 540) / (dr + 1)) * drift, s: 0.2 + 0.8 * p, o: p * (1 - q) });
       });
     },

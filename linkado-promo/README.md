@@ -1,4 +1,4 @@
-# Linkado – Werbefilm (60 s)
+# Linkado – Werbefilm (64 s)
 
 Ein Werbefilm für **Linkado**, den europäischen digitalen Arbeitsplatz auf Nextcloud-Basis:
 **Chaos der Insellösungen → Klarheit → das Linkado-Logo kristallisiert heraus.** Mit ruhigem, schrittweise
@@ -22,20 +22,20 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 > * Die **Oberflächen** (Startseite „Ihr Tag“, Apps und Pakete, Support, Leiste) sind nach **echten Screenshots der Cloud** nachgebaut (`src/ui.js`). Die Instanz war leer;
 >   **alle Inhalte (Termine, Dateien, Anfragen, Namen, Assistent-Antworten) sind erfundene Demo-Daten**. Szenen 02–04 tragen „SNEAK PEEK“.
 >   Die Original-Screenshots liegen lokal in `refs/` (nicht im Repository: enthalten Instanz-Daten).
-> * Die Aussagen zu Microsoft 365, openDesk und Nextcloud sind bewusst fair formuliert („erst Stärke, dann *Aber:*“).
->   Die Nextcloud-Zeile zielt auf den *ungepflegten Standard-Alltag*, nicht auf die Software – bitte final freigeben.
+> * Im Chaos-Teil werden **keine Produkt- oder Firmennamen** genannt: drei allgemeine Ansätze (Allrounder, fertiges Portal, offene Basis), jeweils „erst Stärke, dann *Aber:*“. Bitte inhaltlich freigeben.
+>   Nextcloud kommt nur als eure eigene Basis vor (Szene 01, Schlusszeile).
 > * Im Logo-Lockup steht „Der europäische digitale Arbeitsplatz“; im Briefing war von „offenem Arbeitsplatz“ die Rede.
 >   Umstellen: Konstante `TAGLINE` in `src/scenes/finale.js`.
 
 ## Aufbau
 
 ```
-timeline.json            Zeitplan: 30 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
+timeline.json            Zeitplan: 32 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
-  scenes/act1.js           Chaos: Hook, Microsoft 365, openDesk, Nextcloud, Überforderung in fünf Blickwinkeln, Pause
-  scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht/Suche mit Assistent, Apps und Pakete, Support + Fortschrittsfaden
+  scenes/act1.js           Chaos: Hook, drei allgemeine Ansätze (ohne Namen), Überforderung in fünf Blickwinkeln, Pause/Sog in den Drop
+  scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Fortschrittsfaden
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
 audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
@@ -70,7 +70,7 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 ## Qualitätssicherung
 
 * Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
-* Ton: exakt 2 880 000 Samples, −14 LUFS, Spitzen ≤ −1 dBFS, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
+* Ton: exakt 3 072 000 Samples (64 s), −14 LUFS, Spitzen ≤ −1 dBFS, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
   Struktur im Spektrogramm (`audio/spektrogramm.png`).
 * Lesbarkeit: Titel 74–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
 
