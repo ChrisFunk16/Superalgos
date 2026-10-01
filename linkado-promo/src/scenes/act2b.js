@@ -4,6 +4,7 @@
 //  06: ein Arbeitstag als Zeitleiste: Technik-Reibung schrumpft, Wesentliches wächst; gemeinsam im Dokument.
 //      Ab ~53.2 löst sich alles in Knoten auf (Übergabe ans Finale, siehe handoffDots).
 // ============================================================
+import { avatarHTML } from '../ui.js';
 
 /** Knoten, aus denen das Finale das Netz aufbaut (gleiche Positionen wie die Auflösung hier). */
 export function handoffDots(E) {
@@ -124,7 +125,7 @@ export default function register(E) {
       const doc = h('div', { class: 'a2b-doc' });
       doc.append(h('div', { class: 'abs', style: { left: 28, top: 22, font: '800 22px/1 var(--font-display)', textTransform: 'uppercase', color: '#1F2532' }, text: 'Projektplan Herbst' }),
         h('div', { class: 'abs', style: { left: 28, top: 56, font: '500 15px/1 var(--font-body)', color: '#8B837A' }, text: 'Gemeinsam bearbeitet · gerade eben' }));
-      const lines = [[300, '#E67E22', 'Anna'], [480, '#1F2532', 'Ben'], [380, '#3B6FD4', 'Chris']];
+      const lines = [[300, '#E67E22', 'Anna'], [480, '#1F2532', 'Ben'], [380, '#3B6FD4', 'Lena']];
       const lineEls = lines.map(([w, c, nm], i) => {
         const bar = h('div', { class: 'abs', style: { left: 28, top: 108 + i * 62, height: 16, borderRadius: 6, background: '#E3DACA', width: 0 } });
         const bar2 = h('div', { class: 'abs', style: { left: 28, top: 132 + i * 62, height: 12, borderRadius: 5, background: '#EDE6D8', width: 0 } });
@@ -132,7 +133,7 @@ export default function register(E) {
         const caret = h('div', { class: 'abs', style: { width: 3, height: 30, background: c, top: 101 + i * 62 } });
         doc.append(bar, bar2, caret, flag); return { bar, bar2, flag, caret, w, c };
       });
-      const avs = [['A', '#E67E22'], ['B', '#1F2532'], ['C', '#3B6FD4']].map(([l, c], i) => { const el = h('div', { class: 'a2b-av', style: { right: 28 + (2 - i) * 38, top: 20, background: c }, text: l }); doc.append(el); return el; });
+      const avs = ['anna', 'ben', 'lena'].map((k, i) => { const el = h('div', { class: 'a2b-av', style: { right: 28 + (2 - i) * 38, top: 20, background: 'none', padding: 0 }, html: avatarHTML(k, 40) }); doc.append(el); return el; });
       card.append(doc);
       const dots = DOTS.map((d) => { const el = h('div', { class: 'abs', style: { left: -d.r, top: -d.r, width: d.r * 2, height: d.r * 2, borderRadius: '50%', background: d.c } }); root.append(el); return el; });
       root.append(card);

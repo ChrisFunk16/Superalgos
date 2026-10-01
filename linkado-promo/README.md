@@ -34,7 +34,8 @@ timeline.json            Zeitplan: 34 Takte à 2 s (120 BPM), Szenen und „hits
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
-  scenes/act1.js           Chaos: Hook, drei allgemeine Ansätze (ohne Namen), Überforderung in fünf Blickwinkeln, Pause/Sog in den Drop
+  scenes/act1.js           Chaos: Hook (3,5 s), drei Alltagsmomente (ohne Namen; Sätze mit Profilbild, Laptop/Handy), Überforderung in fünf Blickwinkeln, Pause/Sog in den Drop
+  scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
   scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA

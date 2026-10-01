@@ -1,11 +1,12 @@
 // ============================================================
 // Act I – Chaos (0–20 s). Dunkel, kühl, bewusst „designtes“ Chaos.
-//   hook 0–2 · m365 2–6 · opendesk 6–10 · nextcloud 10–14 · overwhelm 14–18 · pause 18–20 (+0.8)
+//   hook 0–3,5 (letztes Wort steht 1,3 s) · m365 3,5–7 · opendesk 7–10,5 · nextcloud 10,5–14 · overwhelm 14–18 · pause 18–20 (+0.8)
 //   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
 // Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Lücken – die Chips poppen auf den
 // ping-hits der timeline.json. Linkado-Orange kommt hier NICHT vor (außer Faden+Flagge in der Pause).
 // ============================================================
-import { buildUI } from '../ui.js';
+import { buildUI, avatarHTML, PEOPLE } from '../ui.js';
+import { laptop, phone, mini, quote } from './act1-bits.js';
 import { THREAD_Y } from './act2.js';
 
 export default function register(E) {
@@ -15,7 +16,8 @@ export default function register(E) {
   const hit = (kind, v) => E.hits(kind, v).map((x) => x.t);
   const T0 = { m365: hit('card', 1)[0], opendesk: hit('card', 2)[0], nextcloud: hit('card', 3)[0] };
   const PING = { m365: hit('ping', 1), opendesk: hit('ping', 2), nextcloud: hit('ping', 3) };
-  const SHOVE = { m365: hit('shove', 1)[0], opendesk: hit('shove', 2)[0], nextcloud: 13.7 };
+  const SHOVE = { m365: hit('shove', 1)[0], opendesk: hit('shove', 2)[0], nextcloud: hit('shove', 3)[0] };
+  const T_HOOK = T0.m365;                            // 3.5 – Ende des Hooks = erster Karten-Schlag
   const CUT = E.hits('cut')[0].t;                    // 18.0 – harter Schnitt
   const TEXTS = E.hits('text').filter((x) => x.t >= 14 && x.t <= 17.5).map((x) => x.t);   // 14 · 14.75 · 15.5 · 16.25 · 17
   const ASK = E.hits('text').find((x) => x.t > 18.5 && x.t < 19.5).t;                  // 19.0
@@ -33,6 +35,7 @@ export default function register(E) {
   .a1-badge { position:absolute; left:0; top:0; min-width:44px; height:44px; padding:0 12px; border-radius:22px; background:#E5565B; color:#fff; font:700 22px/44px var(--font-body); text-align:center; box-shadow:0 8px 20px rgba(0,0,0,.4); }
   .a1-card { position:absolute; left:110px; top:190px; width:870px; height:640px; border-radius:30px; background:#161D2C; border:1.5px solid rgba(255,255,255,.13); overflow:hidden; }
   .a1-acc { position:absolute; left:0; top:0; bottom:0; width:10px; }
+  .a1-name2 { position:absolute; left:110px; top:128px; font:700 84px/1 var(--font-display); text-transform:uppercase; color:${CREAM}; letter-spacing:-.005em; white-space:nowrap; text-shadow:0 4px 22px rgba(10,14,22,.7); }
   .a1-name { position:absolute; left:58px; top:44px; font:700 84px/1 var(--font-display); text-transform:uppercase; color:${CREAM}; letter-spacing:-.005em; white-space:nowrap; }
   .a1-ok { position:absolute; left:58px; top:146px; display:flex; align-items:center; gap:14px; font:600 30px/1 var(--font-body); letter-spacing:.05em; color:#B9C1D3; text-transform:uppercase; white-space:nowrap; }
   .a1-ok .ck { width:34px; height:34px; border-radius:50%; background:rgba(63,191,138,.18); color:#3FBF8A; display:flex; align-items:center; justify-content:center; }
@@ -89,6 +92,11 @@ export default function register(E) {
         root.append(el); return d;
       });
 
+      /* ---- Hintergrund-Oberflächen: unterschiedliche Fenster füllen nach und nach den Bildschirm (dim im Hook/den Alltagsmomenten, hell in der Überforderung) ---- */
+      const BGW = [['mail', 40, 650, 300, 200, -4, 0.8], ['chat', 1500, 60, 320, 210, 3, 1.2], ['cal', 700, 30, 300, 200, -2, 1.8], ['sheet', 1580, 700, 300, 200, 4, 2.4], ['video', 60, 80, 280, 190, 3, 3.0],
+        ['ticket', 840, 770, 320, 210, -3, 3.6], ['ai', 1300, 20, 280, 190, -3, 4.4], ['files', 20, 340, 260, 180, -2, 5.2], ['kanban', 1250, 790, 300, 200, 2, 6.0], ['form', 560, 870, 300, 190, -4, 7.0]];
+      const bgw = BGW.map(([k, x, y, w, hh, rot, tIn]) => { const el = h('div', { class: 'abs', style: { left: 0, top: 0, zIndex: 2 } }, mini(E, k, w, hh)); root.append(el); return { el, x, y, rot, tIn }; });
+
       /* ---- Hook ---- */
       const word = (s, c) => h('span', { class: 'w' }, h('span', { text: s, style: { color: c } }));
       const w1 = word('Alles', DIM), w2 = word('funktioniert.', DIM), w3 = word('Nur nicht', DIM);
@@ -99,103 +107,113 @@ export default function register(E) {
       root.append(hook);
       const hookBadges = [[430, 250, '3'], [1500, 330, '12'], [1280, 780, '7']].map(([x, y, n]) => { const b = h('div', { class: 'a1-badge', text: n }); root.append(b); return { el: b, x, y }; });
 
-      /* ---- Gruppen (Karte + Visual) ---- */
+      /* ---- Drei Alltagsmomente (statt Kartenliste): Titel + Stärke, darunter Sätze von Kolleg*innen mit Profilbild; rechts Laptop/Handy voller Apps ---- */
       const mkGroup = (cfg, i) => {
         const g = h('div', { class: 'abs', style: { left: 0, top: 0, width: 1920, height: 1080, transformOrigin: '960px 540px', zIndex: 10 + i } });
-        const card = h('div', { class: 'a1-card', style: { '--acc': cfg.acc } });
-        const gaps = cfg.gaps.map(([ico, txt]) => h('div', { class: 'a1-gap', style: { '--acc': cfg.acc } }, h('span', { class: 'ic', html: icon(ico, 30, '#fff', 2.2) }), h('span', { html: txt })));
-        card.append(h('div', { class: 'a1-acc', style: { background: cfg.acc } }), h('div', { class: 'a1-name', text: cfg.name, style: { fontSize: cfg.size + 'px' } }),
-          h('div', { class: 'a1-ok', style: { '--acc': cfg.acc } }, h('span', { class: 'ck', html: icon('check', 20, '#3FBF8A', 3) }), h('span', { text: cfg.ok }), h('b', { text: 'ABER:' })),
-          h('div', { class: 'a1-gaps' }, gaps),
-          h('div', { class: 'a1-foot' }, [0, 1, 2].map((k) => h('i', { style: { background: k === i ? cfg.acc : '' } })), h('span', { text: `ANSATZ ${i + 1} VON 3`, style: { marginLeft: 8 } })));
-        g.append(card);
+        const name = h('div', { class: 'a1-name2', text: cfg.name, style: { fontSize: cfg.size + 'px' } });
+        const ok = h('div', { class: 'a1-ok', style: { '--acc': cfg.acc, left: '110px', top: '246px' } }, h('span', { class: 'ck', html: icon('check', 20, '#3FBF8A', 3) }), h('span', { text: cfg.ok }), h('b', { text: 'ABER:' }));
+        const qs = cfg.quotes.map(([key, role, txt], k) => { const el = quote(E, avatarHTML(key, 58), { who: PEOPLE[key].name.split(' ')[0], role, text: txt, w: cfg.qw[k] }); Object.assign(el.style, { left: cfg.qpos[k][0] + 'px', top: cfg.qpos[k][1] + 'px' }); return el; });
+        g.append(name, ok, ...qs);
         const vis = cfg.visual(g);
         root.append(g);
-        return { id: cfg.id, g, card, gaps, ok: card.querySelector('.a1-ok'), name: card.querySelector('.a1-name'), vis, t0: T0[cfg.id], pings: PING[cfg.id], shove: SHOVE[cfg.id], pile: PILE[cfg.id] };
+        return { id: cfg.id, g, name, ok, qs, qrot: cfg.qrot, vis, t0: T0[cfg.id], pings: PING[cfg.id], shove: SHOVE[cfg.id], pile: PILE[cfg.id] };
       };
+      const APPCOL = ['#2F6FDE', '#1E9E6A', '#E5565B', '#36A9E8', '#7B6CF6', '#14A8A8', '#4C5BD4', '#D1497A'];
+      const APPICO = ['file-text', 'table-2', 'presentation', 'mail', 'calendar', 'message-square', 'cloud', 'users'];
 
-      /* Visual 1 – Allrounder: „App-Raster von der Stange“ + Kostenschilder */
-      const vM365 = (g) => {
-        const win = h('div', { class: 'a1-win', style: { left: 1030, top: 280 } },
-          h('div', { class: 'tb' }, h('i'), h('i'), h('i'), h('b', { text: 'Alle Apps' })),
-          h('div', { class: 'abs', style: { left: 0, top: 56, bottom: 0, width: 70, background: '#E5E9F1' } }, [0, 1, 2, 3, 4].map((k) => h('div', { class: 'abs', style: { left: 21, top: 30 + k * 62, width: 28, height: 28, borderRadius: 8, background: '#C9D0DE' } }))));
-        const cols = ['#2F6FDE', '#1E9E6A', '#E5565B', '#36A9E8', '#7B6CF6', '#14A8A8', '#4C5BD4', '#D1497A'];
-        const icos = ['file-text', 'table-2', 'presentation', 'mail', 'calendar', 'message-square', 'cloud', 'users'];
-        const tiles = cols.map((c, k) => { const el = h('div', { class: 'a1-tile', style: { background: c, left: 120 + (k % 4) * 152, top: 100 + Math.floor(k / 4) * 154 }, html: icon(icos[k], 52, '#fff', 2) }); win.append(el); return el; });
-        const tags = ['+ LIZENZ', '+ ADD-ON', '+ SPEICHER', '+ KI-ZUSATZ'].map((s, k) => { const el = h('div', { class: 'a1-tag' }, h('span', { html: icon('euro', 24, '#E5565B', 2.6) }), s); g.append(el); return el; });
-        const ghost = h('div', { class: 'abs', style: { left: 120 + 3 * 152 - 4, top: 100 + 154 - 4, width: 136, height: 136, borderRadius: 30, border: '3px dashed rgba(229,86,91,.85)', zIndex: 3 } });
-        win.append(ghost); g.append(win); win.style.zIndex = 2;
-        tags.forEach((el) => { el.style.zIndex = 5; });
+      /* Visual 1 – Allrounder: Laptop mit „Alle Apps“, Handy mit Benachrichtigungen, Preisschilder, ein Kachel, die nicht passt */
+      const vSuite = (g) => {
+        const lap = laptop(E); Object.assign(lap.el.style, { left: '980px', top: '250px', zIndex: 3 }); g.append(lap.el);
+        const scr = lap.screen; scr.style.background = 'linear-gradient(135deg,#1B2840,#0F1626)';
+        scr.append(h('div', { class: 'abs', style: { left: 0, top: 0, right: 0, height: 26, background: 'rgba(255,255,255,.08)' } }));
+        const back = mini(E, 'chat', 300, 200); Object.assign(back.style, { left: '470px', top: '250px', transform: 'rotate(3deg)' }); scr.append(back);
+        const win = h('div', { class: 'abs', style: { left: 60, top: 54, width: 580, height: 372, borderRadius: 12, background: '#F1F3F7', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,.45)' } },
+          h('div', { class: 'abs', style: { left: 0, top: 0, right: 0, height: 36, background: '#fff', borderBottom: '1.5px solid #E3E7EF', display: 'flex', alignItems: 'center', gap: 8, padding: '0 14px', font: '700 14px/1 var(--font-body)', color: '#59627A' } }, h('i', { style: { width: 10, height: 10, borderRadius: '50%', background: '#D5DAE4', display: 'block' } }), h('i', { style: { width: 10, height: 10, borderRadius: '50%', background: '#D5DAE4', display: 'block' } }), 'Alle Apps'));
+        const tiles = APPCOL.map((c, k) => { const el = h('div', { class: 'abs', style: { left: 42 + (k % 4) * 134, top: 66 + Math.floor(k / 4) * 148, width: 110, height: 110, borderRadius: 24, background: c, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 14px rgba(31,37,50,.28)' }, html: icon(APPICO[k], 48, '#fff', 2) }); win.append(el); return el; });
+        const ghost = h('div', { class: 'abs', style: { left: 42 + 3 * 134 - 5, top: 66 + 148 - 5, width: 120, height: 120, borderRadius: 28, border: '3px dashed rgba(229,86,91,.9)', zIndex: 3 } });
+        win.append(ghost); scr.append(win);
+        scr.append(h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 0, height: 34, background: 'rgba(255,255,255,.1)', display: 'flex', alignItems: 'center', gap: 12, padding: '0 16px' } }, ...APPCOL.map((c) => h('i', { style: { width: 20, height: 20, borderRadius: 6, background: c, display: 'block', opacity: 0.85 } }))));
+        // Handy daneben, voller Apps und Benachrichtigungen
+        const ph = phone(E); Object.assign(ph.el.style, { left: '1640px', top: '470px', zIndex: 5 }); g.append(ph.el);
+        ph.screen.style.background = 'linear-gradient(160deg,#2B3A5E,#141B2E)';
+        const badges = [];
+        for (let k = 0; k < 20; k++) { const ic = h('div', { class: 'abs', style: { left: 22 + (k % 4) * 70, top: 76 + Math.floor(k / 4) * 92, width: 58, height: 58, borderRadius: 15, background: APPCOL[(k * 3) % 8], display: 'flex', alignItems: 'center', justifyContent: 'center' }, html: icon(APPICO[(k * 5) % 8], 28, '#fff', 2) }); if (k % 3 !== 1) { const b = h('div', { class: 'a1-badge', text: String(2 + ((k * 7) % 40)), style: { left: 38, top: -10, transform: 'scale(.7)', transformOrigin: '0 50%', display: 'none' } }); ic.append(b); badges.push(b); } ph.screen.append(ic); }
+        const tags = ['+ LIZENZ', '+ ADD-ON', '+ SPEICHER', '+ KI-ZUSATZ'].map((txt) => { const el = h('div', { class: 'a1-tag', style: { zIndex: 8 } }, h('span', { html: icon('euro', 24, '#E5565B', 2.6) }), txt); g.append(el); return el; });
+        const peeks = [['mail', 940, 40, -4], ['cal', 1290, 30, 3]].map(([k, x, y, r]) => { const el = mini(E, k, 300, 190); Object.assign(el.style, { left: x + 'px', top: y + 'px', zIndex: 1 }); g.append(el); return { el, r }; });
         return {
-          win, update(t, t0, P) {
-            const a = t - t0;
-            tf(win, { x: 90 * (1 - tw(a, 0.0, 0.7, ease.ui)), y: 30 * (1 - tw(a, 0.0, 0.7, ease.ui)), r: 2.5, o: tw(a, 0.0, 0.5) });
-            tiles.forEach((el, k) => { const p = tw(a, 0.15 + k * 0.05, 0.6 + k * 0.05, ease.snap); let q = { s: 0.6 + 0.4 * p, o: clamp(p * 1.5) };
-              if (k === 7) { const j = tw(t, P[2], P[2] + 0.35, ease.snap); q.x = 46 * j; q.y = -38 * j; q.r = 14 * j; } tf(el, q); });
-            const gp = tw(t, P[2], P[2] + 0.3, ease.out3); show(ghost, t >= P[2]); tf(ghost, { o: gp });
-            tags.forEach((el, k) => { const tt = P[1] + k * 0.11, p = tw(t, tt, tt + 0.5, ease.out3); const bounce = Math.abs(Math.sin(p * Math.PI * 1.5)) * (1 - p) * 40;
-              show(el, t >= tt - 0.01); tf(el, { x: 1530 + (k % 2) * 40 - k * 6, y: 330 + k * 86 - (1 - p) * 260 - bounce, r: -8 + k * 6, o: clamp(p * 3) }); });
+          update(t, t0, P) {
+            const a = t - t0, p = tw(a, 0, 0.7, ease.ui);
+            tf(lap.el, { x: 90 * (1 - p), y: 24 * (1 - p), o: tw(a, 0, 0.5), r: -1.2 });
+            tiles.forEach((el, k) => { const q = tw(a, 0.25 + k * 0.06, 0.7 + k * 0.06, ease.snap); const j = k === 7 ? tw(t, P[1], P[1] + 0.35, ease.snap) : 0; tf(el, { s: 0.6 + 0.4 * q, o: clamp(q * 1.5), x: 36 * j, y: -30 * j, r: 12 * j }); });
+            show(ghost, t >= P[1]); tf(ghost, { o: tw(t, P[1], P[1] + 0.3, ease.out3) });
+            const pp = tw(a, 0.55, 1.2, ease.ui); tf(ph.el, { x: 0, y: 160 * (1 - pp), s: 0.56, o: pp });
+            badges.forEach((b, k) => { const tt = P[2] - 0.2 + k * 0.05; show(b, t >= tt); });
+            tags.forEach((el, k) => { const tt = P[0] + k * 0.11, q = tw(t, tt, tt + 0.5, ease.out3), bounce = Math.abs(Math.sin(q * Math.PI * 1.5)) * (1 - q) * 40; show(el, t >= tt - 0.01); tf(el, { x: 1580 + (k % 2) * 40 - k * 6, y: 190 + k * 76 - (1 - q) * 240 - bounce, r: -8 + k * 6, o: clamp(q * 3) }); });
+            peeks.forEach((pk, k) => { const tt = P[2] + k * 0.15, q = tw(t, tt, tt + 0.5, ease.snap); show(pk.el, t >= tt); tf(pk.el, { y: -30 * (1 - q), s: 0.8 + 0.2 * q, r: pk.r, o: clamp(q * 2) * 0.95 }); });
           },
         };
       };
 
-      /* Visual 2 – Fertiges Portal: Fassade klappt auf, dahinter uneinheitliche Fenster */
-      const vOpenDesk = (g) => {
-        const wrap = h('div', { class: 'abs', style: { left: 1030, top: 280, width: 780, height: 520, perspective: '1600px' } });
-        const styles = [
-          { t: 'Dateien', c: '#2F6FDE', rad: 4, x: 0, y: 0, font: 'var(--font-body)' }, { t: 'Mail', c: '#1E9E6A', rad: 22, x: 440, y: 20, font: 'Georgia, serif' },
-          { t: 'Chat', c: '#7B6CF6', rad: 0, x: 20, y: 270, font: 'monospace' }, { t: 'Wiki', c: '#14A8A8', rad: 12, x: 450, y: 290, font: 'var(--font-display)' },
-        ];
-        const sws = styles.map((s) => { const el = h('div', { class: 'a1-sw', style: { left: s.x, top: s.y, borderRadius: s.rad, fontFamily: s.font } }, h('div', { class: 'hd', style: { background: s.c }, text: s.t }), h('div', { class: 'bar' }), h('div', { class: 'bar', style: { width: 180 } }), h('div', { class: 'bar', style: { width: 240 } }), h('div', { class: 'bar', style: { width: 120 } })); wrap.append(el); return el; });
-        const front = h('div', { class: 'a1-win', style: { left: 0, top: 0, transformOrigin: '0 50%', background: '#fff' } },
-          h('div', { class: 'tb' }, h('i'), h('i'), h('i'), h('b', { text: 'Portal' })),
-          h('div', { class: 'abs', style: { left: 40, top: 92, width: 280, height: 380, borderRadius: 16, background: '#fff', boxShadow: '0 12px 40px rgba(31,37,50,.18)', border: '1.5px solid #E3E7EF', padding: '26px 24px' } },
-            h('div', { style: { font: '700 22px/1 var(--font-display)', textTransform: 'uppercase', marginBottom: 20 }, text: 'Anmelden' }),
-            h('div', { style: { height: 44, borderRadius: 9, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 12 } }), h('div', { style: { height: 44, borderRadius: 9, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 18 } }),
-            h('div', { style: { height: 48, borderRadius: 9, background: '#7B6CF6' } })),
-          ['Dateien', 'Mail', 'Chat', 'Wiki', 'Projekte', 'Büro'].map((n, k) => h('div', { class: 'abs', style: { left: 360 + (k % 2) * 190, top: 100 + Math.floor(k / 2) * 126, width: 172, height: 108, borderRadius: 14, background: '#EEEAFE', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, font: '600 18px/1 var(--font-body)', color: '#4B3FC7' } }, h('span', { html: icon('app-window', 32, '#7B6CF6', 2) }), n)));
-        const hl = h('div', { class: 'abs', style: { left: 34, top: 86, width: 292, height: 392, borderRadius: 20, border: '4px solid #7B6CF6', boxShadow: '0 0 40px rgba(123,108,246,.6)', transformOrigin: '0 50%' } });
-        front.append(hl); wrap.append(front); g.append(wrap);
+      /* Visual 2 – Fertiges Portal: ein Login am Handy, dahinter öffnen sich viele unterschiedliche Oberflächen */
+      const vPortal = (g) => {
+        const ph = phone(E); Object.assign(ph.el.style, { left: '1260px', top: '190px', zIndex: 4 }); g.append(ph.el);
+        ph.screen.style.background = 'linear-gradient(160deg,#2A2150,#101226)';
+        const tilesP = ['Dateien', 'Mail', 'Chat', 'Wiki', 'Projekte', 'Büro'].map((n, k) => { const el = h('div', { class: 'abs', style: { left: 24 + (k % 2) * 138, top: 110 + Math.floor(k / 2) * 150, width: 120, height: 130, borderRadius: 20, background: '#EEEAFE', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, font: '600 17px/1 var(--font-body)', color: '#4B3FC7' }, html: icon('app-window', 40, '#7B6CF6', 2) + `<span>${n}</span>` }); ph.screen.append(el); return el; });
+        const panel = h('div', { class: 'abs', style: { left: 24, top: 130, width: 258, height: 380, borderRadius: 20, background: '#fff', padding: '28px 22px', transformOrigin: '0 50%', boxShadow: '0 14px 40px rgba(0,0,0,.4)' } },
+          h('div', { style: { font: '700 24px/1 var(--font-display)', textTransform: 'uppercase', marginBottom: 26, color: '#1F2532' }, text: 'Anmelden' }),
+          h('div', { style: { height: 48, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 14 } }), h('div', { style: { height: 48, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 24 } }), h('div', { style: { height: 52, borderRadius: 10, background: '#7B6CF6' } }));
+        ph.screen.append(panel);
+        const hl = h('div', { class: 'abs', style: { left: 16, top: 122, width: 274, height: 396, borderRadius: 26, border: '4px solid #7B6CF6', boxShadow: '0 0 40px rgba(123,108,246,.6)', zIndex: 3 } }); ph.screen.append(hl);
+        const AROUND = [['files', 960, 210, 300, 200, -4], ['chat', 950, 560, 290, 200, 3], ['mail', 1620, 170, 300, 200, 4], ['sheet', 1630, 580, 290, 200, -3], ['ticket', 1290, 880, 320, 190, 2]];
+        const wins = AROUND.map(([k, x, y, w, hh, r], i) => { const el = mini(E, k, w, hh); Object.assign(el.style, { left: x + 'px', top: y + 'px', zIndex: 2 }); g.append(el); return { el, r, i }; });
         return {
-          wrap, update(t, t0, P) {
-            const a = t - t0;
-            tf(wrap, { x: 90 * (1 - tw(a, 0.0, 0.7, ease.ui)), o: tw(a, 0.0, 0.5), r: -2 });
-            const door = ease.io3(prog(t, P[1], P[1] + 0.7));
-            front.style.transform = `perspective(1600px) rotateY(${(72 * door).toFixed(2)}deg)`; front.style.opacity = 1 - 0.65 * door;
-            tf(hl, { o: tw(t, P[0], P[0] + 0.25) * (1 - door) * (0.7 + 0.3 * Math.sin(t * 14)) });
-            sws.forEach((el, k) => { const sp = tw(t, P[2], P[2] + 0.5, ease.snap); const rot = [-5, 4, 6, -4][k] * sp; tf(el, { x: [-18, 22, -20, 24][k] * sp, y: [-14, -10, 16, 14][k] * sp, r: rot, o: 0.35 + 0.65 * door }); });
+          update(t, t0, P) {
+            const a = t - t0, p = tw(a, 0, 0.7, ease.ui);
+            tf(ph.el, { x: 90 * (1 - p), y: 20 * (1 - p), o: tw(a, 0, 0.5), r: -2 });
+            tf(hl, { o: tw(t, t0 + 0.3, t0 + 0.6) * (1 - tw(t, P[0], P[0] + 0.5)) * (0.7 + 0.3 * Math.sin(t * 14)) });
+            const door = ease.io3(prog(t, P[0], P[0] + 0.7));
+            panel.style.transform = `perspective(900px) rotateY(${(-80 * door).toFixed(2)}deg)`; panel.style.opacity = 1 - 0.95 * door;
+            tilesP.forEach((el, k) => { const q = tw(t, P[0] + 0.2 + k * 0.06, P[0] + 0.6 + k * 0.06, ease.snap); tf(el, { s: 0.6 + 0.4 * q, o: clamp(q * 2) }); });
+            wins.forEach((w, k) => { const tt = P[1] + k * 0.12, q = tw(t, tt, tt + 0.5, ease.snap), sp = tw(t, P[2], P[2] + 0.6, ease.snap); show(w.el, t >= tt); tf(w.el, { x: [-24, -20, 22, 24, 0][k] * sp, y: [-14, 12, -12, 14, 18][k] * sp + 8 * Math.sin(t * 2 + k), r: w.r + [-3, 3, -3, 3, 2][k] * sp, s: 0.6 + 0.4 * q, o: clamp(q * 2) }); });
           },
         };
       };
 
-      /* Visual 3 – Offene Basis: nacktes Wireframe + Update-Balken */
-      const vNextcloud = (g) => {
-        const ui = buildUI(E);
-        const w = ui.window({ raw: true }); w.setActive('Startseite'); w.main.append(ui.home().el);
-        w.el.style.transformOrigin = '0 0';
-        const frame = h('div', { class: 'abs', style: { left: 1030, top: 270, width: 780, height: 470 } }); frame.append(w.el); g.append(frame);
-        const bar = h('div', { class: 'abs', style: { left: 1030, top: 770, width: 780, height: 70, borderRadius: 16, background: '#1B2335', border: '1.5px solid rgba(255,255,255,.14)', display: 'flex', alignItems: 'center', gap: 18, padding: '0 24px' } },
+      /* Visual 3 – Offene Basis: Laptop mit nacktem Wireframe, Update-Balken „selbst erledigen“, Werkzeug-Symbole, ein Ticket */
+      const vBase = (g) => {
+        const lap = laptop(E); Object.assign(lap.el.style, { left: '980px', top: '250px', zIndex: 3 }); g.append(lap.el);
+        const ui = buildUI(E); const w = ui.window({ raw: true }); w.setActive('Startseite'); w.main.append(ui.home().el);
+        w.el.style.transformOrigin = '0 0'; w.el.style.transform = `scale(${(812 / 1480).toFixed(4)})`; lap.screen.append(w.el);
+        const bar = h('div', { class: 'abs', style: { left: 980, top: 852, width: 840, height: 70, borderRadius: 16, background: '#1B2335', border: '1.5px solid rgba(255,255,255,.14)', display: 'flex', alignItems: 'center', gap: 18, padding: '0 24px', zIndex: 4 } },
           h('span', { html: icon('triangle-alert', 30, '#36A9E8', 2.4) }), h('span', { text: 'UPDATES: SELBST ERLEDIGEN', style: { font: '700 20px/1 var(--font-body)', letterSpacing: '.1em', color: CREAM, whiteSpace: 'nowrap' } }),
           h('div', { style: { flex: 1, height: 14, borderRadius: 7, background: 'rgba(255,255,255,.12)', position: 'relative', overflow: 'hidden' } }, h('div', { class: 'fillbar', style: { position: 'absolute', left: 0, top: 0, bottom: 0, width: '0%', background: '#36A9E8', borderRadius: 7 } })));
         g.append(bar);
-        const tools = ['wrench', 'server', 'hammer'].map((n, k) => { const el = h('div', { class: 'abs', style: { left: 1030 + 90 + k * 280, top: 250, width: 76, height: 76, borderRadius: 20, background: '#36A9E8', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 18px rgba(0,0,0,.45)', zIndex: 6 }, html: icon(n, 40, '#fff', 2.2) }); g.append(el); return el; });
+        const tools = ['wrench', 'server', 'hammer'].map((n, k) => { const el = h('div', { class: 'abs', style: { left: 1000 + k * 300, top: 200, width: 76, height: 76, borderRadius: 20, background: '#36A9E8', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 18px rgba(0,0,0,.45)', zIndex: 6 }, html: icon(n, 40, '#fff', 2.2) }); g.append(el); return el; });
+        const tk = mini(E, 'ticket', 300, 190); Object.assign(tk.style, { left: '1560px', top: '30px', zIndex: 2 }); g.append(tk);
+        const mailg = mini(E, 'files', 280, 180); Object.assign(mailg.style, { left: '1250px', top: '20px', zIndex: 1 }); g.append(mailg);
         return {
-          frame, update(t, t0, P) {
-            const a = t - t0, sc = 780 / 1480;
-            tf(frame, { x: 90 * (1 - tw(a, 0.0, 0.7, ease.ui)), o: tw(a, 0.0, 0.5) * (1 - 0.18 * Math.max(0, Math.sin((t - P[1]) * 22)) * (t > P[1] && t < P[1] + 0.35 ? 1 : 0)), r: 1.5 });
-            w.el.style.transform = `scale(${sc.toFixed(4)})`;
+          update(t, t0, P) {
+            const a = t - t0, sc = 1;
+            tf(lap.el, { x: 90 * (1 - tw(a, 0.0, 0.7, ease.ui)), y: 24 * (1 - tw(a, 0, 0.7, ease.ui)), o: tw(a, 0.0, 0.5) * (1 - 0.18 * Math.max(0, Math.sin((t - P[1]) * 22)) * (t > P[1] && t < P[1] + 0.35 ? 1 : 0)), r: 1.2 });
             tf(bar, { y: 40 * (1 - tw(t, P[0] - 0.1, P[0] + 0.4, ease.ui)), o: tw(t, P[0] - 0.1, P[0] + 0.3) });
             bar.querySelector('.fillbar').style.width = (28 * ease.out3(prog(t, P[0] + 0.1, P[0] + 1.0))) + '%';
-            tools.forEach((el, k) => { const tt = P[2] + k * 0.1, p = tw(t, tt, tt + 0.45, ease.snap); show(el, t >= tt); tf(el, { y: -50 * (1 - p) + 6 * Math.sin(t * 3 + k), s: 0.5 + 0.5 * p, o: clamp(p * 2), r: (k - 1) * 8 }); });
+            tools.forEach((el, k) => { const tt = P[1] + k * 0.1, p = tw(t, tt, tt + 0.45, ease.snap); show(el, t >= tt); tf(el, { y: -50 * (1 - p) + 6 * Math.sin(t * 3 + k), s: 0.5 + 0.5 * p, o: clamp(p * 2), r: (k - 1) * 8 }); });
+            [tk, mailg].forEach((el, k) => { const tt = P[2] + k * 0.15, q = tw(t, tt, tt + 0.5, ease.snap); show(el, t >= tt); tf(el, { y: -26 * (1 - q), s: 0.8 + 0.2 * q, r: k ? -3 : 3, o: clamp(q * 2) * 0.95 }); });
           },
         };
       };
 
-      // Bewusst ohne Produkt- oder Firmennamen: drei Ansätze, die jeder kennt – erst die Stärke, dann das „Aber“.
+      // Bewusst ohne Produkt- oder Firmennamen: drei Ansätze, die jeder kennt – erst die Stärke, dann das „Aber“, ausgedrückt in Alltagssätzen.
       const cfgs = [
-        { id: 'm365', name: 'DER ALLROUNDER', size: 84, ok: 'ALLES AUS EINER HAND.', acc: ACC.m365, gaps: [['globe-lock', 'ABHÄNGIG VOM<br>ANBIETER'], ['euro', 'KOSTEN<br>WACHSEN MIT'], ['shirt', 'NICHT AUF DICH<br>ZUGESCHNITTEN']], visual: vM365 },
-        { id: 'opendesk', name: 'DAS FERTIGE PORTAL', size: 68, ok: 'OFFEN UND LOKAL GEDACHT.', acc: ACC.opendesk, gaps: [['panels-top-left', 'NUR OBERFLÄCHE<br>UND ANMELDUNG'], ['blocks', 'WERKZEUGE<br>BLEIBEN EINZELN'], ['unplug', 'KEIN DURCHGÄNGIGES<br>ERLEBNIS']], visual: vOpenDesk },
-        { id: 'nextcloud', name: 'DIE OFFENE BASIS', size: 76, ok: 'MÄCHTIG UND FREI.', acc: ACC.nextcloud, gaps: [['history', 'PFLEGE BLEIBT<br>BEI DIR'], ['hammer', 'ROH<br>IM ALLTAG'], ['server', 'VIEL TECHNIK,<br>WENIG ERLEBNIS']], visual: vNextcloud },
+        { id: 'm365', name: 'DER ALLROUNDER', size: 84, ok: 'ALLES AUS EINER HAND.', acc: ACC.m365, visual: vSuite,
+          quotes: [['anna', 'Vertrieb', 'Und wenn der Anbieter die Regeln ändert?'], ['jonas', 'Einkauf', 'Jede Erweiterung kostet extra – und die nächste auch.'], ['lena', 'Projekte', 'Wir passen uns der Software an. Nicht umgekehrt.']],
+          qpos: [[110, 380], [200, 540], [130, 700]], qw: [640, 700, 680], qrot: [-1, 0.8, -0.6] },
+        { id: 'opendesk', name: 'DAS FERTIGE PORTAL', size: 68, ok: 'OFFEN UND LOKAL GEDACHT.', acc: ACC.opendesk, visual: vPortal,
+          quotes: [['tom', 'Geschäftsführung', 'Ein Login, schön. Dahinter ist alles anders.'], ['aylin', 'Büro', 'Die Mail sieht anders aus als der Chat – und der anders als die Dateien.'], ['ben', 'Buchhaltung', 'Es fühlt sich nicht wie ein Ganzes an.']],
+          qpos: [[110, 380], [190, 540], [130, 730]], qw: [660, 720, 620], qrot: [0.8, -0.8, 0.6] },
+        { id: 'nextcloud', name: 'DIE OFFENE BASIS', size: 76, ok: 'MÄCHTIG UND FREI.', acc: ACC.nextcloud, visual: vBase,
+          quotes: [['ben', 'Buchhaltung', 'Das Update spielen wir natürlich selbst ein.'], ['lena', 'Projekte', 'Mächtig, ja. Im Alltag sieht es noch roh aus.'], ['tom', 'Geschäftsführung', 'Für die Kolleg*innen ist das einfach zu technisch.']],
+          qpos: [[110, 380], [200, 540], [120, 700]], qw: [650, 660, 700], qrot: [-0.8, 0.8, -0.6] },
       ];
       const groups = cfgs.map(mkGroup);
 
@@ -240,7 +258,7 @@ export default function register(E) {
       // Sog in den Drop: der Faden glüht auf, ein orangenes Licht wächst aus der Linie, kurz vor 20.0 „atmet alles ein“
       const pGlow = h('div', { class: 'abs', style: { left: 60, top: THREAD_Y - 900, width: 1800, height: 1800, background: 'radial-gradient(closest-side, rgba(230,126,34,.55), rgba(230,126,34,.18) 45%, rgba(230,126,34,0) 100%)', zIndex: 36 } }); root.append(pGlow);
 
-      return { pGlow, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
+      return { pGlow, bgw, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
     },
 
     update(t, s) {
@@ -257,20 +275,28 @@ export default function register(E) {
       s.chips.forEach((c, i) => {
         if (!pre) { show(c.el, false); return; }
         let o, sc = c.sc;
-        if (c.bg) { o = t < 2.0 ? 0.2 + 0.05 * Math.sin(i) : (t < 14 ? 0.14 : lerp(0.14, 0.8, ease.out2(over))); o *= tw(t, 0, 0.8); sc *= 1 + 0.25 * over; }
+        if (c.bg) { o = t < T_HOOK ? (0.2 + 0.05 * Math.sin(i)) * (c.y > 250 && c.y < 600 ? 0.3 : 1) : (t < 14 ? 0.14 : lerp(0.14, 0.8, ease.out2(over))); o *= tw(t, 0, 0.8); sc *= 1 + 0.25 * over; }
         else { const p = tw(t, c.tIn, c.tIn + 0.35, ease.snap); o = p * 0.95; sc *= 0.7 + 0.35 * p; }
         show(c.el, o > 0.01);
         const spd = 1 + 2.4 * over;
         tf(c.el, { x: c.x + c.vx * t * spd, y: c.y + c.vy * t * spd, r: c.rot + Math.sin(t * 1.3 + i) * 1.2 * (1 + over * 3), s: sc, o });
       });
 
-      /* ---- Hook (0–2) ---- */
+      /* ---- Hintergrund-Oberflächen ---- */
+      const ov = prog(t, 14.0, 17.8);
+      s.bgw.forEach((w, i) => {
+        const p = tw(t, w.tIn, w.tIn + 0.7, ease.ui), o = (t < 14 ? 0.26 : lerp(0.26, 0.6, ease.out2(ov))) * p;
+        show(w.el, pre && o > 0.01);
+        tf(w.el, { x: w.x + 6 * Math.sin(t * 0.7 + i), y: w.y + 5 * Math.cos(t * 0.6 + i) + 20 * (1 - p), r: w.rot, s: 1 + 0.12 * ov, o });
+      });
+
+      /* ---- Hook (0–3,5): „dazwischen.“ landet bei 2,0 und steht 1,3 s, bevor der Schnitt kommt ---- */
       const hk = (el, t0) => tf(el.firstChild, { y: 130 * (1 - tw(t, t0, t0 + 0.7, ease.ui)) });
-      hk(s.w1, 0.15); hk(s.w2, 0.5); hk(s.w3, 1.0); hk(s.w4, 1.5);
-      const gap = 34 * tw(t, 1.62, 2.1, ease.out3); tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
-      const hx = tw(t, 1.88, 2.0, ease.in3);                       // harter Schnitt auf den Karten-Schlag bei 2.0
-      show(s.hook, t < 2.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
-      s.hookBadges.forEach((b, k) => { const t0 = [0.5, 1.0, 1.5][k], p = tw(t, t0, t0 + 0.35, ease.snap); show(b.el, t >= t0 && t < 2.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
+      hk(s.w1, 0.2); hk(s.w2, 0.5); hk(s.w3, 1.5); hk(s.w4, 2.0);
+      const gap = 34 * tw(t, 2.1, 2.9, ease.out3); tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
+      const hx = tw(t, T_HOOK - 0.2, T_HOOK, ease.in3);                // harter Schnitt auf den Karten-Schlag
+      show(s.hook, t < T_HOOK + 0.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
+      s.hookBadges.forEach((b, k) => { const t0 = [0.5, 1.5, 2.0][k], p = tw(t, t0, t0 + 0.35, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
 
       /* ---- Karten-Gruppen ---- */
       s.groups.forEach((G, gi) => {
@@ -283,11 +309,12 @@ export default function register(E) {
         const P = G.pile;
         const sc = lerp(1, P.s, sh) * grow, tx = lerp(0, P.x, sh), ty = lerp(0, P.y, sh), rot = lerp(-1.2, P.r, sh) + Math.sin(t * 0.8 + gi) * 0.6 * sh;
         const sl = 1.09 - 0.09 * slam;
-        tf(G.g, { x: tx, y: ty + 34 * (1 - slam) * (1 - sh), s: sc * (sh > 0 ? 1 : sl), r: rot, o: clamp(slam * 2) * (1 - 0.62 * sh * (t < 14 ? 1 : 1 - 0.15 * prog(t, 14, 17))) });
+        tf(G.g, { x: tx, y: ty + 34 * (1 - slam) * (1 - sh), s: sc * (sh > 0 ? 1 : sl), r: rot, o: clamp(slam * 2) * (1 - 0.8 * sh * (t < 14 ? 1 : 1 - 0.15 * prog(t, 14, 17))) });
         G.g.style.zIndex = String(10 + gi + (sh > 0.5 ? -8 : 0));
-        // Inhalte der Karte
-        tf(G.ok, { y: 16 * (1 - tw(a, 0.2, 0.6, ease.ui)), o: tw(a, 0.2, 0.55) });
-        G.gaps.forEach((gp, k) => { const tt = G.pings[k], p = tw(t, tt, tt + 0.32, ease.snap); tf(gp, { x: 34 * (1 - p), s: 0.93 + 0.07 * p, o: clamp(p * 2) }); });
+        // Titel, Stärke und Alltagssätze (die Sätze erscheinen auf den Pings; beim Wegschieben bleiben nur Gerät und Titel als Schatten)
+        tf(G.name, { y: 18 * (1 - tw(a, 0.05, 0.5, ease.ui)), o: tw(a, 0.05, 0.45) * (1 - 0.5 * sh) });
+        tf(G.ok, { y: 16 * (1 - tw(a, 0.3, 0.7, ease.ui)), o: tw(a, 0.3, 0.65) * (1 - 0.5 * sh) });
+        G.qs.forEach((q, k) => { const tt = G.pings[k] != null ? G.pings[k] : G.t0 + 0.75 * (k + 1), p = tw(t, tt, tt + 0.45, ease.snap); tf(q, { x: -34 * (1 - p), y: 14 * (1 - p), s: 0.92 + 0.08 * p, r: G.qrot[k], o: clamp(p * 2) * (1 - tw(t, G.shove + 0.1, G.shove + 0.45)) }); });
         G.vis.update(t, G.t0, G.pings);
       });
 

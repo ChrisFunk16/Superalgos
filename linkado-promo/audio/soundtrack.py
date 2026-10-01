@@ -277,29 +277,29 @@ def render():
     B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
     for k in range(int(10.0 / BEAT)):                           # Uhr-Ticks (Zählzeiten)
         tt = k * BEAT; A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5, pan=-0.2 if k % 2 else 0.2)
-    # Puls: ab 2 s gedämpfter Kick (halbe Zeit), ab 6 s auf jeder Zählzeit, Filter öffnet sich bis 18 s
+    # Puls: gedämpfter Kick in halber Zeit (Hook + erster Alltagsmoment), ab 7 s auf jeder Zählzeit, Filter öffnet sich bis 18 s
     for k in range(int(CUT / BEAT)):
         tk = k * BEAT
-        if tk < 6.0 and k % 2: continue
-        co = 105 + 1100 * prog(tk, 6, 18) ** 1.6 + 30 * prog(tk, 0, 6); lv = 0.30 + 0.55 * prog(tk, 0, 18)
+        if tk < 7.0 and k % 2: continue
+        co = 105 + 1100 * prog(tk, 7, 18) ** 1.6 + 30 * prog(tk, 0, 7); lv = 0.30 + 0.55 * prog(tk, 0, 18)
         A1.add(soft_kick(lv, co), tk, 1.0); kicks.append((tk, 0.30 * (0.5 + prog(tk, 0, 18))))
-    # Hats: ab 6 s gedämpfte Achtel, ab 10 s offene Hats auf dem Offbeat
-    for k in range(int((CUT - 6.0) / (BEAT / 2))):
-        tt = 6.0 + k * BEAT / 2
-        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, 6, 18)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, 6, 18), pan=(-1) ** k * 0.35)
-        if tt >= 10.0 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, 10, 18), pan=0.45)
-    # Bass-Puls ab 10 s: Offbeat-Achtel auf A – C – E (Am-Dreiklang), tief genug zum Tragen, aber noch kein Sub
-    for k in range(int((CUT - 10.0) / (BEAT / 2))):
-        tt = 10.0 + k * BEAT / 2
+    # Hats: ab 7 s gedämpfte Achtel, ab 10,5 s offene Hats auf dem Offbeat
+    for k in range(int((CUT - 7.0) / (BEAT / 2))):
+        tt = 7.0 + k * BEAT / 2
+        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, 7, 18)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, 7, 18), pan=(-1) ** k * 0.35)
+        if tt >= 10.5 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, 10.5, 18), pan=0.45)
+    # Bass-Puls ab 10,5 s: Offbeat-Achtel auf A – C – E (Am-Dreiklang), tief genug zum Tragen, aber noch kein Sub
+    for k in range(int((CUT - 10.5) / (BEAT / 2))):
+        tt = 10.5 + k * BEAT / 2
         if k % 2 == 0: continue
         nn = [45, 45, 48, 52][(k // 2) % 4]
-        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, 10, 18), pan=0.0)
+        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, 10.5, 18), pan=0.0)
     # Drei Stimmen, im 16tel-Raster verzahnt: zusammen ergeben sie die Figur A – C – E – A – E – C (A-Moll-Arpeggio)
-    #   Stimme 1 (M365, Zupfton A4) ab 2 s · Stimme 2 (openDesk, Marimba C5) ab 6 s · Stimme 3 (Nextcloud, Glocke E5) ab 10 s
+    #   Stimme 1 (Allrounder, Zupfton A4) ab 3,5 s · Stimme 2 (Portal, Marimba C5) ab 7 s · Stimme 3 (Basis, Glocke E5) ab 10,5 s
     def v1(f, vel=1.0): return pluck(f, 0.30, vel, 0.25, tau=0.08)
     def v2(f, vel=1.0): return marimba(f, vel, 0.45)
     def v3(f, vel=1.0): return bell(f, 1.3, vel, tail=0.25)
-    VOICES = [(2.0, [3, 11], 69, v1, 0.20, -0.35), (6.0, [6, 14], 72, v2, 0.20, 0.35), (10.0, [9, 13], 76, v3, 0.17, 0.0)]
+    VOICES = [(3.5, [3, 11], 69, v1, 0.20, -0.35), (7.0, [6, 14], 72, v2, 0.20, 0.35), (10.5, [9, 13], 76, v3, 0.17, 0.0)]
     for t_on, steps, nn, fn, lv0, pan_ in VOICES:
         for bar in range(int(t_on // BAR) + 1, int(CUT // BAR) + 1):
             for st in steps:
@@ -324,9 +324,10 @@ def render():
         while tt < b - 1e-6:
             note = CH[ch]['arp'][[0, 2, 4, 2, 5, 4, 2, 4][k % 8]]
             A1V.add(pluck(midi(note), 0.26, 0.8, 0.30, tau=0.08), tt + hum(0.002), 0.10 + 0.22 * prog(tt, 14, 18), pan=(-1) ** k * 0.3); tt += S16; k += 1
-    # Hook (0–2 s): aufsteigender Moll-Dreiklang A – C – E auf „funktioniert. / Nur nicht / dazwischen.“ – bleibt offen, die Auflösung kommt erst im Finale
-    for hk_, nn in zip([h for h in hits('ping') if h['t'] < 2.0], [69, 72, 76]):
+    # Hook (0–3,5 s): aufsteigender Moll-Dreiklang A – C – E auf „funktioniert. / Nur nicht / dazwischen.“ – bleibt offen, die Auflösung kommt erst im Finale
+    for hk_, nn in zip([h for h in hits('ping') if h['t'] < 3.0], [69, 72, 76]):
         A1V.add(marimba(midi(nn), 1.0), hk_['t'], 0.20, pan=(-1) ** int(hk_['t'] * 2) * 0.3)
+    A1V.add(bell(midi(76), 1.6, 0.7, tail=0.5), 2.0, 0.10)                       # „dazwischen.“ klingt nach – das Wort steht jetzt 1,3 s
     # Kartenschläge: Grundton A / C / E (Sub-Impuls + gezupfte Note), danach je Lücke ein heller Ton derselben Stimme
     for h in hits('card'):
         tt, v = h['t'], h['voice']; f0 = {1: 110.0, 2: 130.81, 3: 164.81}[v]

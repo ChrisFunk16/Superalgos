@@ -10,10 +10,10 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 
 | Zeit (s) | Bild | Text |
 |---|---|---|
-| 0–2 | Alles funktioniert. Nur nicht dazwischen. | *(Pause, nur Musik – oder:)* „Alles funktioniert. Nur nicht dazwischen.“ |
-| 2–6 | Der Allrounder | „Alles aus einer Hand – aber abhängig vom Anbieter, die Kosten wachsen mit, und zugeschnitten ist es nicht auf dich.“ |
-| 6–10 | Das fertige Portal | „Offen und lokal gedacht – aber oft nur Oberfläche und Anmeldung. Die Werkzeuge bleiben einzeln.“ |
-| 10–14 | Die offene Basis | „Mächtig und frei – aber die Pflege bleibt bei dir, und im Alltag ist es roh.“ |
+| 0–3,5 | Alles funktioniert. Nur nicht dazwischen. | *(Pause, nur Musik – oder:)* „Alles funktioniert. Nur nicht dazwischen.“ (das letzte Wort steht bis 3,3 s) |
+| 3,5–7 | Der Allrounder (Laptop + Handy, Sätze mit Profilbild) | „Alles aus einer Hand – aber abhängig vom Anbieter, die Kosten wachsen mit, und zugeschnitten ist es nicht auf dich.“ |
+| 7–10,5 | Das fertige Portal (Handy-Login, fünf Oberflächen) | „Offen und lokal gedacht – aber oft nur Oberfläche und Anmeldung. Die Werkzeuge bleiben einzeln.“ |
+| 10,5–14 | Die offene Basis (Laptop, Wireframe) | „Mächtig und frei – aber die Pflege bleibt bei dir, und im Alltag ist es roh.“ |
 | 14–18 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine Frage an die IT.“ |
 | 19–20 | Pause | „Es geht auch anders.“ |
 | 20–24 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |

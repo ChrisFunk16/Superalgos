@@ -25,6 +25,60 @@ export const LAY = {
   support: { input: [WIN.rail + 236 + 36 + 12 + 190, WIN.top + 326] },
 };
 
+
+/* ---------- Illustrierte Porträts (alle Personen erfunden; keine Fotos) ----------
+   Eine Szene 300×225 (Kopf und Schultern vor einem Raum); als Profilbild wird auf den Kopf zugeschnitten. */
+export const PEOPLE = {
+  anna:  { name: 'Anna Meyer', skin: '#F0C4A0', hair: '#4A2C17', style: 'long',  clothes: '#7B6CF6', glasses: false, beard: false, bg: 'dark' },
+  mira:  { name: 'Mira Koch',  skin: '#DDA37A', hair: '#1D1511', style: 'bun',   clothes: '#E67E22', glasses: false, beard: false, bg: 'office' },
+  jonas: { name: 'Jonas Beck', skin: '#F3CDB0', hair: '#B5651D', style: 'short', clothes: '#1F2532', glasses: true,  beard: true,  bg: 'warm' },
+  lena:  { name: 'Lena Vogt',  skin: '#8D5A3B', hair: '#15110E', style: 'curly', clothes: '#2F7D6B', glasses: false, beard: false, bg: 'books' },
+  tom:   { name: 'Tom Arnold', skin: '#F6D5BD', hair: '#8A8A90', style: 'bald',  clothes: '#3B6FD4', glasses: true,  beard: true,  bg: 'cool' },
+  aylin: { name: 'Aylin Demir', skin: '#E6B08A', hair: '#2A1A12', style: 'long', clothes: '#D1497A', glasses: false, beard: false, bg: 'warm' },
+  ben:   { name: 'Ben Roth',   skin: '#D9A07A', hair: '#2B1D14', style: 'buzz',  clothes: '#4A5470', glasses: false, beard: false, bg: 'cool' },
+};
+let _pid = 0;
+const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const c = (sh) => Math.max(0, Math.min(255, Math.round(((n >> sh) & 255) * f))); return `rgb(${c(16)},${c(8)},${c(0)})`; };
+export function portraitSVG(key, mode = 'head', o = {}) {
+  const P = PEOPLE[key], id = 'pt' + (++_pid), sk = P.skin, skd = shade(sk, 0.82), hr = P.hair;
+  const bgs = {
+    dark:   ['#3B4E6A', '#141B2A'], office: ['#EADFD0', '#C9B9A3'], warm: ['#F3D9BE', '#C98F5B'], cool: ['#CFE0EE', '#6F93B6'], books: ['#D8CFE6', '#8F7FB0'],
+  };
+  const [g1, g2] = bgs[P.bg];
+  let scene = '';
+  if (P.bg === 'office') scene = '<rect x="214" y="26" width="64" height="84" rx="3" fill="#CFE3F2"/><path d="M246 26V110M214 68H278" stroke="#fff" stroke-width="3"/><path d="M26 225 L34 196 H62 L70 225Z" fill="#B5784A"/><ellipse cx="48" cy="178" rx="9" ry="24" fill="#4F9A6B" transform="rotate(-22 48 178)"/><ellipse cx="58" cy="176" rx="9" ry="26" fill="#3E8458" transform="rotate(14 58 176)"/>';
+  if (P.bg === 'books') scene = '<rect x="0" y="40" width="300" height="5" fill="rgba(0,0,0,.12)"/><rect x="0" y="120" width="300" height="5" fill="rgba(0,0,0,.12)"/><g opacity=".55"><rect x="14" y="8" width="12" height="32" fill="#7B6CF6"/><rect x="28" y="12" width="10" height="28" fill="#E67E22"/><rect x="40" y="6" width="14" height="34" fill="#2F7D6B"/><rect x="236" y="10" width="12" height="30" fill="#D1497A"/><rect x="250" y="6" width="14" height="34" fill="#3B6FD4"/><rect x="18" y="86" width="14" height="34" fill="#E67E22"/><rect x="34" y="92" width="10" height="28" fill="#1F2532"/><rect x="240" y="88" width="14" height="32" fill="#7B6CF6"/></g>';
+  if (P.bg === 'warm') scene = '<circle cx="46" cy="52" r="34" fill="rgba(255,255,255,.22)"/><circle cx="262" cy="84" r="22" fill="rgba(255,255,255,.16)"/><rect x="226" y="30" width="54" height="40" rx="4" fill="rgba(255,255,255,.2)"/>';
+  if (P.bg === 'cool') scene = '<rect x="30" y="36" width="70" height="46" rx="4" fill="rgba(255,255,255,.28)"/><circle cx="250" cy="60" r="28" fill="rgba(255,255,255,.18)"/>';
+  if (P.bg === 'dark') scene = '<circle cx="46" cy="44" r="26" fill="rgba(255,255,255,.08)"/><circle cx="256" cy="70" r="34" fill="rgba(255,255,255,.06)"/>';
+  // Haare hinten
+  let back = '', front = '';
+  switch (P.style) {
+    case 'long': back = `<path d="M106 92 C98 56,126 44,150 44 C176 44,202 56,194 92 L204 182 C192 192,172 186,168 170 L132 170 C128 186,108 192,96 182Z" fill="${hr}"/>`; front = `<path d="M108 94 C108 66,130 56,152 56 C176 56,192 70,192 98 C180 84,166 78,148 80 C130 82,116 88,108 94Z" fill="${hr}"/>`; break;
+    case 'bun': back = `<circle cx="150" cy="40" r="19" fill="${hr}"/>`; front = `<path d="M108 98 C106 66,128 52,150 52 C174 52,194 66,192 98 C184 82,170 74,150 74 C130 74,116 82,108 98Z" fill="${hr}"/>`; break;
+    case 'curly': back = `<ellipse cx="150" cy="92" rx="56" ry="50" fill="${hr}"/>`; front = [[112, 78, 17], [128, 62, 18], [150, 56, 19], [172, 62, 18], [188, 78, 17], [118, 98, 12], [182, 98, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hr}"/>`).join(''); break;
+    case 'buzz': front = `<path d="M110 94 C108 66,128 56,150 56 C174 56,192 66,190 94 C184 80,170 74,150 74 C130 74,116 80,110 94Z" fill="${hr}" opacity=".9"/>`; break;
+    case 'bald': front = `<ellipse cx="112" cy="104" rx="5" ry="14" fill="${hr}"/><ellipse cx="188" cy="104" rx="5" ry="14" fill="${hr}"/>`; break;
+    default: front = `<path d="M108 98 C106 64,128 52,150 52 C174 52,194 64,192 98 C184 80,170 72,150 72 C130 72,116 80,108 98Z" fill="${hr}"/><path d="M108 98 C108 112,110 118,112 122 L112 98Z" fill="${hr}"/><path d="M192 98 C192 112,190 118,188 122 L188 98Z" fill="${hr}"/>`;
+  }
+  const beard = P.beard ? `<path d="M112 110 C112 148,128 160,150 160 C172 160,188 148,188 110 C184 128,172 140,150 140 C128 140,116 128,112 110Z" fill="${hr}" opacity=".92"/>` : '';
+  const glasses = P.glasses ? '<g fill="none" stroke="#1B1B1F" stroke-width="2.6"><rect x="120" y="96" width="26" height="19" rx="8"/><rect x="154" y="96" width="26" height="19" rx="8"/><path d="M146 104 H154"/></g>' : '';
+  const body = `<path d="M44 225 C48 186,86 168,150 166 C214 168,252 186,256 225Z" fill="${P.clothes}"/><path d="M128 168 L150 196 L172 168 Z" fill="${sk}"/><path d="M124 166 L150 200 L176 166 L168 164 L150 186 L132 164Z" fill="rgba(255,255,255,.88)"/>`;
+  const neck = `<path d="M134 140 H166 V172 C166 180,134 180,134 172Z" fill="${skd}"/>`;
+  const face = `<ellipse cx="111" cy="108" rx="6" ry="10" fill="${skd}"/><ellipse cx="189" cy="108" rx="6" ry="10" fill="${skd}"/><ellipse cx="150" cy="106" rx="40" ry="49" fill="${sk}"/>`;
+  const feat = `<ellipse cx="134" cy="106" rx="6" ry="4.2" fill="#fff"/><ellipse cx="166" cy="106" rx="6" ry="4.2" fill="#fff"/><circle cx="134.6" cy="106.4" r="3.2" fill="#2B1B12"/><circle cx="166.6" cy="106.4" r="3.2" fill="#2B1B12"/>` +
+    `<path d="M124 94 Q134 89 144 93M156 93 Q166 89 176 94" stroke="${P.style === 'bald' ? '#6F6F75' : hr}" stroke-width="3.4" fill="none" stroke-linecap="round"/>` +
+    `<path d="M150 108 Q145 122 148 126 Q152 128 156 126" stroke="${skd}" stroke-width="2.6" fill="none" stroke-linecap="round"/>` +
+    `<circle cx="126" cy="124" r="7" fill="#E57B6E" opacity=".22"/><circle cx="174" cy="124" r="7" fill="#E57B6E" opacity=".22"/>` +
+    `<g class="mc"><path d="M137 134 Q150 145 163 134" stroke="#A4524A" stroke-width="3.2" fill="none" stroke-linecap="round"/></g><g class="mo" style="display:none"><ellipse cx="150" cy="137" rx="8" ry="6" fill="#7A2E2E"/><path d="M143 133 Q150 135 157 133" stroke="#fff" stroke-width="2" fill="none"/></g>`;
+  const vb = mode === 'head' ? '88 34 124 124' : '0 0 300 225';
+  const par = mode === 'head' ? 'xMidYMid slice' : 'xMidYMid slice';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="${par}" width="100%" height="100%" style="display:block"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="${g1}"/><stop offset="1" stop-color="${g2}"/></linearGradient></defs>` +
+    `<rect width="300" height="225" fill="url(#${id})"/>${scene}${back}${body}${neck}${face}${front}${feat}${beard}${glasses}</svg>`;
+}
+/** Rundes Profilbild als HTML (Größe in px) */
+export const avatarHTML = (key, size, extra = '') => `<span class="ui-pa" style="display:block;width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex:none;${extra}">${portraitSVG(key, 'head')}</span>`;
+
 let cssDone = false;
 export function installUiCss(E) {
   if (cssDone) return; cssDone = true;
@@ -42,7 +96,8 @@ export function installUiCss(E) {
   .ui-tir { position:absolute; right:14px; top:0; height:${WIN.top}px; display:flex; align-items:center; gap:12px; }
   .ui-ti { position:relative; width:32px; height:32px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.86); }
   .ui-ti .dot { position:absolute; right:5px; top:4px; width:8px; height:8px; border-radius:50%; background:#EF4B3F; }
-  .ui-avatar { position:relative; width:36px; height:36px; border-radius:50%; background:#fff; color:#7A4FD0; font:700 16px/1 var(--font-body); display:flex; align-items:center; justify-content:center; margin-left:4px; }
+  .ui-avatar { position:relative; width:36px; height:36px; border-radius:50%; background:#fff; margin-left:4px; }
+  .ui-avatar svg { border-radius:50%; }
   .ui-avatar::after { content:""; position:absolute; right:-2px; bottom:-2px; width:12px; height:12px; border-radius:50%; background:#3FBF8A; border:2px solid #1E2430; }
   .ui-rail { position:absolute; left:0; top:${WIN.top}px; bottom:0; width:${R}px; background:#1E2430; z-index:4; --rc:#1E2430; }
   .ui-ri { position:absolute; left:10px; width:${R - 20}px; height:72px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
@@ -94,7 +149,7 @@ export function installUiCss(E) {
   .ui-nrow + .ui-nrow { border-top:1px solid #F0EBE5; }
   .ui-nrow small { display:block; font:500 12.5px/1.3 var(--font-body); color:#6B6F78; margin-top:2px; }
   .ui-slant { width:46px; height:34px; background:#F7DDBF; clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%); display:flex; align-items:center; justify-content:center; font:800 12.5px/1 var(--font-body); color:#8A4A10; flex:none; }
-  .ui-pill { margin-left:auto; padding:6px 12px; border-radius:99px; background:#FBE8D3; color:#8A4A10; font:700 12px/1 var(--font-body); white-space:nowrap; }
+  .ui-pill { margin-left:12px; padding:6px 12px; border-radius:99px; background:#FBE8D3; color:#8A4A10; font:700 12px/1 var(--font-body); white-space:nowrap; }
   .ui-fcard { position:absolute; height:64px; background:#fff; border-radius:10px; display:flex; align-items:center; gap:12px; padding:0 14px; box-shadow:0 1px 2px rgba(31,37,50,.05); }
   .ui-fcard .ic { width:34px; height:34px; border-radius:8px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; flex:none; color:#4A4F5C; }
   .ui-fcard b { display:block; font:700 14px/1.2 var(--font-body); color:#171A22; white-space:nowrap; }
@@ -288,7 +343,7 @@ export function installUiCss(E) {
   .ui-tcin { position:absolute; left:0; top:0; width:1146px; height:100%; }
   .ui-tbtn { position:absolute; width:40px; height:40px; border-radius:9px; background:#20232B; display:flex; align-items:center; justify-content:center; color:#fff; }
   .ui-tbtn.w2 { width:58px; gap:2px; }
-  .ui-tvid { position:absolute; width:480px; height:350px; border-radius:14px; overflow:hidden; }
+  .ui-tvid { position:absolute; border-radius:14px; overflow:hidden; background:#1B2030; }
   .ui-tvid .lab { position:absolute; left:12px; bottom:12px; display:flex; align-items:center; gap:8px; padding:6px 12px; border-radius:8px; background:rgba(0,0,0,.55); font:600 13.5px/1 var(--font-body); }
   .ui-tvid .ring { position:absolute; inset:0; border-radius:14px; border:3px solid #3FBF8A; }
   .ui-tleave { position:absolute; display:flex; height:40px; border-radius:9px; overflow:hidden; background:#D6322E; font:700 14px/40px var(--font-body); white-space:nowrap; }
@@ -307,7 +362,7 @@ export function installUiCss(E) {
   .raw .ui-ri .t { background:#D6DBE2 !important; }
   .raw .ui-gridtile { background:rgba(255,255,255,.28) !important; } .raw .ui-gridtile i { background:#A9B0BB !important; }
   .raw .ui-lbox { background:#A9B0BB !important; } .raw .ui-lbox svg { opacity:0; }
-  .raw .ui-avatar { background:#A9B0BB !important; } .raw .ui-avatar::after { display:none; }
+  .raw .ui-avatar { background:#A9B0BB !important; } .raw .ui-avatar::after { display:none; } .raw .ui-avatar svg, .raw .ui-pa { display:none !important; }
   .raw .ui-ti .dot { background:#A9B0BB !important; }
   .raw .ui-hero { background:#D6DAE1 !important; } .raw .ui-hero::before { display:none; }
   .raw .ui-day, .raw .ui-wcard, .raw .ui-fcard, .raw .ui-adj { background:#F8F9FB !important; border:1.5px solid #D3D8DF; }
@@ -355,7 +410,7 @@ export function buildUI(E) {
       h('div', { class: 'ui-lbox', html: lGlyph }),
       h('div', { class: 'ui-tir' },
         ['sparkles', 'search', 'bell', 'contact', 'globe'].map((n) => h('div', { class: 'ui-ti', html: icon(n, 22, 'currentColor', 2) + (n === 'bell' ? '<i class="dot"></i>' : '') })),
-        h('div', { class: 'ui-avatar', text: 'A' })));
+        h('div', { class: 'ui-avatar', html: portraitSVG('anna', 'head') })));
     const railEl = h('div', { class: 'ui-rail' });
     const items = {};
     const mk = (id, glyph, label, y) => {
@@ -409,15 +464,16 @@ export function buildUI(E) {
     const tmpl = h('div', { class: 'ui-tmpl' }, T('', 'Vorlage „Tagesblick“ · Ihre eigene Anordnung'), h('div', { class: 'ui-adj' }, ic('sliders-horizontal', 17, '#171A22', 2.2), T('', 'Anpassen')));
     const cap = (txt, left, top) => h('div', { class: 'ui-sec ui-cap', style: { left, top } }, tick(), T('', txt));
     const nextCard = h('div', { class: 'ui-wcard', style: { left: 64, top: 566, width: 788, height: 126 } },
-      h('div', { class: 'ui-nrow' }, h('div', { class: 'ui-slant t', text: '10:00' }), h('div', {}, T('', 'Teamtermin'), h('small', { class: 't', text: 'Besprechungsraum 2 · 60 Min.' })), T('ui-pill', 'in 47 Min.')),
-      h('div', { class: 'ui-nrow' }, h('span', { style: { width: 46, display: 'flex', justifyContent: 'center' } }, ic('list-todo', 24, '#C76A19', 2.2)), h('div', {}, T('', 'Karte fällig: Angebot Hartmann prüfen'), h('small', { class: 't', text: 'Deck · Vertrieb' })), T('ui-pill', 'heute')));
+      h('div', { class: 'ui-nrow' }, h('div', { class: 'ui-slant t', text: '10:00' }), h('div', {}, T('', 'Teamtermin'), h('small', { class: 't', text: 'Besprechungsraum 2 · 60 Min.' })),
+        h('span', { class: 'ui-stack', style: { marginLeft: 'auto', display: 'flex' }, html: ['jonas', 'lena', 'tom'].map((k, i) => avatarHTML(k, 30, `margin-left:${i ? -9 : 0}px;border:2px solid #fff;box-sizing:border-box`)).join('') }), T('ui-pill', 'in 47 Min.', 'span')),
+      h('div', { class: 'ui-nrow' }, h('span', { style: { width: 46, display: 'flex', justifyContent: 'center' } }, ic('list-todo', 24, '#C76A19', 2.2)), h('div', {}, T('', 'Karte fällig: Angebot Hartmann prüfen'), h('small', { class: 't', text: 'Deck · Vertrieb · zugewiesen von Jonas' })), h('span', { style: { marginLeft: 'auto', display: 'flex' }, html: avatarHTML('jonas', 30) }), T('ui-pill', 'heute', 'span')));
     const note = h('div', { class: 'ui-sec t', text: 'Oben steht, was gleich beginnt, was Sie persönlich betrifft und was heute fällig ist.', style: { left: 64, top: 702, font: '500 12.5px/1 var(--font-body)', color: '#5E6168' } });
     const files = [['file-text', 'Angebot_Hartmann.pdf', 'gestern, 16:41 · Vertrieb'], ['file-spreadsheet', 'Preisliste_2026.xlsx', 'Montag · Projekte'], ['file-text', 'Protokoll_Teamtermin.docx', 'Montag · Team']];
     const fcards = files.map(([n, a, b], i) => h('div', { class: 'ui-fcard', style: { left: 64 + i * 268, top: 762, width: 256 } }, h('span', { class: 'ic', html: icon(n, 18, 'currentColor', 2) }), h('div', {}, h('b', { class: 't', text: a }), h('small', { class: 't', text: b }))));
     const news = h('div', { class: 'ui-wcard', style: { left: 880, top: 566, width: 452, height: 192, padding: '22px 26px' } },
       h('div', { class: 't', text: 'Neu: Assistent in Ihrer Cloud', style: { font: '700 18px/1.2 var(--font-body)', color: '#171A22' } }),
       h('div', { class: 't', html: 'Suchen, zusammenfassen, Fragen stellen –<br>direkt dort, wo Sie arbeiten. Aktivieren Sie ihn unter<br>Einstellungen › Assistent.', style: { font: '500 13.5px/1.6 var(--font-body)', color: '#2A2F3A', marginTop: '12px', display: 'block' } }),
-      h('div', { style: { position: 'absolute', left: 26, right: 26, bottom: 18, display: 'flex', alignItems: 'center', font: '500 12px/1 var(--font-body)', color: '#6B6F78' } }, T('', 'linkado-team · 14. Oktober'), h('span', { class: 't', text: 'Alle Neuigkeiten →', style: { marginLeft: 'auto', font: '700 13px/1 var(--font-body)', color: '#8A4A10' } })));
+      h('div', { style: { position: 'absolute', left: 26, right: 26, bottom: 18, display: 'flex', alignItems: 'center', gap: 8, font: '500 12px/1 var(--font-body)', color: '#6B6F78' } }, h('span', { html: avatarHTML('mira', 24) }), T('', 'Mira K. · 14. Oktober'), h('span', { class: 't', text: 'Alle Neuigkeiten →', style: { marginLeft: 'auto', font: '700 13px/1 var(--font-body)', color: '#8A4A10' } })));
     const el = h('div', { class: 'ui-view' }, hero, day, tmpl, cap('ALS NÄCHSTES', 64, 538), nextCard, note, cap('WEITER, WO SIE AUFGEHÖRT HABEN', 64, 734), ...fcards, cap('NEUES BEI LINKADO', 880, 538), news);
     return { el, hero, day, band, events, now, search, searchText: search.querySelector('.t'), caret: search.querySelector('.ui-caret'), hin: hero.querySelector('.ui-hin'), nextCard, news, fcards };
   }
@@ -517,18 +573,19 @@ export function buildUI(E) {
       h('div', { class: 'go' }, T('', 'Sicherheitseinstellungen öffnen'), ic('arrow-right', 16, '#171A22', 2.4)));
     // Anfragen
     const reqh = h('div', { class: 'ui-reqh' }, h('span', { class: 'ui-h2 t', text: 'Meine Anfragen' }), h('span', { class: 'lk t', text: 'Anfragen ansehen' }));
-    const mkReq = (n, a, b, st, cls) => { const stEl = h('span', { class: 'ui-rst ' + cls }, T('', st)); const sub = h('small', { class: 't', text: b }); const el = h('div', { class: 'ui-req' }, h('span', { class: 'ic', html: icon(n, 17, '#4A4F5C', 2) }), h('div', {}, h('b', { class: 't', text: a }), sub), stEl); return { el, stEl, sub, stText: stEl.firstChild }; };
-    const rOld = mkReq('wrench', 'Drucker im 2. OG einrichten', 'Anfrage von Ihnen · vor 3 Tagen', 'Gelöst', 'g');
+    const mkReq = (n, a, b, st, cls) => { const stEl = h('span', { class: 'ui-rst ' + cls }, T('', st)); const sub = h('small', { class: 't', text: b }); const el = h('div', { class: 'ui-req' }, n === 'wrench' ? h('span', { html: avatarHTML('mira', 34) }) : h('span', { class: 'ic', html: icon(n, 17, '#4A4F5C', 2) }), h('div', {}, h('b', { class: 't', text: a }), sub), stEl); return { el, stEl, sub, stText: stEl.firstChild }; };
+    const rOld = mkReq('wrench', 'Drucker im 2. OG einrichten', 'Gelöst von Mira · vor 3 Tagen', 'Gelöst', 'g');
     const rNew = mkReq('user-plus', 'Kollegen ins Team einladen', 'Anfrage von Ihnen · gerade eben', 'Eingegangen', '');
     rNew.stText.textContent = 'Eingegangen';
     const reply = h('div', { class: 't', text: '„Hallo Anna, hier ist Ihr Einladungslink.“', style: { font: '500 12.5px/1.35 var(--font-body)', color: '#8A4A10', marginTop: 5 } });
     rNew.sub.after(reply);
     // Karten rechts
-    const kto = h('div', { class: 'ui-rcard', style: { top: 236 } }, h('h6', {}, ic('user-round', 18, '#171A22', 2.2), T('', 'Mein Konto')),
+    const kto = h('div', { class: 'ui-rcard', style: { top: 236 } }, h('h6', {}, h('span', { html: avatarHTML('anna', 28) }), T('', 'Mein Konto')),
       T('', 'Für Ihr Konto ist eine E-Mail-Adresse hinterlegt.', 'p'), T('g', 'Empfehlung: Aktivieren Sie einen zweiten Faktor.', 'p'), h('div', { class: 'lk' }, T('', 'Mein Konto öffnen'), ic('arrow-right', 15, '#171A22', 2.4)));
     const chatBtn = h('div', { class: 'abs', style: { left: 20, right: 20, bottom: 18, height: 40, borderRadius: 8, background: '#fff', border: '1px solid #D6DDE3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, font: '700 13.5px/1 var(--font-body)', color: '#171A22' } }, ic('message-circle', 17, '#171A22', 2.2), T('', 'Im Chat fragen'));
     const hk = h('div', { class: 'ui-rcard', style: { top: 436, height: 250 } }, h('h6', {}, T('', 'Hilfe und Kontakt')),
-      T('g', 'Anleitungen finden Sie links – oder fragen Sie uns direkt im Chat oder per Anruf.', 'p'), T('', 'Support-Zeiten: Mo–Fr 9–17 Uhr. Außerhalb antworten wir am nächsten Arbeitstag.', 'p'), chatBtn);
+      h('div', { style: { display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 } }, h('span', { style: { position: 'relative', display: 'block' }, html: avatarHTML('mira', 44) + '<i style="position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:#3FBF8A;border:2px solid #EAEEF1"></i>' }), h('div', {}, h('b', { class: 't', text: 'Mira K. · Support', style: { font: '700 14px/1.2 var(--font-body)', color: '#171A22', display: 'block' } }), h('small', { class: 't', text: 'online · antwortet im Chat', style: { font: '500 12px/1.3 var(--font-body)', color: '#3A9E70' } }))),
+      T('g', 'Anleitungen finden Sie links – oder fragen Sie direkt im Chat oder per Anruf.', 'p'), T('', 'Support-Zeiten: Mo–Fr 9–17 Uhr. Außerhalb antworten wir am nächsten Arbeitstag.', 'p'), chatBtn);
     const sc = h('div', { class: 'ui-sc0' },
       h('div', { class: 'ui-abs', style: { left: 0, top: 30 } }, h('span', { class: 'ui-cap', style: { fontWeight: 500, textTransform: 'none', letterSpacing: 0, fontSize: 12.5, color: '#6B6F78' } }, tick(), T('', 'Support'))),
       h('h1', { class: 'ui-h1 t', text: 'Ihr Support auf einen Blick.' }),
@@ -561,7 +618,7 @@ export function buildUI(E) {
       ['message-circle', 'Angebot Hartmann – Team', 'Talk · 3 neue Nachrichten', ''], ['user-round', 'Lena Vogt', 'Person · Vertrieb', ''],
     ];
     const hl = (t_) => { const i = t_.toLowerCase().indexOf(query.toLowerCase()); return i < 0 ? t_ : t_.slice(0, i) + '<mark class="ui-m">' + t_.slice(i, i + query.length) + '</mark>' + t_.slice(i + query.length); };
-    const rowEls = rows.map(([n, a, b, k], i) => h('div', { class: 'ui-mrr' + (i === 0 ? ' on' : '') }, h('span', { class: 'ic ' + k, html: icon(n, 18, 'currentColor', 2) }), h('div', { class: 'tx' }, h('span', { class: 't', html: hl(a) }), h('small', { class: 't', text: b }))));
+    const rowEls = rows.map(([n, a, b, k], i) => h('div', { class: 'ui-mrr' + (i === 0 ? ' on' : '') }, n === 'user-round' ? h('span', { html: avatarHTML('lena', 34) }) : h('span', { class: 'ic ' + k, html: icon(n, 18, 'currentColor', 2) }), h('div', { class: 'tx' }, h('span', { class: 't', html: hl(a) }), h('small', { class: 't', text: b }))));
     const res = h('div', { class: 'ui-mres' }, h('div', { class: 'ui-mcap', style: { margin: '6px 0 4px', padding: '0 8px' } }, T('', 'TREFFER ÜBERALL')), rowEls);
     const input = h('span', { class: 't', text: 'Was möchten Sie tun?' });
     const caret = h('span', { class: 'ui-caret', style: { display: 'none', height: 20 } });
@@ -579,59 +636,65 @@ export function buildUI(E) {
   const person = (w, h_, body, head, extra = '') => `<svg viewBox="0 0 ${w} ${h_}" width="${w}" height="${h_}" style="position:absolute;left:0;top:0">${extra}<ellipse cx="${w / 2}" cy="${h_ + 20}" rx="${w * 0.30}" ry="${h_ * 0.44}" fill="${body}"/><circle cx="${w / 2}" cy="${h_ * 0.42}" r="${h_ * 0.15}" fill="${head}"/></svg>`;
   function talk() {
     const T_ = (cls, text, tag = 'span') => h(tag, { class: 't ' + cls, text });
+    const grp = (a, b) => `<span style="position:relative;display:block;width:38px;height:38px">${avatarHTML(a, 26, 'position:absolute;left:0;top:0;border:2px solid #D3D5D7;box-sizing:border-box')}${avatarHTML(b, 26, 'position:absolute;left:12px;top:12px;border:2px solid #D3D5D7;box-sizing:border-box')}</span>`;
     /* --- Chat --- */
-    const convs = [['Linkado Support', 'Mira: Hier ist dein Link …', 'L', '#1E2430', true], ['Team Vertrieb', 'Jonas: Angebot ist raus', 'TV', '#2F7D6B'], ['Projekt Herbst', 'Lena: Termin steht', 'PH', '#7A4FD0'], ['Notiz an mich', 'Das System hat die Unterhaltung …', '', '#2B8DD6']];
-    const convEls = convs.map(([a, b, av, col, on], i) => h('div', { class: 'ui-tconv' + (on ? ' on' : ''), style: { top: 148 + i * 64 } },
-      h('div', { class: 'av', style: { background: on ? 'rgba(255,255,255,.22)' : col }, html: av ? '' : icon('notebook-pen', 18, '#fff', 2) }, av ? T_('', av) : null), h('div', {}, h('b', { class: 't', text: a }), h('small', { class: 't', text: b }))));
+    const convs = [['Mira K. · Support', 'Mira: Hier ist dein Link …', avatarHTML('mira', 38), true], ['Team Vertrieb', 'Jonas: Angebot ist raus', grp('jonas', 'lena')], ['Projekt Herbst', 'Lena: Termin steht', grp('lena', 'tom')], ['Notiz an mich', 'Das System hat die Unterhaltung …', '<span style="display:flex;width:38px;height:38px;border-radius:50%;background:#2B8DD6;align-items:center;justify-content:center">' + icon('notebook-pen', 18, '#fff', 2) + '</span>']];
+    const convEls = convs.map(([a, b, av, on], i) => h('div', { class: 'ui-tconv' + (on ? ' on' : ''), style: { top: 148 + i * 64 } },
+      h('span', { style: { display: 'flex', flex: 'none' }, html: av }), h('div', {}, h('b', { class: 't', text: a }), h('small', { class: 't', text: b }))));
     const side = h('div', { class: 'ui-tside' },
-      h('div', { class: 'ui-tsearch' }, ic('search', 16, '#5E6168', 2), T_('', 'Suche …')), h('span', { class: 'ui-tico', style: { left: 200 }, html: icon('filter', 18, 'currentColor', 2) }), h('span', { class: 'ui-tico', style: { left: 226 - 2 }, html: icon('message-circle', 18, 'currentColor', 2) }),
+      h('div', { class: 'ui-tsearch' }, ic('search', 16, '#5E6168', 2), T_('', 'Suche …')), h('span', { class: 'ui-tico', style: { left: 200 }, html: icon('filter', 18, 'currentColor', 2) }), h('span', { class: 'ui-tico', style: { left: 224 }, html: icon('message-circle', 18, 'currentColor', 2) }),
       h('div', { class: 'ui-tnav', style: { top: 58 } }, ic('house', 18, '#171A22', 2), T_('', 'Startseite')), h('div', { class: 'ui-tnav', style: { top: 98 } }, ic('messages-square', 18, '#171A22', 2), T_('', 'Themen')),
       ...convEls, h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 16, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, font: '700 14px/1 var(--font-body)', color: '#171A22' } }, ic('settings', 16, '#171A22', 2), T_('', 'App-Einstellungen')));
     const callBtn = h('div', { class: 'ui-tcall-btn' }, ic('phone', 16, '#fff', 2.4), T_('', 'Anruf starten'));
-    const head = h('div', { class: 'ui-thead' }, ic('menu', 20, '#2A2F3A', 2), h('div', { class: 'av', html: lGlyph }), h('span', { class: 'ti t', text: 'Linkado Support' }), h('span', { style: { flex: 1 } }),
+    const head = h('div', { class: 'ui-thead' }, ic('menu', 20, '#2A2F3A', 2), h('span', { style: { position: 'relative', display: 'block' }, html: avatarHTML('mira', 36) + '<i style="position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#3FBF8A;border:2px solid #fff"></i>' }),
+      h('div', {}, h('span', { class: 'ti t', text: 'Mira K. · Linkado Support', style: { display: 'block' } }), h('small', { class: 't', text: 'online', style: { font: '500 11.5px/1 var(--font-body)', color: '#3A9E70' } })), h('span', { style: { flex: 1 } }),
       h('div', { class: 'ui-tcal', html: icon('calendar', 18, 'currentColor', 2) }), callBtn, h('span', { html: icon('ellipsis', 20, '#2A2F3A', 2) }));
     const msg = (cls, top, text, time) => h('div', { class: 'ui-tm ' + cls, style: { top } }, T_('', text), h('small', { class: 't', text: time }));
     const m1 = msg('out', 62, 'Hallo! Wie lade ich Kollegen in unser Team ein?', '09:41');
-    const nm = h('div', { class: 'ui-tname t', text: 'Mira · Linkado Support', style: { top: 146 } });
-    const av = h('div', { class: 'ui-tmav', style: { top: 164 }, html: '<span>M</span>' });
+    const av1 = h('span', { class: 'ui-tmav', style: { top: 68, left: 'auto', right: 14, background: 'none' }, html: avatarHTML('anna', 34) });
+    const nm = h('div', { class: 'ui-tname t', text: 'Mira Koch · Linkado Support', style: { top: 146 } });
+    const av = h('span', { class: 'ui-tmav', style: { top: 164, background: 'none' }, html: avatarHTML('mira', 34) });
     const dots = h('div', { class: 'ui-tdots', style: { top: 164 } }, h('i'), h('i'), h('i'));
     const m2 = msg('in', 164, 'Hallo Anna! Das geht in drei Schritten – hier ist dein Einladungslink.', '09:42');
     const lk = h('div', { class: 'ui-tlink', style: { top: 262 } }, h('div', { class: 'ic', html: icon('link', 20, 'currentColor', 2.2) }), h('div', {}, h('b', { class: 't', text: 'Einladung · Team Vertrieb' }), h('small', { class: 't', text: 'Link gültig 7 Tage' })), h('div', { class: 'cp' }, ic('copy', 14, '#171A22', 2.2), T_('', 'Kopieren')));
     const m3 = msg('out', 348, 'Super, danke! Können wir kurz sprechen?', '09:43');
+    const av3 = h('span', { class: 'ui-tmav', style: { top: 354, left: 'auto', right: 14, background: 'none' }, html: avatarHTML('anna', 34) });
     const date = h('div', { class: 'ui-tdate t', text: 'Heute, 14. Oktober' });
     const input = h('div', { class: 'ui-tinput' }, ic('plus', 22, '#2A2F3A', 2.2), h('div', { class: 'box' }, ic('smile', 20, '#2A2F3A', 2), T_('', 'Nachricht schreiben …')), h('span', { html: icon('ellipsis', 20, '#2A2F3A', 2) }), h('span', { html: micSvg(20, '#2A2F3A') }));
-    const msgs = h('div', { class: 'ui-tmsgs' }, date, m1, nm, av, dots, m2, lk, m3);
+    const msgs = h('div', { class: 'ui-tmsgs' }, date, m1, av1, nm, av, dots, m2, lk, m3, av3);
     const main = h('div', { class: 'ui-tmain' }, head, msgs, input);
-    const right = h('div', { class: 'ui-tright' }, h('h6', { class: 't', text: 'Linkado Support' }), h('div', { class: 'ui-ttab' }, T_('', 'Teilnehmer')),
-      h('div', { class: 'ui-tpart', style: { marginTop: 14 } }, h('i', { text: 'A' }), T_('', 'Anna (Du)')), h('div', { class: 'ui-tpart' }, h('i', { text: 'M', style: { background: '#E3E9EE', color: '#1E2430' } }), T_('', 'Mira K. · Support')));
+    const part = (k, label) => h('div', { class: 'ui-tpart' }, h('span', { style: { position: 'relative', display: 'block' }, html: avatarHTML(k, 32) + '<i style="position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#3FBF8A;border:2px solid #fff"></i>' }), T_('', label));
+    const right = h('div', { class: 'ui-tright' }, h('h6', { class: 't', text: 'Mira K. · Support' }), h('div', { class: 'ui-ttab' }, T_('', 'Teilnehmer')), h('div', { style: { height: 8 } }), part('anna', 'Anna Meyer (Du)'), part('mira', 'Mira Koch'));
     const chat = h('div', { class: 'ui-talk' }, side, main, right);
-    /* --- Anruf --- */
+    /* --- Anruf: Mira allein (1:1), dann Team im 2×2-Raster --- */
     const timer = h('b', { class: 't', text: '00 : 00', style: { font: '700 15px/1 var(--font-body)' } });
     const cHead = h('div', {}, h('div', { class: 'ui-tbtn', style: { left: 14, top: 10, width: 36, height: 36 }, html: icon('menu', 18, '#fff', 2) }),
       h('div', { class: 'abs', style: { left: 62, top: 10, width: 36, height: 36, borderRadius: '50%', background: '#4A4F5C', display: 'flex', alignItems: 'center', justifyContent: 'center' }, html: icon('users', 18, '#fff', 2) }),
-      h('span', { class: 'abs t', text: 'Linkado Support', style: { left: 110, top: 20, font: '500 15px/1 var(--font-body)' } }),
+      h('span', { class: 'abs t', text: 'Mira K. · Linkado Support', style: { left: 110, top: 20, font: '500 15px/1 var(--font-body)' } }),
       h('div', { class: 'abs', style: { right: 94, top: 20, display: 'flex', alignItems: 'center', gap: 22 } }, timer, h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 6, font: '700 14px/1 var(--font-body)' } }, ic('users', 16, '#fff', 2), h('span', { class: 'n', text: '1' }))),
       h('span', { class: 'abs', style: { right: 24, top: 20 }, html: icon('ellipsis', 20, '#fff', 2) }));
     const wait = h('div', { class: 'abs', style: { left: 0, width: 1146, top: 330, textAlign: 'center' } }, h('div', { style: { display: 'flex', justifyContent: 'center' }, html: icon('users', 54, '#fff', 1.8) }),
       h('div', { class: 't', text: 'Warte auf weitere Teilnehmer …', style: { font: '600 26px/1.2 var(--font-body)', marginTop: 18 } }), h('div', { class: 't', text: 'Du kannst andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste einladen', style: { font: '500 14px/1.4 var(--font-body)', color: '#C9CDD6', marginTop: 12 } }));
-    const tile = (left, name, g1, g2, body, headc) => {
-      const el = h('div', { class: 'ui-tvid', style: { left, top: 130, background: `linear-gradient(160deg, ${g1}, ${g2})` } });
-      el.innerHTML = person(480, 350, body, headc, '<circle cx="90" cy="70" r="44" fill="rgba(255,255,255,.16)"/><circle cx="410" cy="110" r="30" fill="rgba(255,255,255,.12)"/><rect x="330" y="40" width="110" height="90" rx="6" fill="rgba(255,255,255,.10)"/>');
-      const lab = h('div', { class: 'lab' }, h('span', { html: micSvg(14, '#fff') }), h('span', { class: 't', text: name })); const ring = h('div', { class: 'ring', style: { display: 'none' } });
-      el.append(lab, ring); return { el, ring };
+    const micOff = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="#fff"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18" stroke="#FF6B6B"/></svg>`;
+    const tile = (key, label, muted) => {
+      const el = h('div', { class: 'ui-tvid', style: { display: 'none' } });
+      el.innerHTML = portraitSVG(key, 'scene').replace('width="100%" height="100%" style="display:block"', 'width="100%" height="100%" style="position:absolute;left:0;top:0;display:block"');
+      const lab = h('div', { class: 'lab' }, h('span', { html: muted ? micOff : micSvg(14, '#fff') }), h('span', { class: 't', text: label })); const ring = h('div', { class: 'ring', style: { display: 'none' } });
+      el.append(lab, ring);
+      return { el, ring, mc: el.querySelector('.mc'), mo: el.querySelector('.mo') };
     };
-    const mira = tile(72, 'Mira K. · Support', '#F2D7B8', '#B97A3E', '#6B3F1E', '#7A4A27'), jonas = tile(570, 'Jonas · Vertrieb', '#C9DCEB', '#4C6F94', '#1E3350', '#2B4565');
-    const selfv = h('div', { class: 'abs', style: { left: 1146 - 18 - 214, top: 844 - 62 - 160, width: 214, height: 160, borderRadius: 12, overflow: 'hidden', background: 'linear-gradient(160deg,#3B4E6A,#1B2638)' } });
-    selfv.innerHTML = person(214, 160, '#0F1826', '#16233A', '<circle cx="40" cy="36" r="22" fill="rgba(255,255,255,.10)"/>');
+    const mira = tile('mira', 'Mira K. · Support'), jonas = tile('jonas', 'Jonas Beck'), lena = tile('lena', 'Lena Vogt'), tom = tile('tom', 'Tom Arnold', true);
+    const selfv = h('div', { class: 'abs', style: { left: 1146 - 18 - 196, top: 844 - 62 - 148, width: 196, height: 148, borderRadius: 12, overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,.5)', outline: '2px solid rgba(255,255,255,.12)' } });
+    selfv.innerHTML = portraitSVG('anna', 'scene').replace('width="100%" height="100%" style="display:block"', 'width="100%" height="100%" style="position:absolute;left:0;top:0;display:block"');
     const ctl = (left, w2, inner) => h('div', { class: 'ui-tbtn' + (w2 ? ' w2' : ''), style: { left, top: 844 - 54 }, html: inner });
     const bx = 1146 / 2 - 168;
     const bar = h('div', {}, ctl(bx, 1, micSvg(18) + icon('chevron-down', 12, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"')), ctl(bx + 66, 1, icon('video', 19, '#fff', 2) + icon('chevron-down', 12, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"')), ctl(bx + 132, 0, icon('sparkles', 19, '#fff', 2)), ctl(bx + 180, 0, icon('monitor', 19, '#fff', 2)), ctl(bx + 228, 0, icon('smile', 19, '#fff', 2)), ctl(bx + 276, 0, icon('hand-helping', 19, '#fff', 2)));
-    const leave = h('div', { class: 'ui-tleave', style: { right: 1146 - (1146 - 18), top: 844 - 54 } }, h('span', {}, h('span', { html: icon('phone', 16, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(135deg)"') }), T_('', 'Anruf verlassen')), h('i', { html: icon('chevron-down', 14, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"') }));
+    const leave = h('div', { class: 'ui-tleave', style: { right: 18, top: 844 - 54 } }, h('span', {}, h('span', { html: icon('phone', 16, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(135deg)"') }), T_('', 'Anruf verlassen')), h('i', { html: icon('chevron-down', 14, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"') }));
     const full = h('div', { class: 'ui-tbtn', style: { left: 14, top: 844 - 54, width: 36, height: 36 }, html: icon('maximize', 17, '#fff', 2) });
-    const cin = h('div', { class: 'ui-tcin' }, cHead, wait, mira.el, jonas.el, selfv, bar, leave, full);
+    const cin = h('div', { class: 'ui-tcin' }, cHead, wait, mira.el, jonas.el, lena.el, tom.el, selfv, bar, leave, full);
     const call = h('div', { class: 'ui-tcall' }, cin);
     const el = h('div', { class: 'ui-view' }, chat, call);
-    return { el, chat, call, convEls, callBtn, m1, nm, av, dots, m2, lk, m3, timer, count: cHead.querySelector('.n'), wait, mira, jonas, selfv, leave };
+    return { el, chat, call, convEls, callBtn, m1, av1, nm, av, dots, m2, lk, m3, av3, timer, count: cHead.querySelector('.n'), wait, mira, jonas, lena, tom, selfv, leave };
   }
 
   /* Cursor (Pfeil) und Klick-Welle */

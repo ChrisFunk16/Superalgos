@@ -116,7 +116,7 @@ export default function register(E) {
   }
 
   // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: siehe CLICKS (stehen auch als hits in timeline.json)
-  const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85, 40.2, 43.3];
+  const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85, 40.2, 43.5];
   const B0 = LAY.apps.btn(0), B1 = LAY.apps.btn(1), TG = LAY.apps.toggle(3), SUP = LAY.rail.support, SIN = LAY.support.input;
   const CUR = [
     [24.40, 980, 640], [24.98, LAY.menu.grid[0] + 4, LAY.menu.grid[1] + 4], [25.50, LAY.menu.grid[0] + 4, LAY.menu.grid[1] + 4], [25.95, 210, 95], [26.75, 210, 95], [27.05, LAY.menu.row(0)[0] + 20, LAY.menu.row(0)[1]], [27.55, LAY.menu.row(0)[0] + 20, LAY.menu.row(0)[1]], [28.30, 760, 560],
@@ -124,7 +124,7 @@ export default function register(E) {
     [32.40, 900, 520], [33.15, TG[0], TG[1]], [33.35, TG[0], TG[1]],
     [33.98, SUP[0], SUP[1]], [34.30, SUP[0], SUP[1]],
     [35.45, SIN[0] - 80, SIN[1]], [35.80, SIN[0] - 80, SIN[1]], [37.00, 700, 560],
-    [37.78, LAY.talk.chatBtn[0], LAY.talk.chatBtn[1]], [38.30, LAY.talk.chatBtn[0], LAY.talk.chatBtn[1]], [38.80, 760, 520], [39.95, 760, 520], [40.18, LAY.talk.call[0], LAY.talk.call[1]], [40.50, LAY.talk.call[0] + 12, LAY.talk.call[1] + 14], [41.30, 700, 520], [43.05, 700, 520], [43.28, LAY.talk.leave[0], LAY.talk.leave[1]], [43.80, LAY.talk.leave[0] + 6, LAY.talk.leave[1] + 6],
+    [37.78, LAY.talk.chatBtn[0], LAY.talk.chatBtn[1]], [38.30, LAY.talk.chatBtn[0], LAY.talk.chatBtn[1]], [38.80, 760, 520], [39.95, 760, 520], [40.18, LAY.talk.call[0], LAY.talk.call[1]], [40.50, LAY.talk.call[0] + 12, LAY.talk.call[1] + 14], [41.30, 700, 520], [43.22, 700, 520], [43.48, LAY.talk.leave[0], LAY.talk.leave[1]], [44.00, LAY.talk.leave[0] + 6, LAY.talk.leave[1] + 6],
   ];
 
   // App-Flüge (Hinzufügen-Taste → Seitenleiste); Rail-Positionen 6 und 7 (unter Talk)
@@ -308,17 +308,23 @@ export default function register(E) {
       pop(talk.m1, 38.4);
       const typing = t >= 38.7 && t < 39.0;
       show(talk.dots, typing); if (typing) Array.from(talk.dots.querySelectorAll('i')).forEach((d, i) => { d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin((t * 10) - i * 0.9))).toFixed(2)}px)`; });
-      pop(talk.nm, 39.0); pop(talk.av, 39.0); pop(talk.m2, 39.0); pop(talk.lk, 39.28); pop(talk.m3, 39.7);
+      pop(talk.nm, 39.0); pop(talk.av, 39.0); pop(talk.av1, 38.4); pop(talk.av3, 39.7); pop(talk.m2, 39.0); pop(talk.lk, 39.28); pop(talk.m3, 39.7);
       talk.callBtn.style.boxShadow = (t >= 40.0 && t < 40.4) ? '0 0 0 4px rgba(230,126,34,.45)' : '';
       // Anrufansicht: Warten → Mira tritt bei (41.4) → Jonas (42.3) → Auflegen (43.3)
       const sec = Math.floor(clamp(t - 40.4, 0, 99)); talk.timer.textContent = '00 : ' + String(sec).padStart(2, '0');
       tf(talk.wait, { o: tw(t, 40.35, 40.7, ease.out2) * (1 - tw(t, 41.35, 41.7, ease.in2)), y: -10 * tw(t, 41.35, 41.7) });
-      const tileIn = (tl, t0) => { const p = tw(t, t0, t0 + 0.5, ease.snap); show(tl.el, t >= t0); tf(tl.el, { s: 0.92 + 0.08 * p, o: clamp(p * 2), y: 14 * (1 - p) }); };
-      tileIn(talk.mira, 41.4); tileIn(talk.jonas, 42.3);
-      talk.count.textContent = t >= 42.3 ? '3' : t >= 41.4 ? '2' : '1';
-      show(talk.mira.ring, (t >= 41.9 && t < 42.6)); show(talk.jonas.ring, (t >= 42.9 && t < 43.35));
+      // 1:1 (Mira füllt die Bühne) → ab 42.1 tritt das Team bei, Raster 2 oben : 2 unten
+      const R1 = { x: 73, y: 92, w: 1000, h: 650 }, GW = 520, GH = 330, CELL = [[45, 90], [581, 90], [45, 436], [581, 436]];
+      const setRect = (tl, x, y, w, hh) => Object.assign(tl.el.style, { left: x.toFixed(1) + 'px', top: y.toFixed(1) + 'px', width: w.toFixed(1) + 'px', height: hh.toFixed(1) + 'px' });
+      const gq = ease.uiInOut(prog(t, 42.1, 42.8));
+      const mp = tw(t, 41.4, 41.9, ease.snap); show(talk.mira.el, t >= 41.4);
+      setRect(talk.mira, lerp(R1.x, CELL[0][0], gq), lerp(R1.y, CELL[0][1], gq), lerp(R1.w, GW, gq), lerp(R1.h, GH, gq)); talk.mira.el.style.opacity = clamp(mp * 2); talk.mira.el.style.transform = `scale(${(0.94 + 0.06 * mp).toFixed(4)})`;
+      [[talk.jonas, 42.3, 1], [talk.lena, 42.45, 2], [talk.tom, 42.6, 3]].forEach(([tl, t0, ci]) => { const p = tw(t, t0, t0 + 0.5, ease.snap); show(tl.el, t >= t0); setRect(tl, CELL[ci][0], CELL[ci][1], GW, GH); tl.el.style.opacity = clamp(p * 2); tl.el.style.transform = `scale(${(0.92 + 0.08 * p).toFixed(4)})`; });
+      talk.count.textContent = t >= 42.3 ? '5' : t >= 41.4 ? '2' : '1';
+      const speak = (tl, wins) => { const on = wins.some(([a, b]) => t >= a && t < b); show(tl.ring, on); const open = on && Math.floor(t * 9) % 2 === 0; tl.mc.style.display = open ? 'none' : ''; tl.mo.style.display = open ? '' : 'none'; };
+      speak(talk.mira, [[41.7, 42.15], [42.9, 43.2]]); speak(talk.jonas, [[42.55, 42.85]]); speak(talk.lena, [[43.2, 43.5]]); speak(talk.tom, []);
       tf(talk.selfv, { o: tw(t, 40.4, 40.8, ease.out2), y: 12 * (1 - tw(t, 40.4, 40.8, ease.ui)) });
-      talk.leave.style.boxShadow = (t >= 43.0 && t < 43.5) ? '0 0 0 4px rgba(214,50,46,.5)' : '';
+      talk.leave.style.boxShadow = (t >= 43.2 && t < 43.7) ? '0 0 0 4px rgba(214,50,46,.5)' : '';
 
       /* ---- Cursor ---- */
       let cx = CUR[0][1], cy = CUR[0][2];
@@ -326,7 +332,7 @@ export default function register(E) {
       else for (let i = 0; i < CUR.length - 1; i++) if (t >= CUR[i][0] && t < CUR[i + 1][0]) { const p = ease.uiInOut(prog(t, CUR[i][0], CUR[i + 1][0])); cx = lerp(CUR[i][1], CUR[i + 1][1], p); cy = lerp(CUR[i][2], CUR[i + 1][2], p); }
       let press = 1;
       for (const ck of CLICKS) { const d = t - ck; if (d >= -0.05 && d < 0.3) press = Math.min(press, d < 0.05 ? 1 - 0.16 * clamp((d + 0.05) / 0.1) : 0.84 + 0.16 * clamp((d - 0.05) / 0.25)); }
-      const cop = tw(t, 24.7, 24.95) * (1 - tw(t, 43.6, 43.95));
+      const cop = tw(t, 24.7, 24.95) * (1 - tw(t, 43.8, 44.1));
       show(cur.el, cop > 0.01); tf(cur.el, { x: cx, y: cy, s: press, o: cop });
       let rip = 0, rt = 0; for (const ck of CLICKS) { const d = t - ck; if (d >= 0 && d < 0.55) { rip = 1; rt = d / 0.55; } }
       show(cur.rip, rip > 0);
