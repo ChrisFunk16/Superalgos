@@ -18,8 +18,8 @@ Der Film erzählt genau das: Jeder gängige Ansatz (der Allrounder, das fertige 
 | 2–14 s | je Ansatz eine Stärke, dann *ABER:* – die Lücken sind das Dazwischen (bewusst ohne Produkt- oder Firmennamen) |
 | 14–18 s | fünf Blickwinkel, in denen die Lücke wehtut (Login, Tool, Abo, KI, IT) |
 | 18–20 s | der **Faden** erscheint als erstes Verbindendes |
-| 40–46 s „Gesamtpaket“ | drei Kettenglieder greifen *ineinander* – das Dazwischen ist gefüllt |
-| 54–64 s Finale | der Faden wird zum Steg im „A“ des Logos |
+| 44–50 s „Gesamtpaket“ | drei Kettenglieder greifen *ineinander* – das Dazwischen ist gefüllt |
+| 60–68 s Finale | der Faden wird zum Steg im „A“ des Logos |
 
 **Alternative Hooks** (Konstante in `src/scenes/act1.js`, Abschnitt *Hook*; Hits in `timeline.json`):
 
@@ -73,7 +73,7 @@ jeweils mit **eigener Bildidee** und eigenem Akkord:
 |---|---|
 | 02 Menü-Suche | Cursor zieht den Faden vom Suchfeld des großen Menüs → Datei → Termin → Talk (vier Treffer werden nacheinander verbunden), Faden bleibt als dünne Linie stehen |
 | 03 Apps | Beim Hinzufügen läuft der Faden von der Karte in die Leiste und bleibt dort als orange Kante des Eintrags (heute fliegt nur das Icon) |
-| 04 Support | Faden verbindet Frage → Antwortkarte → Anfrage; die Antwort des Supports „rastet“ ans Ende des Fadens |
+| 04 Support / Talk | Faden verbindet Frage → Antwortkarte → Chat → Anruf; die Teilnehmenden „rasten“ an den Faden ein |
 | 05 Gesamtpaket | die Kette wird vom Faden durchzogen (Faden = Gelenk) |
 
 **Umsetzung.** Ein Pfad pro Szene im Fensterraum (`act2.js`, wie `trailSvg` bei den App-Flügen), Länge per `stroke-dasharray` – deterministisch und billig. **Aufwand mittel** (halber Tag).
@@ -157,7 +157,7 @@ Alle Texte stehen in den Szenendateien (`act1.js`, `act2.js`, `act2b.js`, `final
 
 * **Echte Sprecherstimme + Ducking:** Sidechain der Stems auf die Stimme (Pad/Arps −6 dB).
 * **Audio-Logo-Version solo** (3 s) für Intros/Outros anderer Videos: `audio/sonic-logo.wav` aus dem Skript exportieren.
-* **Loop-fähige Messefassung:** 64 s mit sanftem Ausklang → Einstieg (Crossfade 2 s).
+* **Loop-fähige Messefassung:** 68 s mit sanftem Ausklang → Einstieg (Crossfade 2 s).
 
 ---
 

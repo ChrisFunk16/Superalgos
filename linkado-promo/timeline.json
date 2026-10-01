@@ -4,17 +4,17 @@
     "width": 1920,
     "height": 1080,
     "fps": 30,
-    "duration": 64.0,
+    "duration": 68.0,
     "bpm": 120,
     "beat": 0.5,
     "bar": 2.0,
-    "note": "1 Takt = 2,0 s, 32 Takte = 64 s (Szene 06 und das Schlussbild haben mehr Luft als in der 60-s-Fassung). Alle Szenengrenzen liegen auf Taktgrenzen. Dieses File ist der Vertrag zwischen Bild (src/) und Ton (audio/)."
+    "note": "1 Takt = 2,0 s, 34 Takte = 68 s (Szene 04 mit Talk, Szene 06 und das Schlussbild haben mehr Luft als in der 60-s-Fassung). Alle Szenengrenzen liegen auf Taktgrenzen. Dieses File ist der Vertrag zwischen Bild (src/) und Ton (audio/)."
   },
 
   "acts": [
     { "id": "chaos",   "start": 0.0,  "end": 20.0, "bars": "1-10",  "idea": "Drei Insellösungen, die nicht zusammenpassen. Spannung baut sich auf, dann Atempause." },
-    { "id": "clarity", "start": 20.0, "end": 54.0, "bars": "11-27", "idea": "Linkado: sechs Nutzenversprechen, die nacheinander einrasten. Ruhiger Groove wächst Schicht für Schicht." },
-    { "id": "finale",  "start": 54.0, "end": 64.0, "bars": "28-32", "idea": "Alles kristallisiert zum Linkado-Logo. Abschlusszeile, Ausklang." }
+    { "id": "clarity", "start": 20.0, "end": 58.0, "bars": "11-29", "idea": "Linkado: sechs Nutzenversprechen, die nacheinander einrasten. Ruhiger Groove wächst Schicht für Schicht." },
+    { "id": "finale",  "start": 58.0, "end": 68.0, "bars": "30-34", "idea": "Alles kristallisiert zum Linkado-Logo. Abschlusszeile, Ausklang." }
   ],
 
   "scenes": [
@@ -28,11 +28,11 @@
     { "id": "reveal",    "start": 20.0, "end": 24.0, "bars": "11-12", "text": "Nextcloud als Basis. Linkado als Benutzererlebnis. – Technik verständlich und zugänglich machen." },
     { "id": "overview",  "start": 24.0, "end": 28.0, "bars": "13-14", "text": "Mehr Übersicht im Arbeitsalltag. – Anwendungen und wichtige Funktionen leichter finden." },
     { "id": "appshop",   "start": 28.0, "end": 34.0, "bars": "15-17", "text": "Passende Werkzeuge an einem Ort. – Apps über den Linkado-Appshop auswählen und verwalten." },
-    { "id": "help",      "start": 34.0, "end": 40.0, "bars": "18-20", "text": "Hilfe direkt in der Cloud. – Anleitungen und Support dort, wo Fragen entstehen." },
-    { "id": "package",   "start": 40.0, "end": 46.0, "bars": "21-23", "text": "Ein stimmiges Gesamtpaket. – Oberfläche, Erweiterungen und Betreuung greifen ineinander." },
-    { "id": "time",      "start": 46.0, "end": 54.0, "bars": "24-27", "text": "Mehr Zeit fürs Wesentliche. – Weniger mit Technik beschäftigen, leichter zusammenarbeiten." },
+    { "id": "help",      "start": 34.0, "end": 44.0, "bars": "18-22", "text": "Hilfe direkt in der Cloud. – Anleitungen, Assistent und Support dort, wo Fragen entstehen; persönlich per Chat und Anruf (Talk)." },
+    { "id": "package",   "start": 44.0, "end": 50.0, "bars": "23-25", "text": "Ein stimmiges Gesamtpaket. – Oberfläche, Erweiterungen und Betreuung greifen ineinander." },
+    { "id": "time",      "start": 50.0, "end": 58.0, "bars": "26-29", "text": "Mehr Zeit fürs Wesentliche. – Weniger mit Technik beschäftigen, leichter zusammenarbeiten." },
 
-    { "id": "finale",    "start": 54.0, "end": 64.0, "bars": "28-32", "text": "Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag. – Der offene Arbeitsplatz." }
+    { "id": "finale",    "start": 58.0, "end": 68.0, "bars": "30-34", "text": "Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag. – Der offene Arbeitsplatz." }
   ],
 
   "hits": [
@@ -100,26 +100,35 @@
     { "t": 36.3, "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 1" },
     { "t": 36.9, "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 2" },
     { "t": 37.5, "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 3" },
-    { "t": 37.85,"kind": "click",   "variant": "tap",    "note": "Anfrage stellen" },
-    { "t": 38.0, "kind": "ping",    "voice": 0, "note": "Anfrage erscheint" },
-    { "t": 38.8, "kind": "chime",   "note": "Antwort vom Support trifft ein" },
+    { "t": 37.85,"kind": "click",   "variant": "tap",    "note": "„Im Chat fragen“ (Karte Hilfe und Kontakt)" },
+    { "t": 38.0, "kind": "ping",    "voice": 0, "note": "Talk öffnet sich: Chat mit dem Support" },
+    { "t": 38.0, "kind": "swipe",   "note": "Ansicht wechselt zu Talk" },
+    { "t": 38.4, "kind": "msg",     "variant": "out",    "note": "Nachricht gesendet: Wie lade ich Kollegen ein?" },
+    { "t": 39.0, "kind": "chime",   "note": "Antwort vom Support trifft ein (mit Einladungslink)" },
+    { "t": 39.7, "kind": "msg",     "variant": "out",    "note": "Nachricht gesendet: Können wir kurz sprechen?" },
+    { "t": 40.2, "kind": "click",   "variant": "tap",    "note": "„Anruf starten“" },
+    { "t": 40.3, "kind": "swipe",   "note": "Anrufansicht" },
+    { "t": 40.4, "kind": "ring",    "end": 41.4, "note": "Es klingelt (Warte auf weitere Teilnehmer)" },
+    { "t": 41.4, "kind": "join",    "note": "Mira vom Support ist im Anruf" },
+    { "t": 42.3, "kind": "join",    "note": "Jonas aus dem Team tritt bei" },
+    { "t": 43.3, "kind": "click",   "variant": "tap",    "note": "„Anruf verlassen“" },
 
-    { "t": 41.0, "kind": "snap",    "note": "Kettenglied 1: Oberfläche" },
-    { "t": 42.0, "kind": "snap",    "note": "Kettenglied 2: Erweiterungen" },
-    { "t": 43.0, "kind": "snap",    "note": "Kettenglied 3: Betreuung" },
-    { "t": 44.0, "kind": "lock",    "note": "Kette rastet ein, Lichtpuls" },
+    { "t": 45  , "kind": "snap",    "note": "Kettenglied 1: Oberfläche" },
+    { "t": 46  , "kind": "snap",    "note": "Kettenglied 2: Erweiterungen" },
+    { "t": 47  , "kind": "snap",    "note": "Kettenglied 3: Betreuung" },
+    { "t": 48  , "kind": "lock",    "note": "Kette rastet ein, Lichtpuls" },
 
-    { "t": 40.0, "kind": "swipe",   "note": "Fenster verlässt das Bild, Kette erscheint" },
-    { "t": 46.0, "kind": "ping",    "voice": 0, "note": "Szene Mehr Zeit" },
-    { "t": 46.0, "kind": "swipe",   "note": "Zeitleiste fährt ein" },
+    { "t": 44  , "kind": "swipe",   "note": "Fenster verlässt das Bild, Kette erscheint" },
+    { "t": 50  , "kind": "ping",    "voice": 0, "note": "Szene Mehr Zeit" },
+    { "t": 50  , "kind": "swipe",   "note": "Zeitleiste fährt ein" },
 
-    { "t": 54  , "kind": "riser",   "end": 56, "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren" },
-    { "t": 55.5, "kind": "cut",     "end": 56, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
-    { "t": 56  , "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Harmonie hellt auf (Moll -> Dur)" },
-    { "t": 56.5, "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
-    { "t": 56.75,"kind": "tagline", "note": "Die Möglichkeiten von Nextcloud." },
-    { "t": 58  , "kind": "tagline", "note": "Einfach für deinen Alltag." },
-    { "t": 59  , "kind": "tagline", "note": "Logo-Tagline + genau ein CTA; ab hier 5 s volles Endbild" },
-    { "t": 64  , "kind": "end" }
+    { "t": 58    , "kind": "riser",   "end": 60, "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren" },
+    { "t": 59.5, "kind": "cut",     "end": 60, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
+    { "t": 60    , "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Harmonie hellt auf (Moll -> Dur)" },
+    { "t": 60.5, "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
+    { "t": 60.75,"kind": "tagline", "note": "Die Möglichkeiten von Nextcloud." },
+    { "t": 62    , "kind": "tagline", "note": "Einfach für deinen Alltag." },
+    { "t": 63    , "kind": "tagline", "note": "Logo-Tagline + genau ein CTA; ab hier 5 s volles Endbild" },
+    { "t": 68    , "kind": "end" }
   ]
 }

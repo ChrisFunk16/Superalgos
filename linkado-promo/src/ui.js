@@ -14,6 +14,7 @@ const MAIN = { w: WIN.w - WIN.rail, h: WIN.h - WIN.top };   // 1396 × 844
 export const LAY = {
   rail: { x: 42, y: (i) => WIN.top + 8 + i * 77 + 36, support: [42, WIN.top + MAIN.h - 8 - 36] },
   home: { search: [WIN.rail + 64, WIN.top + 184, 520, 50] },
+  talk: { call: [WIN.rail + 250 + 759, WIN.top + 28], leave: [WIN.rail + 1146 - 100, WIN.top + 844 - 34], chatBtn: [WIN.rail + 236 + 36 + 580 + 150, WIN.top + 436 + 214] },
   menu: { grid: [33, 28], input: [WIN.rail + 160, WIN.top + 85], row: (i) => [WIN.rail + 150, WIN.top + 150 + i * 56] },
   apps: {
     x0: WIN.rail + 232, scroll: 590, pk: 778,
@@ -244,6 +245,54 @@ export function installUiCss(E) {
   .ui-mrr .ic.ai { background:linear-gradient(135deg,#E67E22,#C76A19); color:#fff; }
   .ui-mrr small { display:block; font:500 12px/1.3 var(--font-body); color:#6F6C66; margin-top:2px; white-space:nowrap; }
   .ui-mrr .tx { overflow:hidden; }
+
+  /* --- Talk: Chat und Anruf (Beispiele erfunden, keine Fotos) --- */
+  .ui-talk { position:absolute; inset:0; font-family:var(--font-body); }
+  .ui-tside { position:absolute; left:0; top:0; width:250px; height:100%; background:#D3D5D7; }
+  .ui-tsearch { position:absolute; left:12px; top:12px; width:176px; height:34px; border-radius:7px; background:#fff; display:flex; align-items:center; gap:8px; padding:0 10px; font:500 13.5px/1 var(--font-body); color:#5E6168; }
+  .ui-tico { position:absolute; top:16px; color:#2A2F3A; }
+  .ui-tnav { position:absolute; left:10px; width:230px; height:38px; display:flex; align-items:center; gap:12px; padding:0 12px; font:500 14.5px/1 var(--font-body); color:#171A22; }
+  .ui-tconv { position:absolute; left:8px; width:234px; height:60px; border-radius:9px; display:flex; align-items:center; gap:11px; padding:0 10px; color:#171A22; }
+  .ui-tconv.on { background:var(--orange-deep); color:#fff; }
+  .ui-tconv .av { width:38px; height:38px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font:700 15px/1 var(--font-body); color:#fff; background:#7A7F88; }
+  .ui-tconv b { display:block; font:600 14px/1.2 var(--font-body); white-space:nowrap; } .ui-tconv small { display:block; font:500 12px/1.3 var(--font-body); opacity:.8; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:150px; }
+  .ui-tmain { position:absolute; left:250px; top:0; width:880px; height:100%; background:#fff; }
+  .ui-thead { position:absolute; left:0; top:0; right:0; height:56px; border-bottom:1px solid #EEE8DF; display:flex; align-items:center; gap:12px; padding:0 14px 0 16px; }
+  .ui-thead .av { width:36px; height:36px; border-radius:9px; background:var(--orange); display:flex; align-items:center; justify-content:center; }
+  .ui-thead .ti { font:600 15.5px/1 var(--font-body); color:#171A22; }
+  .ui-tcal { width:36px; height:36px; border-radius:8px; background:#FBEBDD; display:flex; align-items:center; justify-content:center; color:#8A4A10; }
+  .ui-tcall-btn { height:36px; border-radius:8px; background:var(--orange-deep); color:#fff; display:flex; align-items:center; gap:8px; padding:0 14px; font:700 14px/1 var(--font-body); }
+  .ui-tmsgs { position:absolute; left:0; right:0; top:56px; bottom:70px; overflow:hidden; }
+  .ui-tdate { position:absolute; left:50%; top:14px; transform:translateX(-50%); padding:6px 14px; border-radius:99px; background:#F1ECE7; font:500 13px/1 var(--font-body); color:#5E6168; white-space:nowrap; }
+  .ui-tm { position:absolute; max-width:500px; padding:12px 16px; border-radius:14px; font:500 15px/1.4 var(--font-body); color:#171A22; }
+  .ui-tm.out { right:30px; background:#FCE3C9; border-bottom-right-radius:4px; }
+  .ui-tm.in { left:62px; background:#F1ECE7; border-bottom-left-radius:4px; }
+  .ui-tm small { display:block; margin-top:5px; font:500 11px/1 var(--font-body); color:#8A867D; text-align:right; }
+  .ui-tmav { position:absolute; left:18px; width:34px; height:34px; border-radius:50%; background:#1E2430; color:#fff; font:700 14px/34px var(--font-body); text-align:center; }
+  .ui-tname { position:absolute; left:62px; font:600 12.5px/1 var(--font-body); color:#6B6F78; }
+  .ui-tlink { position:absolute; left:62px; width:360px; padding:12px 14px; border-radius:12px; border:1px solid #E6DCCB; background:#FBF8F2; display:flex; align-items:center; gap:12px; }
+  .ui-tlink .ic { width:38px; height:38px; border-radius:9px; background:#FBEBDD; display:flex; align-items:center; justify-content:center; color:#8A4A10; flex:none; }
+  .ui-tlink b { display:block; font:700 14px/1.2 var(--font-body); color:#171A22; } .ui-tlink small { display:block; font:500 12px/1.3 var(--font-body); color:#6B6F78; margin-top:2px; }
+  .ui-tlink .cp { margin-left:auto; height:32px; padding:0 12px; border-radius:7px; background:#fff; border:1px solid #E4DED6; display:flex; align-items:center; gap:6px; font:700 12.5px/1 var(--font-body); color:#171A22; }
+  .ui-tdots { position:absolute; left:62px; padding:14px 16px; border-radius:14px; background:#F1ECE7; border-bottom-left-radius:4px; display:flex; gap:6px; }
+  .ui-tdots i { width:8px; height:8px; border-radius:50%; background:#9A9690; display:block; }
+  .ui-tinput { position:absolute; left:0; right:0; bottom:0; height:70px; background:#fff; display:flex; align-items:center; gap:12px; padding:0 18px; }
+  .ui-tinput .box { flex:1; height:42px; border-radius:10px; border:1.5px solid #CFC8BC; display:flex; align-items:center; gap:10px; padding:0 12px; font:500 15px/1 var(--font-body); color:#7A7770; }
+  .ui-tright { position:absolute; left:1130px; top:0; width:266px; height:100%; background:#fff; border-left:1px solid #EEE8DF; padding:16px 18px; }
+  .ui-tright h6 { margin:0; font:700 18px/1.2 var(--font-display); color:#171A22; }
+  .ui-ttab { margin-top:16px; font:700 13.5px/1 var(--font-body); color:#171A22; padding-bottom:9px; border-bottom:3px solid var(--orange); display:inline-block; }
+  .ui-tpart { display:flex; align-items:center; gap:10px; height:44px; font:500 14px/1 var(--font-body); color:#171A22; }
+  .ui-tpart i { width:30px; height:30px; border-radius:50%; background:#EFE6F8; color:#7A4FD0; font:700 13px/30px var(--font-body); text-align:center; font-style:normal; position:relative; }
+  /* Anruf */
+  .ui-tcall { position:absolute; inset:0; background:#0C0E13; color:#fff; }
+  .ui-tcin { position:absolute; left:0; top:0; width:1146px; height:100%; }
+  .ui-tbtn { position:absolute; width:40px; height:40px; border-radius:9px; background:#20232B; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .ui-tbtn.w2 { width:58px; gap:2px; }
+  .ui-tvid { position:absolute; width:480px; height:350px; border-radius:14px; overflow:hidden; }
+  .ui-tvid .lab { position:absolute; left:12px; bottom:12px; display:flex; align-items:center; gap:8px; padding:6px 12px; border-radius:8px; background:rgba(0,0,0,.55); font:600 13.5px/1 var(--font-body); }
+  .ui-tvid .ring { position:absolute; inset:0; border-radius:14px; border:3px solid #3FBF8A; }
+  .ui-tleave { position:absolute; display:flex; height:40px; border-radius:9px; overflow:hidden; background:#D6322E; font:700 14px/40px var(--font-body); white-space:nowrap; }
+  .ui-tleave span { padding:0 14px; display:flex; align-items:center; gap:8px; } .ui-tleave i { width:34px; border-left:1px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; }
 
   /* --- Cursor & Klick --- */
   .ui-cur { position:absolute; left:0; top:0; width:34px; height:34px; z-index:50; pointer-events:none; filter:drop-shadow(0 4px 6px rgba(0,0,0,.35)); }
@@ -477,8 +526,9 @@ export function buildUI(E) {
     // Karten rechts
     const kto = h('div', { class: 'ui-rcard', style: { top: 236 } }, h('h6', {}, ic('user-round', 18, '#171A22', 2.2), T('', 'Mein Konto')),
       T('', 'Für Ihr Konto ist eine E-Mail-Adresse hinterlegt.', 'p'), T('g', 'Empfehlung: Aktivieren Sie einen zweiten Faktor.', 'p'), h('div', { class: 'lk' }, T('', 'Mein Konto öffnen'), ic('arrow-right', 15, '#171A22', 2.4)));
-    const hk = h('div', { class: 'ui-rcard', style: { top: 436 } }, h('h6', {}, T('', 'Hilfe und Kontakt')),
-      T('g', 'Anleitungen finden Sie links – oder stellen Sie eine Anfrage.', 'p'), T('', 'Support-Zeiten: Mo–Fr 9–17 Uhr. Außerhalb: Meldung anlegen, wir antworten am nächsten Arbeitstag.', 'p'), h('div', { style: { marginTop: 14 } }, T('', 'Melden ohne Anmeldung', 'u')));
+    const chatBtn = h('div', { class: 'abs', style: { left: 20, right: 20, bottom: 18, height: 40, borderRadius: 8, background: '#fff', border: '1px solid #D6DDE3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, font: '700 13.5px/1 var(--font-body)', color: '#171A22' } }, ic('message-circle', 17, '#171A22', 2.2), T('', 'Im Chat fragen'));
+    const hk = h('div', { class: 'ui-rcard', style: { top: 436, height: 250 } }, h('h6', {}, T('', 'Hilfe und Kontakt')),
+      T('g', 'Anleitungen finden Sie links – oder fragen Sie uns direkt im Chat oder per Anruf.', 'p'), T('', 'Support-Zeiten: Mo–Fr 9–17 Uhr. Außerhalb antworten wir am nächsten Arbeitstag.', 'p'), chatBtn);
     const sc = h('div', { class: 'ui-sc0' },
       h('div', { class: 'ui-abs', style: { left: 0, top: 30 } }, h('span', { class: 'ui-cap', style: { fontWeight: 500, textTransform: 'none', letterSpacing: 0, fontSize: 12.5, color: '#6B6F78' } }, tick(), T('', 'Support'))),
       h('h1', { class: 'ui-h1 t', text: 'Ihr Support auf einen Blick.' }),
@@ -491,7 +541,7 @@ export function buildUI(E) {
     rOld.el.style.cssText += ';top:748px;height:54px'; rNew.el.style.cssText += ';top:684px;height:54px';
     sc.append(rOld.el, rNew.el);
     const el = h('div', { class: 'ui-view' }, menu, h('div', { class: 'ui-sreg' }, sc));
-    return { el, menu, sc, inp, input: inp.firstChild, caret: inp.querySelector('.ui-caret'), zone, arts: artEls, artsLbl, ai, steps, rOld, rNew, reply, banner, kto, hk, h1: sc.querySelector('.ui-h1') };
+    return { el, menu, sc, inp, input: inp.firstChild, caret: inp.querySelector('.ui-caret'), zone, arts: artEls, artsLbl, ai, steps, rOld, rNew, reply, banner, kto, hk, chatBtn, h1: sc.querySelector('.ui-h1') };
   }
 
   /* Großes Menü: Suche „Was möchten Sie tun?“, Favoriten, Bereiche; bei Eingabe wird die Liste durch Treffer ersetzt (erste Zeile: Assistent) */
@@ -524,6 +574,66 @@ export function buildUI(E) {
     return { el, input, caret, search, cats, scroll, res, rows: rowEls };
   }
 
+  /* Talk: Chat mit „Linkado Support“ und Anrufansicht. Alle Personen sind erfunden und nur als stilisierte Silhouetten gezeichnet. */
+  const micSvg = (sz = 18, col = '#fff') => `<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="${col}"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>`;
+  const person = (w, h_, body, head, extra = '') => `<svg viewBox="0 0 ${w} ${h_}" width="${w}" height="${h_}" style="position:absolute;left:0;top:0">${extra}<ellipse cx="${w / 2}" cy="${h_ + 20}" rx="${w * 0.30}" ry="${h_ * 0.44}" fill="${body}"/><circle cx="${w / 2}" cy="${h_ * 0.42}" r="${h_ * 0.15}" fill="${head}"/></svg>`;
+  function talk() {
+    const T_ = (cls, text, tag = 'span') => h(tag, { class: 't ' + cls, text });
+    /* --- Chat --- */
+    const convs = [['Linkado Support', 'Mira: Hier ist dein Link …', 'L', '#1E2430', true], ['Team Vertrieb', 'Jonas: Angebot ist raus', 'TV', '#2F7D6B'], ['Projekt Herbst', 'Lena: Termin steht', 'PH', '#7A4FD0'], ['Notiz an mich', 'Das System hat die Unterhaltung …', '', '#2B8DD6']];
+    const convEls = convs.map(([a, b, av, col, on], i) => h('div', { class: 'ui-tconv' + (on ? ' on' : ''), style: { top: 148 + i * 64 } },
+      h('div', { class: 'av', style: { background: on ? 'rgba(255,255,255,.22)' : col }, html: av ? '' : icon('notebook-pen', 18, '#fff', 2) }, av ? T_('', av) : null), h('div', {}, h('b', { class: 't', text: a }), h('small', { class: 't', text: b }))));
+    const side = h('div', { class: 'ui-tside' },
+      h('div', { class: 'ui-tsearch' }, ic('search', 16, '#5E6168', 2), T_('', 'Suche …')), h('span', { class: 'ui-tico', style: { left: 200 }, html: icon('filter', 18, 'currentColor', 2) }), h('span', { class: 'ui-tico', style: { left: 226 - 2 }, html: icon('message-circle', 18, 'currentColor', 2) }),
+      h('div', { class: 'ui-tnav', style: { top: 58 } }, ic('house', 18, '#171A22', 2), T_('', 'Startseite')), h('div', { class: 'ui-tnav', style: { top: 98 } }, ic('messages-square', 18, '#171A22', 2), T_('', 'Themen')),
+      ...convEls, h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 16, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, font: '700 14px/1 var(--font-body)', color: '#171A22' } }, ic('settings', 16, '#171A22', 2), T_('', 'App-Einstellungen')));
+    const callBtn = h('div', { class: 'ui-tcall-btn' }, ic('phone', 16, '#fff', 2.4), T_('', 'Anruf starten'));
+    const head = h('div', { class: 'ui-thead' }, ic('menu', 20, '#2A2F3A', 2), h('div', { class: 'av', html: lGlyph }), h('span', { class: 'ti t', text: 'Linkado Support' }), h('span', { style: { flex: 1 } }),
+      h('div', { class: 'ui-tcal', html: icon('calendar', 18, 'currentColor', 2) }), callBtn, h('span', { html: icon('ellipsis', 20, '#2A2F3A', 2) }));
+    const msg = (cls, top, text, time) => h('div', { class: 'ui-tm ' + cls, style: { top } }, T_('', text), h('small', { class: 't', text: time }));
+    const m1 = msg('out', 62, 'Hallo! Wie lade ich Kollegen in unser Team ein?', '09:41');
+    const nm = h('div', { class: 'ui-tname t', text: 'Mira · Linkado Support', style: { top: 146 } });
+    const av = h('div', { class: 'ui-tmav', style: { top: 164 }, html: '<span>M</span>' });
+    const dots = h('div', { class: 'ui-tdots', style: { top: 164 } }, h('i'), h('i'), h('i'));
+    const m2 = msg('in', 164, 'Hallo Anna! Das geht in drei Schritten – hier ist dein Einladungslink.', '09:42');
+    const lk = h('div', { class: 'ui-tlink', style: { top: 262 } }, h('div', { class: 'ic', html: icon('link', 20, 'currentColor', 2.2) }), h('div', {}, h('b', { class: 't', text: 'Einladung · Team Vertrieb' }), h('small', { class: 't', text: 'Link gültig 7 Tage' })), h('div', { class: 'cp' }, ic('copy', 14, '#171A22', 2.2), T_('', 'Kopieren')));
+    const m3 = msg('out', 348, 'Super, danke! Können wir kurz sprechen?', '09:43');
+    const date = h('div', { class: 'ui-tdate t', text: 'Heute, 14. Oktober' });
+    const input = h('div', { class: 'ui-tinput' }, ic('plus', 22, '#2A2F3A', 2.2), h('div', { class: 'box' }, ic('smile', 20, '#2A2F3A', 2), T_('', 'Nachricht schreiben …')), h('span', { html: icon('ellipsis', 20, '#2A2F3A', 2) }), h('span', { html: micSvg(20, '#2A2F3A') }));
+    const msgs = h('div', { class: 'ui-tmsgs' }, date, m1, nm, av, dots, m2, lk, m3);
+    const main = h('div', { class: 'ui-tmain' }, head, msgs, input);
+    const right = h('div', { class: 'ui-tright' }, h('h6', { class: 't', text: 'Linkado Support' }), h('div', { class: 'ui-ttab' }, T_('', 'Teilnehmer')),
+      h('div', { class: 'ui-tpart', style: { marginTop: 14 } }, h('i', { text: 'A' }), T_('', 'Anna (Du)')), h('div', { class: 'ui-tpart' }, h('i', { text: 'M', style: { background: '#E3E9EE', color: '#1E2430' } }), T_('', 'Mira K. · Support')));
+    const chat = h('div', { class: 'ui-talk' }, side, main, right);
+    /* --- Anruf --- */
+    const timer = h('b', { class: 't', text: '00 : 00', style: { font: '700 15px/1 var(--font-body)' } });
+    const cHead = h('div', {}, h('div', { class: 'ui-tbtn', style: { left: 14, top: 10, width: 36, height: 36 }, html: icon('menu', 18, '#fff', 2) }),
+      h('div', { class: 'abs', style: { left: 62, top: 10, width: 36, height: 36, borderRadius: '50%', background: '#4A4F5C', display: 'flex', alignItems: 'center', justifyContent: 'center' }, html: icon('users', 18, '#fff', 2) }),
+      h('span', { class: 'abs t', text: 'Linkado Support', style: { left: 110, top: 20, font: '500 15px/1 var(--font-body)' } }),
+      h('div', { class: 'abs', style: { right: 94, top: 20, display: 'flex', alignItems: 'center', gap: 22 } }, timer, h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 6, font: '700 14px/1 var(--font-body)' } }, ic('users', 16, '#fff', 2), h('span', { class: 'n', text: '1' }))),
+      h('span', { class: 'abs', style: { right: 24, top: 20 }, html: icon('ellipsis', 20, '#fff', 2) }));
+    const wait = h('div', { class: 'abs', style: { left: 0, width: 1146, top: 330, textAlign: 'center' } }, h('div', { style: { display: 'flex', justifyContent: 'center' }, html: icon('users', 54, '#fff', 1.8) }),
+      h('div', { class: 't', text: 'Warte auf weitere Teilnehmer …', style: { font: '600 26px/1.2 var(--font-body)', marginTop: 18 } }), h('div', { class: 't', text: 'Du kannst andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste einladen', style: { font: '500 14px/1.4 var(--font-body)', color: '#C9CDD6', marginTop: 12 } }));
+    const tile = (left, name, g1, g2, body, headc) => {
+      const el = h('div', { class: 'ui-tvid', style: { left, top: 130, background: `linear-gradient(160deg, ${g1}, ${g2})` } });
+      el.innerHTML = person(480, 350, body, headc, '<circle cx="90" cy="70" r="44" fill="rgba(255,255,255,.16)"/><circle cx="410" cy="110" r="30" fill="rgba(255,255,255,.12)"/><rect x="330" y="40" width="110" height="90" rx="6" fill="rgba(255,255,255,.10)"/>');
+      const lab = h('div', { class: 'lab' }, h('span', { html: micSvg(14, '#fff') }), h('span', { class: 't', text: name })); const ring = h('div', { class: 'ring', style: { display: 'none' } });
+      el.append(lab, ring); return { el, ring };
+    };
+    const mira = tile(72, 'Mira K. · Support', '#F2D7B8', '#B97A3E', '#6B3F1E', '#7A4A27'), jonas = tile(570, 'Jonas · Vertrieb', '#C9DCEB', '#4C6F94', '#1E3350', '#2B4565');
+    const selfv = h('div', { class: 'abs', style: { left: 1146 - 18 - 214, top: 844 - 62 - 160, width: 214, height: 160, borderRadius: 12, overflow: 'hidden', background: 'linear-gradient(160deg,#3B4E6A,#1B2638)' } });
+    selfv.innerHTML = person(214, 160, '#0F1826', '#16233A', '<circle cx="40" cy="36" r="22" fill="rgba(255,255,255,.10)"/>');
+    const ctl = (left, w2, inner) => h('div', { class: 'ui-tbtn' + (w2 ? ' w2' : ''), style: { left, top: 844 - 54 }, html: inner });
+    const bx = 1146 / 2 - 168;
+    const bar = h('div', {}, ctl(bx, 1, micSvg(18) + icon('chevron-down', 12, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"')), ctl(bx + 66, 1, icon('video', 19, '#fff', 2) + icon('chevron-down', 12, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"')), ctl(bx + 132, 0, icon('sparkles', 19, '#fff', 2)), ctl(bx + 180, 0, icon('monitor', 19, '#fff', 2)), ctl(bx + 228, 0, icon('smile', 19, '#fff', 2)), ctl(bx + 276, 0, icon('hand-helping', 19, '#fff', 2)));
+    const leave = h('div', { class: 'ui-tleave', style: { right: 1146 - (1146 - 18), top: 844 - 54 } }, h('span', {}, h('span', { html: icon('phone', 16, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(135deg)"') }), T_('', 'Anruf verlassen')), h('i', { html: icon('chevron-down', 14, '#fff', 2.4).replace('<svg', '<svg style="transform:rotate(180deg)"') }));
+    const full = h('div', { class: 'ui-tbtn', style: { left: 14, top: 844 - 54, width: 36, height: 36 }, html: icon('maximize', 17, '#fff', 2) });
+    const cin = h('div', { class: 'ui-tcin' }, cHead, wait, mira.el, jonas.el, selfv, bar, leave, full);
+    const call = h('div', { class: 'ui-tcall' }, cin);
+    const el = h('div', { class: 'ui-view' }, chat, call);
+    return { el, chat, call, convEls, callBtn, m1, nm, av, dots, m2, lk, m3, timer, count: cHead.querySelector('.n'), wait, mira, jonas, selfv, leave };
+  }
+
   /* Cursor (Pfeil) und Klick-Welle */
   function cursor() {
     const el = h('div', { class: 'ui-cur', html: '<svg viewBox="0 0 34 34" width="34" height="34"><path d="M5 3 L5 26 L11 21 L15 30 L19 28 L15 20 L23 20 Z" fill="#fff" stroke="#1F2532" stroke-width="2" stroke-linejoin="round"/></svg>' });
@@ -531,5 +641,5 @@ export function buildUI(E) {
     return { el, rip };
   }
 
-  return { window: window_, home, results, menu, apps, support, cursor, APPS, PKG_ROWS, MAIN, WIN, LAY, ic, T, lGlyph, fi };
+  return { window: window_, home, results, menu, apps, support, talk, cursor, APPS, PKG_ROWS, MAIN, WIN, LAY, ic, T, lGlyph, fi };
 }

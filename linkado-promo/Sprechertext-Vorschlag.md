@@ -19,10 +19,10 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | 20–24 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
 | 24–28 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |
 | 28–34 | 03 | „Passende Werkzeuge an einem Ort: Apps über den Linkado-Appshop auswählen und verwalten.“ |
-| 34–40 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen.“ |
-| 40–46 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
-| 46–54 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
-| 56–64 | Logo | „Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.“ |
+| 34–44 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen. Und wenn es persönlich sein soll: per Chat oder Anruf.“ |
+| 44–50 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
+| 50–58 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
+| 60–68 | Logo | „Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.“ |
 
-Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 14–18 s, 19 s, 20–24 s und 56–64 s sprechen
+Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 14–18 s, 19 s, 20–24 s und 60–68 s sprechen
 und die übrigen Szenen allein über Bild und Musik tragen lassen.

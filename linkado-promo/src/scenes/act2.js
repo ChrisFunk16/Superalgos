@@ -1,5 +1,5 @@
 // ============================================================
-// Act II – Klarheit (20–54 s): Hintergrund + Lichtflut, Overlay (Sneak Peek + Faden),
+// Act II – Klarheit (20–58 s): Hintergrund + Lichtflut, Overlay (Sneak Peek + Faden),
 // und die vier Oberflächen-Szenen 01–04 in EINEM durchgehenden Linkado-Fenster:
 //   01 Nextcloud als Basis, Linkado als Benutzererlebnis   (20–24)
 //   02 Mehr Übersicht im Arbeitsalltag                      (24–28)
@@ -23,7 +23,7 @@ export default function register(E) {
 
   /* ---------------------------------------------------------------- Hintergrund + Lichtflut */
   E.scene({
-    id: 'a2-bg', start: 20, end: 54, z: 10,
+    id: 'a2-bg', start: 20, end: 58, z: 10,
     build(root) {
       const flood = h('div', { class: 'abs', style: { inset: 0, background: 'var(--cream)' } });
       // Drop-Schlag bei 20.0: Lichtblitz, zwei Druckwellen und ein Funkenkranz aus der Bildmitte (rein dekorativ, Marken-Orange/Navy/Creme)
@@ -51,17 +51,17 @@ export default function register(E) {
   });
 
   /* ---------------------------------------------------------------- Overlay: Sneak Peek + Faden */
-  const NODE_T = [20.25, 24.0, 28.0, 34.0, 40.0, 46.0, 54.0];
+  const NODE_T = [20.25, 24.0, 28.0, 34.0, 44.0, 50.0, 58.0];
   const NODE_X = (i) => 110 + i * (1700 / 6);       // 110 … 1810 (Index 6 = Ziel: Linkado)
   const BAR_Y = 1044;
-  const ovOut0 = (t) => 1 - tw(t, 54.0, 54.7);
+  const ovOut0 = (t) => 1 - tw(t, 58.0, 58.7);
   const progressX = (t) => {
     if (t < NODE_T[0]) return NODE_X(0);
     for (let i = 0; i < 6; i++) if (t < NODE_T[i + 1]) return lerp(NODE_X(i), NODE_X(i + 1), ease.io2(prog(t, NODE_T[i] + 0.35, NODE_T[i + 1] - 0.1)));
     return NODE_X(6);
   };
   E.scene({
-    id: 'a2-ov', start: 20, end: 54.8, z: 45,
+    id: 'a2-ov', start: 20, end: 58.8, z: 45,
     build(root) {
       const fade = h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 0, height: 120, background: 'linear-gradient(to top, var(--cream) 55%, rgba(250,246,239,0))' } });
       const pill = h('div', { class: 'abs', style: { left: 110, top: 54, display: 'flex', alignItems: 'center', gap: 14, padding: '11px 26px 11px 20px', borderRadius: 999, background: 'rgba(31,37,50,.07)' } },
@@ -80,17 +80,17 @@ export default function register(E) {
       const L = progressX(t);
       const y = lerp(THREAD_Y, BAR_Y, e), x0 = lerp(0, 110, e), x1 = lerp(1860, L, e);
       Object.assign(s.fill.style, { left: x0 + 'px', top: (y - 2) + 'px', width: Math.max(0, x1 - x0) + 'px', opacity: ovOut0(t) });
-      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: t < 53.9 ? 1 : 1 - tw(t, 53.9, 54.25) });
-      const ovOut = 1 - tw(t, 54.0, 54.7);
-      s.track.style.opacity = e * ovOut; s.fade.style.opacity = e * (1 - tw(t, 52.6, 53.2));
+      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: t < 57.9 ? 1 : 1 - tw(t, 57.9, 58.25) });
+      const ovOut = 1 - tw(t, 58.0, 58.7);
+      s.track.style.opacity = e * ovOut; s.fade.style.opacity = e * (1 - tw(t, 56.6, 57.2));
       s.nodes.forEach((n, i) => {
         const a = t - NODE_T[i], on = a >= 0;
         const pop = on ? 1 + 0.5 * Math.sin(Math.PI * clamp(a / 0.5)) * (1 - clamp(a / 0.5) * 0.4) : 1;
         n.style.background = on ? 'var(--orange)' : 'var(--cream)';
         n.style.borderColor = on ? 'var(--orange)' : 'rgba(31,37,50,.30)';
-        n.style.opacity = e * (1 - tw(t, 53.6, 54.4)); n.style.transform = `scale(${pop})`;
+        n.style.opacity = e * (1 - tw(t, 57.6, 58.4)); n.style.transform = `scale(${pop})`;
       });
-      s.goal.style.opacity = e * (1 - tw(t, 54.2, 54.7)); s.goal.style.transform = `scale(${1 + 0.12 * Math.sin(t * 3)})`;
+      s.goal.style.opacity = e * (1 - tw(t, 58.2, 58.7)); s.goal.style.transform = `scale(${1 + 0.12 * Math.sin(t * 3)})`;
     },
   });
 
@@ -101,9 +101,10 @@ export default function register(E) {
     search: { s: 0.95, px: 868, py: 116 },              // Menü-Pose: großes Menü links im Fenster
     shop:   { s: 0.86, px: 862, py: 118 },
     help:   { s: 0.86, px: 862, py: 104 },
+    talk:   { s: 0.84, px: 836, py: 110 },
     away:   { s: 0.52, px: 1060, py: 300 },
   };
-  const POSES = [[20, 'full'], [23.2, 'full'], [24.2, 'search'], [27.4, 'search'], [28.3, 'shop'], [33.4, 'shop'], [34.3, 'help'], [39.4, 'help'], [40.8, 'away']];
+  const POSES = [[20, 'full'], [23.2, 'full'], [24.2, 'search'], [27.4, 'search'], [28.3, 'shop'], [33.4, 'shop'], [34.3, 'help'], [37.4, 'help'], [38.4, 'talk'], [43.4, 'talk'], [44.8, 'away']];
   function camAt(t) {
     let a = POSES[0], b = POSES[0];
     for (let i = 0; i < POSES.length - 1; i++) { if (t >= POSES[i][0]) { a = POSES[i]; b = POSES[i + 1]; } }
@@ -115,7 +116,7 @@ export default function register(E) {
   }
 
   // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: siehe CLICKS (stehen auch als hits in timeline.json)
-  const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85];
+  const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85, 40.2, 43.3];
   const B0 = LAY.apps.btn(0), B1 = LAY.apps.btn(1), TG = LAY.apps.toggle(3), SUP = LAY.rail.support, SIN = LAY.support.input;
   const CUR = [
     [24.40, 980, 640], [24.98, LAY.menu.grid[0] + 4, LAY.menu.grid[1] + 4], [25.50, LAY.menu.grid[0] + 4, LAY.menu.grid[1] + 4], [25.95, 210, 95], [26.75, 210, 95], [27.05, LAY.menu.row(0)[0] + 20, LAY.menu.row(0)[1]], [27.55, LAY.menu.row(0)[0] + 20, LAY.menu.row(0)[1]], [28.30, 760, 560],
@@ -123,7 +124,7 @@ export default function register(E) {
     [32.40, 900, 520], [33.15, TG[0], TG[1]], [33.35, TG[0], TG[1]],
     [33.98, SUP[0], SUP[1]], [34.30, SUP[0], SUP[1]],
     [35.45, SIN[0] - 80, SIN[1]], [35.80, SIN[0] - 80, SIN[1]], [37.00, 700, 560],
-    [37.80, 1156, 126], [38.30, 1156, 126], [38.80, 1190, 170],
+    [37.78, LAY.talk.chatBtn[0], LAY.talk.chatBtn[1]], [38.30, LAY.talk.chatBtn[0], LAY.talk.chatBtn[1]], [38.80, 760, 520], [39.95, 760, 520], [40.18, LAY.talk.call[0], LAY.talk.call[1]], [40.50, LAY.talk.call[0] + 12, LAY.talk.call[1] + 14], [41.30, 700, 520], [43.05, 700, 520], [43.28, LAY.talk.leave[0], LAY.talk.leave[1]], [43.80, LAY.talk.leave[0] + 6, LAY.talk.leave[1] + 6],
   ];
 
   // App-Flüge (Hinzufügen-Taste → Seitenleiste); Rail-Positionen 6 und 7 (unter Talk)
@@ -134,7 +135,7 @@ export default function register(E) {
   const rowOn = (r, v) => { r.tg.style.background = mixHex('#CBC7BF', '#E67E22', v); r.tg.firstChild.style.left = (3 + 22 * v) + 'px'; r.lbl.textContent = v > 0.5 ? 'Aktiv' : 'Aus'; };
 
   E.scene({
-    id: 'a2-ui', start: 20, end: 41, z: 20,
+    id: 'a2-ui', start: 20, end: 45, z: 20,
     build(root) {
       const ui = buildUI(E);
       const outer = h('div', { class: 'abs', style: { inset: 0 } });
@@ -144,7 +145,7 @@ export default function register(E) {
       // Linkado
       const win = ui.window(); win.setActive('Startseite');
       const dash = ui.home(), shop = ui.apps(), sup = ui.support();
-      win.main.append(dash.el, shop.el, sup.el);
+      const talk = ui.talk(); win.main.append(dash.el, shop.el, sup.el, talk.el);
       const menu = ui.menu('Angebot'); const dim = h('div', { class: 'ui-dim', style: { display: 'none' } }); win.main.append(dim, menu.el);
       const gridTile = win.top.querySelector('.ui-gridtile');
       const rDeck = win.mk('Deck', 'deck', 'Deck', 8 + 6 * 77);
@@ -173,16 +174,17 @@ export default function register(E) {
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
-      return { ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
+      return { sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s) {
-      const { cam, outer, raw, win, dash, shop, sup, menu, dim, gridTile, cur } = s;
+      const { cam, outer, raw, win, dash, shop, sup, talk, menu, dim, gridTile, cur } = s;
 
       /* ---- Kamera + Fenster-Auftritt/Abgang ---- */
       const c = camAt(t);
       cam.style.transform = `translate(${c.px.toFixed(2)}px,${c.py.toFixed(2)}px) scale(${c.s.toFixed(4)})`;
-      const wi = tw(t, 20.25, 20.95, ease.ui), wo = tw(t, 39.9, 40.8, ease.in3);
+      const wi = tw(t, 20.25, 20.95, ease.ui), wo = tw(t, 43.9, 44.8, ease.in3);
       outer.style.opacity = wi * (1 - wo);
       const wsc = 0.94 + 0.06 * tw(t, 20.2, 21.0, ease.outBack);          // Fenster „landet“ nach dem Drop-Schlag mit leichtem Nachfedern
       outer.style.transform = `translateY(${(36 * (1 - wi) - 30 * wo).toFixed(2)}px) scale(${wsc.toFixed(4)})`;
@@ -199,7 +201,8 @@ export default function register(E) {
       tf(s.capLk, { o: tw(t, 21.45, 21.85, ease.out2) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 21.45, 21.85, ease.ui)) });
 
       /* ---- Überschriften ---- */
-      s.heads[0].update(t, 20.25, 24.0); s.heads[1].update(t, 24.0, 28.0); s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 40.0);
+      s.heads[0].update(t, 20.25, 24.0); s.heads[1].update(t, 24.0, 28.0); s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
+      s.sub2.style.display = (t >= 37.95 && t < 44.0) ? 'block' : 'none'; tf(s.sub2, { y: 20 * (1 - tw(t, 38.0, 38.6, ease.ui)), o: tw(t, 38.0, 38.5, ease.out2) * (1 - tw(t, 43.6, 44.0, ease.in2)) });
 
       /* ---- 02: Übersicht – Widgets rasten ein, Suche mit Assistent ---- */
       const loose = tw(t, 23.2, 23.95, ease.out3) * (1 - ease.snap(prog(t, 24.0, 24.55)));
@@ -221,7 +224,7 @@ export default function register(E) {
       menu.rows.forEach((r, i) => { const p = tw(t, 26.45 + i * 0.08, 26.9 + i * 0.08, ease.ui); tf(r, { y: 10 * (1 - p), o: p }); });
 
       /* ---- Ansichtswechsel Startseite → Apps und Pakete → Support ---- */
-      const act = t < 28.0 ? 'Startseite' : t < 34.0 ? '' : 'Support';
+      const act = t < 28.0 ? 'Startseite' : t < 34.0 ? '' : t < 38.0 ? 'Support' : 'Talk';
       if (act !== s.activeRail) { win.setActive(act); s.activeRail = act; }
       show(dash.el, t < 28.5); tf(dash.el, { o: 1 - tw(t, 28.0, 28.45, ease.out2), s: 1 - 0.015 * tw(t, 28.0, 28.45) });
       show(shop.el, t >= 27.98 && t < 34.6);
@@ -270,8 +273,8 @@ export default function register(E) {
       } else { s.flyer.style.display = 'none'; path.style.display = 'none'; }
 
       /* ---- 04: Support – Frage → Antwort des Assistenten → Anfrage ---- */
-      show(sup.el, t >= 33.98 && t < 40.9);
-      sup.el.style.opacity = tw(t, 34.0, 34.4, ease.out2);
+      show(sup.el, t >= 33.98 && t < 38.35);
+      sup.el.style.opacity = tw(t, 34.0, 34.4, ease.out2) * (1 - tw(t, 38.0, 38.3, ease.out2));
       const sp = (a, d = 0.55) => tw(t, 34.1 + a, 34.1 + a + d, ease.ui);
       tf(sup.menu, { x: -16 * (1 - sp(0)), o: sp(0) });
       const g0 = sup.sc.children;                                           // Seitenüberschrift, Banner usw. gestaffelt
@@ -292,18 +295,30 @@ export default function register(E) {
         st.ck.style.display = p > 0 ? 'flex' : 'none'; tf(st.ck, { s: Math.max(0.01, p) });
         st.dot.style.borderColor = t >= ti ? 'var(--orange)' : '#E2C9A8';
       });
-      // Anfragen
-      const rn = tw(t, 38.0, 38.5, ease.snap);
-      show(sup.rNew.el, t >= 37.99); tf(sup.rNew.el, { y: -20 * (1 - rn), s: 0.96 + 0.04 * rn, o: clamp(rn * 1.6) });
-      const grow = tw(t, 39.3, 39.8, ease.ui);
-      sup.rNew.el.style.height = (54 + 22 * grow) + 'px';
-      sup.rOld.el.style.top = (684 + (64 + 22 * grow) * ease.out3(prog(t, 38.0, 38.5))) + 'px';
-      const rs = t >= 38.8;
-      sup.rNew.stEl.className = 'ui-rst ' + (rs ? 'o' : ''); sup.rNew.stText.textContent = rs ? 'Antwort vom Support' : 'Eingegangen';
-      tf(sup.rNew.stEl, { s: 1 + 0.12 * Math.sin(Math.PI * clamp((t - 38.8) / 0.35)) });
-      tf(sup.reply, { o: tw(t, 39.35, 39.85, ease.out2), y: 6 * (1 - tw(t, 39.35, 39.85)) });
-      sup.reply.style.display = t >= 39.34 ? '' : 'none';
-      sup.rNew.sub.textContent = rs ? 'Anfrage von Ihnen · vor 1 Minute' : 'Anfrage von Ihnen · gerade eben';
+      // Hilfe und Kontakt: „Im Chat fragen“ – Hinweisring vor dem Klick; die Anfragen-Liste bleibt ruhig
+      show(sup.rNew.el, false); sup.reply.style.display = 'none'; sup.rOld.el.style.top = '684px';
+      sup.chatBtn.style.boxShadow = (t >= 37.45 && t < 38.1) ? '0 0 0 3px rgba(230,126,34,.55)' : '';
+
+      /* ---- Talk (38–44): Chat mit dem Support → Anruf ---- */
+      show(talk.el, t >= 37.98 && t < 44.95); talk.el.style.opacity = tw(t, 38.0, 38.3, ease.out2);
+      const inCall = t >= 40.3;
+      show(talk.chat, !inCall || t < 40.65); show(talk.call, inCall); talk.call.style.opacity = tw(t, 40.3, 40.6, ease.out2);
+      talk.convEls.forEach((c, i) => { const p = tw(t, 38.05 + i * 0.06, 38.5 + i * 0.06, ease.ui); tf(c, { x: -14 * (1 - p), o: p }); });
+      const pop = (el, t0, d = 0.4) => { const p = tw(t, t0, t0 + d, ease.ui); show(el, t >= t0 - 0.01); tf(el, { y: 26 * (1 - p), o: p, s: 0.97 + 0.03 * p }); };
+      pop(talk.m1, 38.4);
+      const typing = t >= 38.7 && t < 39.0;
+      show(talk.dots, typing); if (typing) Array.from(talk.dots.querySelectorAll('i')).forEach((d, i) => { d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin((t * 10) - i * 0.9))).toFixed(2)}px)`; });
+      pop(talk.nm, 39.0); pop(talk.av, 39.0); pop(talk.m2, 39.0); pop(talk.lk, 39.28); pop(talk.m3, 39.7);
+      talk.callBtn.style.boxShadow = (t >= 40.0 && t < 40.4) ? '0 0 0 4px rgba(230,126,34,.45)' : '';
+      // Anrufansicht: Warten → Mira tritt bei (41.4) → Jonas (42.3) → Auflegen (43.3)
+      const sec = Math.floor(clamp(t - 40.4, 0, 99)); talk.timer.textContent = '00 : ' + String(sec).padStart(2, '0');
+      tf(talk.wait, { o: tw(t, 40.35, 40.7, ease.out2) * (1 - tw(t, 41.35, 41.7, ease.in2)), y: -10 * tw(t, 41.35, 41.7) });
+      const tileIn = (tl, t0) => { const p = tw(t, t0, t0 + 0.5, ease.snap); show(tl.el, t >= t0); tf(tl.el, { s: 0.92 + 0.08 * p, o: clamp(p * 2), y: 14 * (1 - p) }); };
+      tileIn(talk.mira, 41.4); tileIn(talk.jonas, 42.3);
+      talk.count.textContent = t >= 42.3 ? '3' : t >= 41.4 ? '2' : '1';
+      show(talk.mira.ring, (t >= 41.9 && t < 42.6)); show(talk.jonas.ring, (t >= 42.9 && t < 43.35));
+      tf(talk.selfv, { o: tw(t, 40.4, 40.8, ease.out2), y: 12 * (1 - tw(t, 40.4, 40.8, ease.ui)) });
+      talk.leave.style.boxShadow = (t >= 43.0 && t < 43.5) ? '0 0 0 4px rgba(214,50,46,.5)' : '';
 
       /* ---- Cursor ---- */
       let cx = CUR[0][1], cy = CUR[0][2];
@@ -311,7 +326,7 @@ export default function register(E) {
       else for (let i = 0; i < CUR.length - 1; i++) if (t >= CUR[i][0] && t < CUR[i + 1][0]) { const p = ease.uiInOut(prog(t, CUR[i][0], CUR[i + 1][0])); cx = lerp(CUR[i][1], CUR[i + 1][1], p); cy = lerp(CUR[i][2], CUR[i + 1][2], p); }
       let press = 1;
       for (const ck of CLICKS) { const d = t - ck; if (d >= -0.05 && d < 0.3) press = Math.min(press, d < 0.05 ? 1 - 0.16 * clamp((d + 0.05) / 0.1) : 0.84 + 0.16 * clamp((d - 0.05) / 0.25)); }
-      const cop = tw(t, 24.7, 24.95) * (1 - tw(t, 38.5, 38.9));
+      const cop = tw(t, 24.7, 24.95) * (1 - tw(t, 43.6, 43.95));
       show(cur.el, cop > 0.01); tf(cur.el, { x: cx, y: cy, s: press, o: cop });
       let rip = 0, rt = 0; for (const ck of CLICKS) { const d = t - ck; if (d >= 0 && d < 0.55) { rip = 1; rt = d / 0.55; } }
       show(cur.rip, rip > 0);

@@ -29,6 +29,7 @@ N = int(round(DUR * SR))     # 2 880 000
 rng = np.random.default_rng(20261001)
 TL = json.load(open(os.path.join(HERE, '..', 'timeline.json'), encoding='utf-8'))
 HITS = TL['hits']
+CB = int(round([h for h in HITS if h['kind'] == 'crystal'][0]['t'] / BAR)) + 1       # Takt, in dem der Kristall einsetzt (31)
 
 # ------------------------------------------------------------------ Mischpult (linear) – hier drehen
 MIX = dict(
@@ -244,7 +245,9 @@ CH = {
 }
 def chord_at(t):
     bar = int(t // BAR) + 1                                  # 1-basiert
-    if bar >= 29: return 'Amaj9'                             # ab dem Kristall (56.0 s)
+    if bar >= CB: return 'Amaj9'                             # ab dem Kristall
+    if bar == CB - 1: return 'Gadd9'                         # Auftakt: F – G – A (die Aufhellung nach Dur wird vorbereitet)
+    if bar == CB - 2: return 'Fmaj7'
     if bar < 11: return 'Am9'
     seq = ['Am9', 'Fmaj7', 'Cmaj7', 'Gadd9']; return seq[((bar - 11) // 2) % 4]
 
@@ -390,7 +393,7 @@ def render():
         return True
     # liegender Sub in den ersten zwei Takten des Groove
     B['bass'].add(sub_boom(55.0, 2.6, 0.9), DROP, 0.38)
-    for bar in range(11, 31):
+    for bar in range(11, CB + 2):
         for e8 in range(8):
             tt = bar_t(bar) + e8 * (BEAT / 2)
             if bar < 11 or tt >= END_GROOVE or not bass_active(tt) or e8 % 2 == 0: continue
@@ -398,7 +401,7 @@ def render():
             if bar % 2 == 0 and e8 == 7: semi = {'Am9': 10, 'Fmaj7': 7, 'Cmaj7': 7, 'Gadd9': 7, 'Amaj9': 7}[ch]      # Variation, immer akkordeigen
             B['bass'].add(bass_note(midi(root + semi), BEAT * 0.42, 0.9 + 0.1 * (e8 == 3), 0.25 + 0.5 * prog(tt, 24, 46)), tt, 0.9 * (0.75 + 0.25 * prog(tt, 24, 30)))
     # Hi-Hats
-    for bar in range(11, 30):
+    for bar in range(11, CB + 1):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if cut_a <= tt < cut_b or tt >= END_GROOVE: continue
@@ -407,18 +410,20 @@ def render():
             if open_:
                 B['hats'].add(hat(True, 0.9), tt + hum(0.002), 0.9, pan=0.25)
             elif bar >= 15 and s % 2 == 1 or (bar >= 15 and s % 4 == 0 and s % 8 != 0):
-                thin = (cut_a - 3.5) <= tt < (cut_a - 1.5) or bar >= 29
+                thin = (cut_a - 3.5) <= tt < (cut_a - 1.5) or bar >= CB
                 B['hats'].add(hat(False, (0.55 + 0.35 * ((s * 5) % 3 == 0)) * (0.5 if thin else 1)), tt + hum(0.002), 0.7, pan=-0.2 if s % 4 == 1 else 0.3)
     # Rim / Clap auf 2 und 4
-    for bar in range(11, 29):
+    for bar in range(11, CB):
         for beat in (2, 4):
             tt = bar_t(bar, beat)
             if cut_a <= tt < cut_b: continue
             B['rim'].add(rim(0.7 if beat == 2 else 0.9), tt, 0.9, pan=0.15)
-    for bar in range(29, 31):
+    for bar in range(CB, CB + 2):
         for beat in (2, 4): B['rim'].add(rim(0.6), bar_t(bar, beat), 0.8, pan=0.1)
     # Pad: Akkordteppich, Filter öffnet sich über die Zeit
-    segs = [(18.5, 24.0, 'Am9'), (24.0, 28.0, 'Fmaj7'), (28.0, 32.0, 'Cmaj7'), (32.0, 36.0, 'Gadd9'), (36.0, 40.0, 'Am9'), (40.0, 44.0, 'Fmaj7'), (44.0, 48.0, 'Cmaj7'), (48.0, 52.0, 'Gadd9'), (52.0, 54.6, 'Am9')]
+    segs = [(18.5, 24.0, 'Am9')]; a_ = 24.0
+    while a_ < CRY - 1e-6:
+        b_ = a_ + (4.0 if a_ + 4.0 <= CRY - 4.0 + 1e-6 else 2.0); segs.append((a_, min(b_, CRY), chord_at(a_))); a_ = b_
     for a, b, ch in segs:
         cut_f = 800 + 2600 * prog(a, 20, 48); first = a == 18.5
         pc = pad_chord(CH[ch]['pad'], b - a + (0.6 if not first else 0.0), attack=1.4 if first else 1.2, release=1.4, cutoff=cut_f)
@@ -426,41 +431,41 @@ def render():
     # Finale-Pad (A-Dur, hell) – setzt beim Kristall ein und klingt bis zum Ende aus
     pc = pad_chord(CH['Amaj9']['pad'] + [69], 8.0, attack=0.25, release=2.6, cutoff=4200.0, spread=0.7); B['pad'].add(pc, CRY, 1.15)
     # Stabs (Dub-Akkord auf dem Offbeat der Zählzeit 2) – Takte 15–17 und 19–23 sowie 28–29
-    def stab_bar(bar): return (15 <= bar <= 17) or (19 <= bar <= 23) or bar in (29, 30)
-    for bar in range(11, 31):
+    def stab_bar(bar): return (15 <= bar <= 17) or (19 <= bar <= 25) or bar in (CB, CB + 1)
+    for bar in range(11, CB + 2):
         if not stab_bar(bar): continue
         tt = bar_t(bar, 2) + BEAT / 2 + hum(0.002); ch = chord_at(tt)
         if tt >= END_GROOVE: continue
         B['stab'].add(stab(CH[ch]['stab'], 0.9, 0.34, 1400 + 800 * prog(tt, 28, 46)), tt, 0.9, pan=-0.25)
-        if bar % 2 == 1 and bar < 29: B['stab'].add(stab([n + 12 for n in CH[ch]['stab'][:3]], 0.5, 0.25, 1800), bar_t(bar, 4) + hum(0.002), 0.5, pan=0.3)
+        if bar % 2 == 1 and bar < CB: B['stab'].add(stab([n + 12 for n in CH[ch]['stab'][:3]], 0.5, 0.25, 1800), bar_t(bar, 4) + hum(0.002), 0.5, pan=0.3)
     # Arpeggio (Hauptstimme) – 16tel; dünn in Takt 13/14, voll ab 15, dunkel in Takt 18, heller bis Takt 26
     P1 = [0, 2, 4, 2, 5, 4, 2, 1, 0, 2, 4, 6, 7, 6, 4, 2]
     P2 = [4, 5, 7, 5, 6, 4, 5, 2, 4, 5, 7, 5, 6, 7, 5, 4]
     V = [1.0, 0.45, 0.7, 0.5, 0.9, 0.45, 0.7, 0.5, 1.0, 0.45, 0.7, 0.55, 0.85, 0.5, 0.7, 0.5]
-    for bar in range(12, 31):
+    for bar in range(12, CB + 2):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b): continue
             if bar == 12 and s % 4 != 0: continue
             if bar < 15 and s % 2 == 1: continue
-            if bar >= 28 and tt < CRY and tt >= cut_a - 1.5 and s % 2 == 1: continue
+            if bar >= CB - 1 and tt < CRY and tt >= cut_a - 1.5 and s % 2 == 1: continue
             ch = chord_at(tt); notes = CH[ch]['arp']
-            if bar >= 29:
+            if bar >= CB:
                 notes = CH['Amaj9']['arp']
-            note = notes[P1[s] % len(notes)] + (12 if (bar >= 29 and s % 4 == 3) else 0)
+            note = notes[P1[s] % len(notes)] + (12 if (bar >= CB and s % 4 == 3) else 0)
             vel = V[s] * (0.7 + 0.3 * prog(tt, 28, 44)) * (0.85 if bar == 18 else 1.0)
-            bright = (0.3 if bar == 18 else 0.55 + 0.45 * prog(tt, 28, 48)) + (0.25 if bar >= 29 else 0)
+            bright = (0.3 if bar == 18 else 0.55 + 0.45 * prog(tt, 28, 48)) + (0.25 if bar >= CB else 0)
             B['arp'].add(pluck(midi(note), 0.30, vel, bright), tt + hum(0.0025), 0.9, pan=(-1) ** s * (0.3 + 0.2 * (s % 4 == 0)))
     # Zweite Stimme: eine Oktave höher, auf den Off-16teln, ab Takt 21
-    for bar in range(21, 31):
+    for bar in range(21, CB + 2):
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b) or s % 4 != 3 and s % 8 != 6: continue
-            if 47.0 <= tt < 50.0 and s % 8 != 6: continue
-            ch = chord_at(tt); notes = CH[ch]['arp'] if bar < 29 else CH['Amaj9']['arp']
+            if 51.0 <= tt < 54.0 and s % 8 != 6: continue
+            ch = chord_at(tt); notes = CH[ch]['arp'] if bar < CB else CH['Amaj9']['arp']
             B['arp2'].add(pluck(midi(notes[P2[s] % len(notes)] + 12), 0.34, 0.8, 0.95, tau=0.09), tt + hum(0.002), 0.9, pan=(-1) ** (s // 4) * 0.6)
     # Luftiges Schimmern (Rauschen, gefiltert) ab Takt 21 – Höhepunkt 24–26
-    for a, b, lv in ((40.0, 46.0, 0.05), (46.0, 54.0, 0.09)):
+    for a, b, lv in ((44.0, 50.0, 0.05), (50.0, 58.0, 0.09)):
         n = idx(b - a); x = noise(n); x = filt(x, 'bp', 9000, 0.8) * (np.linspace(0.3, 1, n)) * lv
         B['fx'].add(fade_edges(np.stack([x, np.roll(x, 300)], axis=1), 0.5, 0.8), a, 1.0)
 
@@ -483,8 +488,8 @@ def render():
             dur = h['end'] - tt; B['fx'].add(riser(dur, 500, 9000, 1.0, pitch=(660, 1320)), tt, 0.55); n = idx(dur); gl = np.sin(2 * np.pi * np.cumsum(1318 * (1 + 0.5 * np.linspace(0, 1, n))) / SR) * np.hanning(n) * 0.2
             B['fx'].add(gl, tt, 0.5)
         elif kd == 'snap':
-            if 41 <= tt <= 43.1:
-                nn = {41.0: 81, 42.0: 84, 43.0: 88}.get(round(tt, 2), 81); B['bell'].add(bell(midi(nn), 2.4, 1.0), tt, 0.75); B['bell'].add(tick(2600, 1.0), tt, 0.4)
+            if 45 <= tt <= 47.1:
+                nn = {45.0: 81, 46.0: 84, 47.0: 88}.get(round(tt, 2), 81); B['bell'].add(bell(midi(nn), 2.4, 1.0), tt, 0.75); B['bell'].add(tick(2600, 1.0), tt, 0.4)
             elif abs(tt - (CRY + 0.5)) < 0.01: B['bell'].add(bell(midi(88), 3.0, 1.0), tt, 0.80)
             else: B['bell'].add(tick(3200, 1.0), tt, 0.5); B['bell'].add(marimba(midi(93), 0.7), tt, 0.25)
         elif kd == 'lock':
@@ -495,6 +500,10 @@ def render():
             if var == 'add':    B['ui'].add(marimba(midi(76), 0.8, 0.30), tt + 0.03, 0.5); B['ui'].add(marimba(midi(81), 1.0, 0.40), tt + 0.10, 0.6)
             if var == 'toggle': B['ui'].add(ui_blip(midi(81), 0.08), tt + 0.04, 0.35); B['ui'].add(ui_blip(midi(88), 0.10), tt + 0.11, 0.35)
         elif kd == 'swipe':  B['ui'].add(ui_swipe(0.42), tt - 0.05, 0.5)
+        elif kd == 'msg':    B['ui'].add(ui_tap(0.5), tt, 0.3); B['ui'].add(ui_blip(midi(81), 0.07), tt, 0.32); B['ui'].add(ui_blip(midi(88), 0.09), tt + 0.06, 0.32)
+        elif kd == 'ring':
+            for k_ in range(2): B['ui'].add(bell(midi(81 if k_ == 0 else 76), 0.9, 0.7, tail=0.3), tt + 0.5 * k_, 0.38)
+        elif kd == 'join':   B['ui'].add(marimba(midi(88), 1.0, 0.5), tt, 0.5); B['ui'].add(marimba(midi(93), 1.0, 0.5), tt + 0.1, 0.5)
         elif kd == 'fly':    B['ui'].add(ui_fly(h['end'] - tt), tt, 0.6)
         elif kd == 'land':   B['ui'].add(marimba(midi(93), 0.7, 0.35), tt, 0.5, pan=-0.3); B['ui'].add(ui_tap(0.5), tt, 0.4)
         elif kd == 'chime':  B['ui'].add(bell(midi(88), 1.2, 0.8, tail=0.25), tt, 0.55); B['ui'].add(bell(midi(93), 1.6, 0.9, tail=0.3), tt + 0.13, 0.55)
@@ -611,7 +620,7 @@ def analyse(y):
     fig, ax = plt.subplots(2, 1, figsize=(18, 9), gridspec_kw={'height_ratios': [3, 1]})
     ax[0].pcolormesh(tt, f[1:], 10 * np.log10(S[1:] + 1e-14), shading='auto', cmap='magma', vmin=-110, vmax=-40); ax[0].set_yscale('log'); ax[0].set_ylim(30, 16000)
     for b in range(1, NB + 1): ax[0].axvline((b - 1) * BAR, color='w', alpha=0.15, lw=0.6)
-    for tm, lab in ((18, 'Schnitt'), (20, 'Drop'), (56, 'Kristall')): ax[0].axvline(tm, color='cyan', alpha=0.7); ax[0].text(tm + 0.1, 20000, lab, color='cyan', fontsize=9)
+    for tm, lab in ((18, 'Schnitt'), (20, 'Drop'), (CB * 2 - 2, 'Kristall')): ax[0].axvline(tm, color='cyan', alpha=0.7); ax[0].text(tm + 0.1, 20000, lab, color='cyan', fontsize=9)
     ax[0].set_title('Linkado-Soundtrack – Spektrogramm (log. Frequenz), weiße Linien = Takte'); ax[0].set_ylabel('Hz')
     ax[1].bar(np.arange(NB) * BAR + BAR / 2, [b[0] for b in bars], width=BAR * 0.9, color='#E67E22'); ax[1].set_ylabel('RMS dBFS'); ax[1].set_xlim(0, DUR); ax[1].set_ylim(-45, -10); ax[1].set_xlabel('s')
     plt.tight_layout(); plt.savefig(os.path.join(HERE, 'spektrogramm.png'), dpi=70); plt.close()

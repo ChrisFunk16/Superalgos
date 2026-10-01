@@ -1,5 +1,5 @@
 // ============================================================
-// Act II, Teil 2: 05 Ein stimmiges Gesamtpaket (40–46) · 06 Mehr Zeit fürs Wesentliche (46–54)
+// Act II, Teil 2: 05 Ein stimmiges Gesamtpaket (44–50) · 06 Mehr Zeit fürs Wesentliche (50–58)
 //  05: drei Kettenglieder (Oberfläche · Erweiterungen · Betreuung) greifen ineinander – snap 41/42/43, lock 44
 //  06: ein Arbeitstag als Zeitleiste: Technik-Reibung schrumpft, Wesentliches wächst; gemeinsam im Dokument.
 //      Ab ~53.2 löst sich alles in Knoten auf (Übergabe ans Finale, siehe handoffDots).
@@ -36,7 +36,7 @@ export default function register(E) {
   `);
 
   /* ======================================================== 05  Gesamtpaket */
-  const SNAP = hit('snap').filter((x) => x >= 41 && x <= 43), LOCK = hit('lock')[0];     // 41, 42, 43 · 44
+  const SNAP = hit('snap').filter((x) => x >= 45 && x <= 47), LOCK = hit('lock')[0];     // 45, 46, 47 · 48
   E.scene({
     id: 'package', post: 0.5, z: 20,
     build(root) {
@@ -68,7 +68,7 @@ export default function register(E) {
       return { CX, CY, W, H, links, o0, o1, shineRect, glow, rings, icons, labs, grp, head, svg };
     },
     update(t, s) {
-      s.head.update(t, 40.2, 46.0);
+      s.head.update(t, 44.2, 50.0);
       const OFF = [[-760, 0], [720, -70], [760, 90]], tS = SNAP;
       const pos = [];
       s.links.forEach((g, i) => {
@@ -96,7 +96,7 @@ export default function register(E) {
       s.shineRect.parentNode.querySelector('#pk-shine').setAttribute('x1', 0);
       const gl = tw(t, LOCK - 0.05, LOCK + 0.3, ease.out3) * (0.75 + 0.25 * Math.cos(Math.max(0, t - LOCK - 0.3) * 2)); s.glow.style.opacity = t < LOCK - 0.05 ? 0 : gl * 0.9;
       // Ausblenden
-      const ex = tw(t, 45.45, 46.0, ease.in2);
+      const ex = tw(t, 49.45, 50.0, ease.in2);
       s.grp.style.opacity = 1 - ex; s.grp.style.transform = `translateX(${-60 * ex}px)`;
     },
   });
@@ -140,7 +140,8 @@ export default function register(E) {
       const head = K.headline(E, root, { num: '06', size: 74, y: 300, lines: ['MEHR ZEIT', 'FÜRS <em>WESENTLICHE.</em>'], sub: 'Weniger mit Technik beschäftigen. Leichter zusammenarbeiten.' });
       return { card, blocks, doc, lineEls, avs, dots, head };
     },
-    update(t, s) {
+    update(T, s) {
+      const t = T - 4.0;                                 // Zeiten unten gelten für den Start bei 46.0 (Szene 06 beginnt jetzt bei 50.0)
       // Ruhiger Takt (8 s statt 6 s): jeder Zustand bleibt ≥ 1,3 s stehen – Blöcke erscheinen (46.4), kurz halten, schrumpfen/wachsen (48.0–50.0),
       // halten, Dokument (50.2), Cursor tippen (50.8–52.7), halten, Auflösung in Knoten (53.2) – Übergabe ans Finale bei 54.0
       s.head.update(t, 46.2, 53.4);

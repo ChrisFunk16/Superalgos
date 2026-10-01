@@ -1,10 +1,10 @@
 # Linkado-Werbefilm – Konzept (Stand v3)
 
-**64 Sekunden · 16:9 · 30 fps · deutsch · ruhiger Techno, der sich Schritt für Schritt aufbaut.**
+**68 Sekunden · 16:9 · 30 fps · deutsch · ruhiger Techno, der sich Schritt für Schritt aufbaut.**
 Idee: **Alles funktioniert – nur nicht dazwischen. Linkado verbindet das Dazwischen, und am Ende kristallisiert das Logo heraus.**
 Weiterführende Konzepte (Cutdowns, 9:16, KI-Ebene, Faden als Bildelement, Ton): [`KONZEPTE-WEITERDENKEN.md`](KONZEPTE-WEITERDENKEN.md).
 
-## Dramaturgie (32 Takte à 2 s bei 120 BPM)
+## Dramaturgie (34 Takte à 2 s bei 120 BPM)
 
 | Takte | Zeit | Szene | Bild | Ton |
 |---|---|---|---|---|
@@ -17,17 +17,19 @@ Weiterführende Konzepte (Cutdowns, 9:16, KI-Ebene, Faden als Bildelement, Ton):
 | 11–12 | 20–24 s | **01** Nextcloud als Basis · Linkado als Benutzererlebnis | **Drop-Schlag:** Lichtblitz, zwei Druckwellen, Funkenkranz, Lichtflut; das graue Basis-Fenster wird zur Linkado-Startseite | **Drop:** Crash, breiter Akkord, Sonic Logo (Moll) A – C – E – A, Groove sofort voll (Kick, Bass, Hats, Clap) |
 | 13–14 | 24–28 s | **02** Mehr Übersicht im Arbeitsalltag | Startseite „Ihr Tag“ rastet ein, das **große Menü** öffnet sich über dem Raster-Symbol (Favoriten, Bereiche Start / Kommunikation / Organisation), die Suche „Was möchten Sie tun?“ findet Assistent-Antwort, Datei, Termin, Talk, Person | UI-Klicks, Tippen, Offbeat-Hats, Bass |
 | 15–17 | 28–34 s | **03** Passende Werkzeuge an einem Ort | „Apps und Pakete“: Deck und Formulare hinzufügen (Icons fliegen in die Leiste), Scroll zu den Paketen, Schalter | Add-Klänge, Arpeggio, Dub-Akkorde |
-| 18–20 | 34–40 s | **04** Hilfe direkt in der Cloud | Support: Frage tippen → Antwort des Assistenten in drei Schritten → Anfrage → Antwort vom Support | Chime bei der Antwort, Arpeggio dunkler |
-| 21–23 | 40–46 s | **05** Ein stimmiges Gesamtpaket | drei Kettenglieder greifen ineinander | zweite Arpeggio-Stimme, drei Glockentöne, Einrasten |
-| 24–27 | 46–54 s | **06** Mehr Zeit fürs Wesentliche (8 s, ruhiger Takt) | „Dein Arbeitstag“: Blöcke erscheinen und halten, Technik-Reibung schrumpft, Wesentliches wächst, danach hält das Bild; gemeinsam im Dokument; Auflösung in Knoten | „ruhiger Höhepunkt“, Schimmern |
-| 28 | 54–56 s | Aufbau | alles löst sich in Knoten, der Faden verbindet sie | Riser, Fill, Halbtakt-Drop-out |
-| 29–32 | 56–64 s | **Finale** | Kristall → LINKADO · *Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.* · Tagline · ein CTA · Lichtreflex im Endbild | Aufhellung A-Moll → A-Dur, **Sonic Logo A – C♯ – E – A**, Ausklang |
+| 18–22 | 34–44 s | **04** Hilfe direkt in der Cloud (10 s) | Support: Frage tippen → Antwort des Assistenten in drei Schritten → „Im Chat fragen“ → **Talk**: Chat mit dem Support (Einladungslink), „Anruf starten“ → Anrufansicht, Teilnehmende treten bei | Chime bei der Antwort, Klingeln, Beitritts-Klänge, Arpeggio dunkler |
+| 23–25 | 44–50 s | **05** Ein stimmiges Gesamtpaket | drei Kettenglieder greifen ineinander | zweite Arpeggio-Stimme, drei Glockentöne, Einrasten |
+| 26–29 | 50–58 s | **06** Mehr Zeit fürs Wesentliche (8 s, ruhiger Takt) | „Dein Arbeitstag“: Blöcke erscheinen und halten, Technik-Reibung schrumpft, Wesentliches wächst, danach hält das Bild; gemeinsam im Dokument; Auflösung in Knoten | „ruhiger Höhepunkt“, Schimmern |
+| 30 | 58–60 s | Aufbau | alles löst sich in Knoten, der Faden verbindet sie | Riser, Fill, Halbtakt-Drop-out |
+| 31–34 | 60–68 s | **Finale** | Kristall → LINKADO · *Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.* · Tagline · ein CTA · Lichtreflex im Endbild | Aufhellung A-Moll → A-Dur, **Sonic Logo A – C♯ – E – A**, Ausklang |
 
-Das Schlussbild (Logo, Zeilen, Tagline, CTA) steht **ab 59.0 s volle 5 Sekunden** (ein sanfter Lichtreflex läuft einmal über das Logo); es gibt **genau eine** Handlungsaufforderung.
+Das Schlussbild (Logo, Zeilen, Tagline, CTA) steht **ab 63.0 s volle 5 Sekunden** (ein sanfter Lichtreflex läuft einmal über das Logo); es gibt **genau eine** Handlungsaufforderung.
 
 ## Was sich gegenüber v2 geändert hat
 
-* **Mehr Luft am Ende:** Szene 06 („Dein Arbeitstag“) hat 8 statt 6 Sekunden – jeder Zustand bleibt mindestens 1,3 s stehen, das Dokument erscheint erst, wenn die Blöcke fertig sind. Das Schlussbild steht 5 statt 3 Sekunden. Der Film ist dadurch **64 s** lang (32 Takte).
+* **Talk ist eingebaut** (Szene 04): Der Support ist nicht nur eine Seite, sondern ein Gespräch – Chat mit „Linkado Support“ (Konversationsliste, Nachrichten, Einladungslink), dann Anruf mit Teilnehmenden. Gebaut nach euren Screenshots (Konversationsliste, Chat, dunkle Anrufansicht), **ohne** Echtpersonen: Alle Teilnehmenden (Mira, Jonas, Anna) sind erfunden und nur als stilisierte Silhouetten gezeichnet; kein Foto, kein Webcam-Bild.
+
+* **Mehr Luft am Ende:** Szene 06 („Dein Arbeitstag“) hat 8 statt 6 Sekunden – jeder Zustand bleibt mindestens 1,3 s stehen, das Dokument erscheint erst, wenn die Blöcke fertig sind. Das Schlussbild steht 5 statt 3 Sekunden. Der Film ist dadurch **68 s** lang (34 Takte; mit Talk in Szene 04).
 
 * **Kein Name-Calling:** Im Chaos-Teil kommen keine Produkt- oder Firmennamen vor. Drei **allgemeine Ansätze** stehen für das, was jede*r kennt – *Der Allrounder*, *Das fertige Portal*, *Die offene Basis* –
   jeweils „erst die Stärke, dann das Aber“, ohne jemanden schlecht zu machen. Auch die Bilder sind neutral (kein Logo, keine Marken-UI).
@@ -61,7 +63,7 @@ Das Schlussbild (Logo, Zeilen, Tagline, CTA) steht **ab 59.0 s volle 5 Sekunden*
 | Geplante Funktionen gekennzeichnet | „SNEAK PEEK“-Marke in allen Oberflächen-Szenen |
 | Pro Einstellung eine kurze Aussage (3–7 Wörter), gut lesbar | Titel 74–80 px, Untertitel 36 px, Aussagen exakt aus dem Briefing |
 | Übergänge aus vorhandenen Formen | Das Fenster wird zur Rohfassung und zurück; Kettenglieder; Kartenform löst sich in Knoten, aus denen das Logo kristallisiert |
-| Schluss ≥ 3 s, genau ein CTA | ab 59.0 s (5 s); CTA „Linkado entdecken“ + Adresse |
+| Schluss ≥ 3 s, genau ein CTA | ab 63.0 s (5 s); CTA „Linkado entdecken“ + Adresse |
 | Ton ohne Sprache verständlich, Sounddesign sparsam | alles als Schrift im Bild; wenige tonale Klicks; optionaler Sprechertext liegt bei |
 | 4K-Master, Web-Fassung | 3840×2160 und 1920×1080 |
 
