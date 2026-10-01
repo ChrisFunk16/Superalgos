@@ -32,10 +32,10 @@ HITS = TL['hits']
 
 # ------------------------------------------------------------------ Mischpult (linear) – hier drehen
 MIX = dict(
-    kick=0.72, bass=0.46, hats=0.055, rim=0.26, pad=0.42, arp=0.36, arp2=0.20, stab=0.38, bell=0.34, fx=0.30, chaos=1.0, drone=0.5, a1=0.40, a1v=0.55,
+    kick=0.72, bass=0.46, hats=0.055, rim=0.26, pad=0.42, arp=0.36, arp2=0.20, stab=0.38, bell=0.34, fx=0.30, chaos=1.0, drone=0.5,
 )
-SEND_REV = dict(kick=0.00, bass=0.00, hats=0.07, rim=0.35, pad=0.38, arp=0.28, arp2=0.34, stab=0.55, bell=0.60, fx=0.45, chaos=0.34, drone=0.20, a1=0.26, a1v=0.34)
-SEND_DLY = dict(arp=0.38, arp2=0.42, stab=0.55, bell=0.22, chaos=0.10, hats=0.0, a1v=0.30)
+SEND_REV = dict(kick=0.00, bass=0.00, hats=0.07, rim=0.35, pad=0.38, arp=0.28, arp2=0.34, stab=0.55, bell=0.60, fx=0.45, chaos=0.34, drone=0.20)
+SEND_DLY = dict(arp=0.38, arp2=0.42, stab=0.55, bell=0.22, chaos=0.10, hats=0.0)
 DUCK = dict(pad=0.50, bass=0.55, arp=0.28, arp2=0.28, stab=0.35, bell=0.10, fx=0.20)    # Sidechain-Tiefe je Bus
 
 def midi(n): return 440.0 * 2 ** ((n - 69) / 12.0)
@@ -232,49 +232,29 @@ def R(x): return x
 # ======================================================================================= ARRANGEMENT
 def render():
     t0 = time.time()
-    B = {k: Bus() for k in ['kick', 'bass', 'hats', 'rim', 'pad', 'arp', 'arp2', 'stab', 'bell', 'fx', 'chaos', 'drone', 'a1', 'a1v']}
+    B = {k: Bus() for k in ['kick', 'bass', 'hats', 'rim', 'pad', 'arp', 'arp2', 'stab', 'bell', 'fx', 'chaos', 'drone']}
     kicks = []                                                # (Zeit, Pegel) für Sidechain
     hum = lambda s=0.003: rng.uniform(-s, s)                  # Mikro-Timing nur für Nicht-Kick-Elemente
 
-    # ------------------------------------------------------------------ ACT I – Chaos (0–18 s) · v2 „Dekonstruierter Groove“
-    # Idee: Von Anfang an Techno-Puls (gedämpft), aber harmonisch gegeneinander (Halbton/Tritonus zu A-Moll).
-    # Wenig Tiefbass im Chaos → der Drop bei 20.0 s ist die Erlösung (Sub, Breite, Konsonanz).
+    # ------------------------------------------------------------------ ACT I – Chaos (0–18 s)
     CUT = hits('cut')[0]['t']                                  # 18.0
-    A1, A1V = B['a1'], B['a1v']                                # a1 = Rhythmus/Fx, a1v = Stimmen (werden vom Kick geduckt)
-    def soft_kick(level, cutoff): return filt(kick(1.0, 0.0, 0.5), 'lp', cutoff, 0.7, order=2) * level
-    # Drone: Halbton-Dyade A3 + B♭3 (Spannung, kein Sub), schwillt langsam an; dazu Luft
+    # Drone (A1) mit langsamem Schweben + Luft + Uhr-Ticks
     n = idx(CUT); t = np.arange(n) / SR
-    dy = (osc_saw(220.0, n) + osc_saw(220.0 * 1.003, n, 0.3) + osc_saw(233.08, n, 0.6) + osc_saw(233.08 * 0.997, n, 0.9))
-    dy = filt(dy, 'lp', 850, 0.9, order=2) * (0.30 + 0.70 * np.clip(t / 14.0, 0, 1) ** 1.3) * (0.85 + 0.15 * np.sin(2 * np.pi * 0.13 * t))
+    dr = (np.sin(2 * np.pi * 55.0 * t) + 0.5 * np.sin(2 * np.pi * 55.37 * t + 1.0) + 0.18 * np.sin(2 * np.pi * 110.0 * t)) * (0.25 + 0.75 * np.clip(t / 6.0, 0, 1))
+    dr *= 0.8 + 0.2 * np.sin(2 * np.pi * 0.11 * t)
     air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / 10, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
-    B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
-    for k in range(int(10.0 / BEAT)):                           # Uhr-Ticks (Zählzeiten)
-        tt = k * BEAT; A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5, pan=-0.2 if k % 2 else 0.2)
-    # Puls: ab 2 s gedämpfter Kick (halbe Zeit), ab 6 s auf jeder Zählzeit, Filter öffnet sich bis 18 s
+    B['drone'].add(fade_edges(dr * 0.30, 0.3, 0.004), 0.0); B['drone'].add(air, 0.0, pan=0.0)
     for k in range(int(CUT / BEAT)):
-        tk = k * BEAT
-        if tk < 6.0 and k % 2: continue
-        co = 105 + 1100 * prog(tk, 6, 18) ** 1.6 + 30 * prog(tk, 0, 6); lv = 0.30 + 0.55 * prog(tk, 0, 18)
-        A1.add(soft_kick(lv, co), tk, 1.0); kicks.append((tk, 0.30 * (0.5 + prog(tk, 0, 18))))
-    # Hats: ab 6 s gedämpfte Achtel, ab 10 s offene Hats auf dem Offbeat
-    for k in range(int((CUT - 6.0) / (BEAT / 2))):
-        tt = 6.0 + k * BEAT / 2
-        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, 6, 18)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, 6, 18), pan=(-1) ** k * 0.35)
-        if tt >= 10.0 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002) - BEAT / 4 + BEAT / 4, 0.22 + 0.18 * prog(tt, 10, 18), pan=0.45)
-    # Bass-Puls ab 10 s: Offbeat-Achtel auf Gis (Halbton unter A) + Tritonus – kein Sub, eher „falscher“ Boden
-    for k in range(int((CUT - 10.0) / (BEAT / 2))):
-        tt = 10.0 + k * BEAT / 2
-        if k % 2 == 0: continue
-        nn = [44, 44, 44, 50][(k // 2) % 4]
-        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.7), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, 10, 18), pan=0.0)
-    # Stimme 1 (M365): steife Pulse im 3/16-Raster, Gis-Moll-nah (Halbton gegen A)
-    notes1 = [415.30, 493.88, 415.30, 554.37, 369.99]
+        tt = k * BEAT
+        if tt < 14.0: B['chaos'].add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5, pan=-0.2 if k % 2 else 0.2)
+    # Stimme 1 (M365): steife Pulsplucks im 3/16-Raster, ≈ −35 Cent verstimmt
+    notes1 = [440 * 2 ** (-35 / 1200), 523.25 * 2 ** (-20 / 1200), 440 * 2 ** (-35 / 1200), 659.25 * 2 ** (-45 / 1200), 349.23 * 2 ** (-30 / 1200)]
     def v1(f, vel=1.0):
-        n = int(0.26 * SR); t = np.arange(n) / SR; fr = f * (1 + 0.03 * np.exp(-t / 0.02))
-        y = osc_pulse(fr, n, 0.34) * np.exp(-t / 0.09); y = filt(y, 'lp', 1900, 0.9, order=2); return fade_edges(y * vel, 0.002, 0.01)
+        n = int(0.26 * SR); t = np.arange(n) / SR; fr = f * (1 + 0.035 * np.exp(-t / 0.02))
+        y = osc_pulse(fr, n, 0.28) * np.exp(-t / 0.085); y = filt(y, 'lp', 2400, 1.0, order=2); return fade_edges(y * vel, 0.002, 0.01)
     k = 0; tt = 2.0
     while tt < CUT:
-        lvl = 0.18 + 0.12 * prog(tt, 2, 14) + 0.10 * prog(tt, 14, 18); A1V.add(v1(notes1[k % 5], 1.0), tt + hum(0.002), lvl, pan=-0.35); tt += 3 * S16; k += 1
+        lvl = 0.16 + 0.10 * prog(tt, 2, 14) + 0.10 * prog(tt, 14, 18); B['chaos'].add(v1(notes1[k % 5], 1.0), tt + hum(), lvl, pan=-0.35); tt += 3 * S16; k += 1
     # Stimme 2 (openDesk): metallische FM-Ticks im 5/16-Raster um Es5 (Tritonus zu A)
     notes2 = [622.25, 622.25, 739.99, 622.25, 466.16]
     def v2(f, vel=1.0):
@@ -282,59 +262,54 @@ def render():
         y = np.sin(ph + idxm * np.sin(ph * 1.414)) * np.exp(-t / 0.11); return fade_edges(filt(y, 'hp', 300, 0.7) * vel, 0.001, 0.02)
     k = 0; tt = 6.0
     while tt < CUT:
-        lvl = 0.14 + 0.10 * prog(tt, 6, 14) + 0.08 * prog(tt, 14, 18); A1V.add(v2(notes2[k % 5]), tt + hum(0.002), lvl, pan=0.38); tt += 5 * S16; k += 1
-    # Stimme 3 (Nextcloud): hohle Dreieckstöne im 7/16-Raster um G (Halbton gegen Gis → Cluster)
+        lvl = 0.12 + 0.08 * prog(tt, 6, 14) + 0.08 * prog(tt, 14, 18); B['chaos'].add(v2(notes2[k % 5]), tt + hum(), lvl, pan=0.38); tt += 5 * S16; k += 1
+    # Stimme 3 (Nextcloud): hohle Dreieckstöne im 7/16-Raster um G
     notes3 = [392.0, 293.66, 392.0, 261.63]
     def v3(f, vel=1.0):
         n = int(0.55 * SR); t = np.arange(n) / SR; fr = f * (1 + 0.004 * np.sin(2 * np.pi * 5.5 * t)); y = osc_tri(fr, n) * np.minimum(1, t / 0.012) * np.exp(-t / 0.22)
         return fade_edges(filt(y, 'lp', 1900, 0.8, order=2) * vel, 0.002, 0.02)
     k = 0; tt = 10.0
     while tt < CUT:
-        lvl = 0.22 + 0.12 * prog(tt, 10, 18); A1V.add(v3(notes3[k % 4]), tt + hum(0.002), lvl, pan=0.0); tt += 7 * S16; k += 1
-    # 16tel-Ticks und Rim-Wirbel in der Überforderung (14–18 s): beschleunigend lauter/dichter
-    for k in range(int((CUT - 14.0) / S16)):
-        tk = 14.0 + k * S16; A1.add(tick(3800, 0.4), tk, 0.05 + 0.22 * prog(tk, 14, 18), pan=(-1) ** k * 0.4)
-    tt = 16.0
-    while tt < CUT - 0.05:
-        step = BEAT / 2 if tt < 17.0 else (S16 if tt < 17.6 else S16 / 2)
-        A1.add(rim(0.35 + 0.55 * prog(tt, 16, 18)), tt, 0.35 + 0.45 * prog(tt, 16, 18), pan=0.1); tt += step
+        lvl = 0.20 + 0.10 * prog(tt, 10, 18); B['chaos'].add(v3(notes3[k % 4]), tt + hum(), lvl, pan=0.0); tt += 7 * S16; k += 1
+        if 10.0 <= tt < 14.0 and k % 2 == 0: B['chaos'].add(hat(True, 0.6), tt + 0.31, 0.10, pan=0.5)
+    # Herzschlag-Kick (nur Zählzeit 1) ab 6 s, dann ab 14 s vier Schläge je Takt, gedämpft
+    for bar in range(4, 8):
+        tk = bar_t(bar); B['kick'].add(kick(0.55, 0.85), tk, 0.45); kicks.append((tk, 0.25))
+    for k in range(8):
+        tk = 14.0 + k * BEAT; lv = 0.45 + 0.45 * prog(tk, 14, 18); B['kick'].add(kick(0.7, 0.6), tk, lv); kicks.append((tk, 0.3 * lv))
+    # 16tel-Ticks, beschleunigend lauter
+    for k in range(int((18.0 - 14.0) / S16)):
+        tk = 14.0 + k * S16; B['chaos'].add(tick(3800, 0.4), tk, 0.05 + 0.20 * prog(tk, 14, 18), pan=(-1) ** k * 0.4)
     # Treffer aus der Timeline
     for h in hits('ping'):
         tt, v = h['t'], h.get('voice', 0)
         if tt >= CUT: continue
-        if v == 1: A1V.add(v1(830.6, 1.0), tt, 0.24, pan=-0.3)
-        elif v == 2: A1V.add(v2(1244.5), tt, 0.16, pan=0.35)
-        elif v == 3: A1V.add(v3(587.33), tt, 0.28, pan=0.0)
-        else: A1V.add(marimba(1046.5 * 2 ** (-28 / 1200)), tt, 0.16, pan=(-1) ** int(tt * 2) * 0.4)
+        if v == 1: B['chaos'].add(v1(880 * 2 ** (-35 / 1200), 1.0), tt, 0.20, pan=-0.3)
+        elif v == 2: B['chaos'].add(v2(1244.5), tt, 0.14, pan=0.35)
+        elif v == 3: B['chaos'].add(v3(587.33), tt, 0.26, pan=0.0)
+        else: B['chaos'].add(marimba(1046.5 * 2 ** (-28 / 1200)), tt, 0.14, pan=(-1) ** int(tt * 2) * 0.4)
     for h in hits('card'):
         tt, v = h['t'], h['voice']
-        A1.add(sub_boom(98 - 6 * v, 0.45, 0.5), tt, 0.28)                       # kurzer Schlag, bewusst höher als der spätere Sub
-        A1V.add({1: v1(415.30), 2: v2(622.25), 3: v3(392.0)}[v], tt, 0.32, pan=[0, -0.3, 0.35, 0.0][v])
-        A1.add(filt(noise(int(0.3 * SR)) * np.exp(-np.arange(int(0.3 * SR)) / SR / 0.05), 'bp', 700, 0.9), tt, 0.10)
+        th = sub_boom(70 - 5 * v, 0.5, 0.5); B['chaos'].add(th, tt, 0.45)
+        B['chaos'].add({1: v1(440 * 2 ** (-35 / 1200)), 2: v2(622.25), 3: v3(392.0)}[v], tt, 0.30 + 0.0, pan=[0, -0.3, 0.35, 0.0][v])
+        B['chaos'].add(filt(noise(int(0.3 * SR)) * np.exp(-np.arange(int(0.3 * SR)) / SR / 0.05), 'bp', 700, 0.9), tt, 0.10)
     for h in hits('shove'):
         tt = h['t']; n = int(0.45 * SR); t = np.arange(n) / SR; f = 700 * np.exp(-t / 0.25) + 150; y = filt(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.2), 'lp', 1800, 0.7)
-        A1V.add(fade_edges(y, 0.003, 0.03), tt, 0.14, pan=0.0)
+        B['chaos'].add(fade_edges(y, 0.003, 0.03), tt, 0.14, pan=0.0)
     for h in hits('text'):
         tt = h['t']
         if 14 <= tt < CUT:
-            n = int(0.3 * SR); t = np.arange(n) / SR; y = np.sin(2 * np.pi * 130 * t) * np.exp(-t / 0.10) + filt(noise(n), 'bp', 950, 1.0) * np.exp(-t / 0.06) * 0.8
-            A1.add(fade_edges(y, 0.002, 0.02), tt, 0.26 + 0.05 * (tt - 14))
+            n = int(0.3 * SR); t = np.arange(n) / SR; y = np.sin(2 * np.pi * 110 * t) * np.exp(-t / 0.12) + filt(noise(n), 'bp', 950, 1.0) * np.exp(-t / 0.06) * 0.8
+            B['chaos'].add(fade_edges(y, 0.002, 0.02), tt, 0.28 + 0.06 * (tt - 14))
     for h in hits('riser'):
         if h['t'] < 20:
-            dur = h['end'] - h['t']; B['fx'].add(riser(dur, 300, 7500, 1.0, pitch=(220, 880)), h['t'], 0.5)
-    # Tape-Stop: in den letzten 0,6 s „fällt“ die Welt zusammen (Tonhöhe + Höhen sacken ab), danach harter Schnitt
-    def tape_stop(x, t0, dur, depth=0.88):
-        i0 = idx(t0); n = idx(dur); seg = x[i0:i0 + n].copy(); u = np.arange(len(seg)) / max(1, len(seg))
-        pos = np.cumsum(1 - depth * u ** 1.5); pos = np.clip(pos, 0, len(seg) - 1)
-        out = np.stack([np.interp(pos, np.arange(len(seg)), seg[:, c]) for c in (0, 1)], axis=1)
-        out = filt(out, 'lp', 2600, 0.7) * ((1 - u) ** 0.7)[:, None]; x[i0:i0 + len(seg)] = out
-    for bus_ in (A1, A1V, B['drone']): tape_stop(bus_.x, CUT - 0.6, 0.6)
+            dur = h['end'] - h['t']; B['fx'].add(riser(dur, 300, 6500, 1.0, pitch=(220, 880)), h['t'], 0.5)
+    # Gate: alles Trockene hört bei 18.0 abrupt auf (Hall-Schwanz bleibt)
     gate = np.ones(N); i = idx(CUT); gate[i:] = 0.0; gate[i - 120:i] = np.linspace(1, 0, 120)
-    for k in ('a1', 'a1v', 'drone'): B[k].x *= gate[:, None]
-    # Atemzug: Sub-Swell (erstes Mal Tiefbass!) + Rückwärts-Becken, Pad (Am9) ab 19.0 löst das B♭ auf, Rückwärts-Hall saugt in den Drop (20.0)
-    n = idx(2.0); t = np.arange(n) / SR; sw = np.sin(2 * np.pi * 55.0 * t) * np.clip((t - 0.4) / 1.5, 0, 1) ** 2
+    for k in ('chaos', 'drone', 'kick'): B[k].x *= gate[:, None]
+    # Atemzug: tiefer Sub-Swell + Pad (Am9) ab 19.0, Rückwärts-Hall saugt in den Drop (20.0)
+    n = idx(2.0); t = np.arange(n) / SR; sw = np.sin(2 * np.pi * 55.0 * t) * np.clip((t - 0.2) / 1.6, 0, 1) ** 2
     B['fx'].add(fade_edges(sw * 0.45, 0.01, 0.01), CUT, 1.0)
-    nr = idx(1.3); rc = filt(noise(nr), 'hp', 3800, 0.7, order=2) * np.linspace(0, 1, nr) ** 2.4; B['fx'].add(fade_edges(np.stack([rc, np.roll(rc, 150)], axis=1) * 0.55, 0.01, 0.002), 20.0 - 1.3, 1.0)
     ASK = [h['t'] for h in hits('text') if 18.5 < h['t'] < 19.5][0]
     DROP = hits('drop')[0]['t']                                                                                        # 20.0
     chord = pad_chord(CH['Am9']['stab'], 0.25, attack=0.01, release=0.2, cutoff=2400.0)
@@ -479,9 +454,6 @@ def render():
     out = np.zeros((N, 2)); wet_in = np.zeros((N, 2)); dly_in = np.zeros((N, 2))
     for name, bus in B.items():
         x = bus.x
-        if name == 'a1v':
-            g = duck_curve([(tk, lv) for tk, lv in kicks_sorted if tk < 18.0], 0.34, rel=0.15); x = x * g[:, None]
-        if name in ('a1', 'a1v'): x = filt(x, 'hp', 55.0, 0.7)
         if name in DUCK:
             g = duck_curve([(tk, lv) for tk, lv in kicks_sorted if tk >= DROP - 0.01], DUCK[name]); x = x * g[:, None]
         if name == 'bass':                                   # Bass mono
