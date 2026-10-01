@@ -1,0 +1,10 @@
+*.pyc
+__pycache__/
+audio/soundtrack.wav
+node_modules/
+out/*.log
+out/frames/
+out/frames4k/
+out/preview/
+out/speedtest/
+out/tmp/
