@@ -270,7 +270,8 @@ def render():
     CUT = hits('cut')[0]['t']                                  # 22.0 – harter Schnitt
     DROP = hits('drop')[0]['t']                                # 24.0
     OV = [h['t'] for h in hits('text') if CUT - 5 <= h['t'] < CUT][0]   # 17.5 – Beginn der Überforderung
-    M2, M3 = hits('card', 2)[0]['t'], hits('card', 3)[0]['t']    # 8.5, 13.0 – zweiter/dritter Alltagsmoment
+    T1, M2, M3 = hits('card', 1)[0]['t'], hits('card', 2)[0]['t'], hits('card', 3)[0]['t']    # 4.0, 8.5, 13.0 – die drei Alltagsmomente
+    BL2, BL3 = (M2 // BAR) * BAR, (M3 // BAR) * BAR               # 8.0, 12.0 – die Musik wechselt auf der Taktgrenze VOR dem Bildschlag (kündigt ihn an)
     A1, A1V = B['a1'], B['a1v']                                # a1 = Rhythmus/Fx, a1v = Töne/Stimmen (werden vom Kick geduckt)
     def soft_kick(level, cutoff): return filt(kick(1.0, 0.0, 0.5), 'lp', cutoff, 0.7, order=2) * level
     # Drone: reine Quinte A2 + E3 (hohl und ruhig, kein Sub), Filter öffnet sich über die ganzen 18 s
@@ -279,25 +280,28 @@ def render():
     dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.4 * (0.30 + 0.70 * np.clip(t / OV, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
     air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / M3, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
     B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
-    for k in range(int(M3 / BEAT)):                             # Uhr-Ticks (Zählzeiten) bis zum dritten Moment
-        tt = k * BEAT; A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5, pan=-0.2 if k % 2 else 0.2)
+    for k in range(int(M3 / BEAT)):                             # Uhr-Ticks: im Hook nur jede zweite Zählzeit und leiser (ruhiger Start), danach jede Zählzeit
+        tt = k * BEAT
+        if tt < T1 and k % 2: continue
+        A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5 * (0.6 if tt < T1 else 1.0), pan=-0.2 if k % 2 else 0.2)
     # Puls: gedämpfter Kick in halber Zeit (Hook + erster Alltagsmoment), ab dem zweiten Moment auf jeder Zählzeit, Filter öffnet sich bis zum Schnitt
     for k in range(int(CUT / BEAT)):
         tk = k * BEAT
-        if tk < M2 and k % 2: continue
-        co = 105 + 1100 * prog(tk, M2, CUT) ** 1.6 + 30 * prog(tk, 0, M2); lv = 0.30 + 0.55 * prog(tk, 0, CUT)
-        A1.add(soft_kick(lv, co), tk, 1.0); kicks.append((tk, 0.30 * (0.5 + prog(tk, 0, CUT))))
+        if tk < T1 - 1e-6: continue                              # der Hook bleibt kickfrei: Drone, Ticks, die drei Marimba-Töne
+        if tk < BL2 and k % 2: continue                          # erster Moment: halbe Zeit
+        co = 105 + 1100 * prog(tk, BL2, CUT) ** 1.6 + 30 * prog(tk, T1, BL2); lv = 0.28 + 0.57 * prog(tk, T1, CUT)
+        A1.add(soft_kick(lv, co), tk, 1.0); kicks.append((tk, 0.30 * (0.5 + prog(tk, T1, CUT))))
     # Hats: ab dem zweiten Moment gedämpfte Achtel, ab dem dritten offene Hats auf dem Offbeat
-    for k in range(int((CUT - M2) / (BEAT / 2))):
-        tt = M2 + k * BEAT / 2
-        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, M2, CUT)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, M2, CUT), pan=(-1) ** k * 0.35)
-        if tt >= M3 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, M3, CUT), pan=0.45)
+    for k in range(int((CUT - BL2) / (BEAT / 2))):
+        tt = BL2 + k * BEAT / 2
+        A1.add(filt(hat(False, 0.5 + 0.4 * prog(tt, BL2, CUT)), 'lp', 7500, 0.7), tt + hum(0.002), 0.30 + 0.25 * prog(tt, BL2, CUT), pan=(-1) ** k * 0.35)
+        if tt >= BL3 and k % 2 == 1: A1.add(filt(hat(True, 0.6), 'lp', 8500, 0.7), tt + hum(0.002), 0.22 + 0.18 * prog(tt, BL3, CUT), pan=0.45)
     # Bass-Puls ab dem dritten Moment: Offbeat-Achtel auf A – C – E (Am-Dreiklang), tief genug zum Tragen, aber noch kein Sub
-    for k in range(int((CUT - M3) / (BEAT / 2))):
-        tt = M3 + k * BEAT / 2
+    for k in range(int((CUT - BL3) / (BEAT / 2))):
+        tt = BL3 + k * BEAT / 2
         if k % 2 == 0: continue
         nn = [45, 45, 48, 52][(k // 2) % 4]
-        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, M3, CUT), pan=0.0)
+        A1.add(filt(bass_note(midi(nn), BEAT * 0.38, 0.9, 0.6), 'hp', 70, 0.7), tt, 0.30 + 0.25 * prog(tt, BL3, CUT), pan=0.0)
     # Drei Stimmen, im 16tel-Raster verzahnt: zusammen ergeben sie die Figur A – C – E – A – E – C (A-Moll-Arpeggio)
     #   Stimme 1 (Allrounder, Zupfton A4) · Stimme 2 (Portal, Marimba C5) · Stimme 3 (Basis, Glocke E5) – je ab ihrem Karten-Schlag
     def v1(f, vel=1.0): return pluck(f, 0.30, vel, 0.25, tau=0.08)
@@ -383,6 +387,8 @@ def render():
     SC0 = {sc['id']: sc['start'] for sc in TL['scenes']}
     NBS = int(round((SC0['appshop'] - 28.0) / BAR))                              # Takte, um die Szene 03 gegenüber der Urfassung (Szene 03 bei 28 s = Takt 15) verschoben ist: Drop-Verschiebung + Geräte-Beat = 4
     PK = SC0['package']                                                           # Szene 05 (Kettenglieder)
+    B02 = int(SC0['overview'] // BAR) + 1                                         # Takt, in dem Szene 02 beginnt (17)
+    BT0, BT1 = SC0['browser'], SC0['overview']                                    # Geräte-Beat 28 … 32
     cut_a, cut_b = hits('cut')[1]['t'], hits('cut')[1]['end']                 # halber Takt Drop-out vor dem Kristall
     CRY = hits('crystal')[0]['t']                                             # 56.0
     END_GROOVE = CRY + 4.0                                                    # 60.0: danach nur noch Glocken und Pad (Endbild)
@@ -455,7 +461,7 @@ def render():
         for s in range(16):
             tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b): continue
-            if bar == 12 + NB2 and s % 4 != 0: continue
+            if bar < B02 and s % 4 != 0: continue                          # bis Szene 02 (inkl. Geräte-Beat): luftig, nur auf den Zählzeiten
             if bar < 15 + NBS and s % 2 == 1: continue
             if bar >= CB - 1 and tt < CRY and tt >= cut_a - 1.5 and s % 2 == 1: continue
             ch = chord_at(tt); notes = CH[ch]['arp']
@@ -519,7 +525,8 @@ def render():
         elif kd == 'type':
             for q_ in range(h['n']): B['ui'].add(tick(float(rng.uniform(1900, 2900)), float(rng.uniform(0.25, 0.45))), tt + (h['end'] - tt) * q_ / h['n'], 0.55, pan=float(rng.uniform(-0.2, 0.2)))
         elif kd == 'ping' and h.get('voice', 0) == 0:
-            B['bell'].add(marimba(midi(NOTES_P[pk % 6]), 1.0), tt, 0.50, pan=(-1) ** pk * 0.35); pk += 1
+            qt = round(tt / S16) * S16                                      # musikalische Pings rasten aufs 16tel-Raster (Abweichung ≤ 62 ms, unhörbar gegen weiche Bildauftritte)
+            B['bell'].add(marimba(midi(NOTES_P[pk % 6]), 1.0), qt, 0.50, pan=(-1) ** pk * 0.35); pk += 1
         elif kd == 'tagline':
             if abs(tt - hits('tagline')[2]['t']) < 0.01:      # Sonic Logo als Signatur: A – C♯ – E – A (Dur)
                 for k_, nn in enumerate([81, 85, 88, 93]): B['bell'].add(bell(midi(nn), 3.0 if k_ == 3 else 1.4, 1.0, tail=1.2 if k_ == 3 else 0.5), tt + 0.25 * k_, 0.72 if k_ < 3 else 0.82)
@@ -527,6 +534,11 @@ def render():
                 tl_ = [x['t'] for x in hits('tagline')]; nn = {tl_[0]: 93, tl_[1]: 90}.get(tt, 88); B['bell'].add(bell(midi(nn), 3.6, 1.0, tail=1.3), tt, 0.7)
         elif kd == 'riser' and tt >= CRY - 8 and 'end' in h:   # Aufbau vor dem Kristall
             B['fx'].add(riser(h['end'] - tt, 300, 10000, 1.0, pitch=(330, 1760)), tt, 0.60)
+    # Geräte-Beat → Szene 02: die Kamera fährt zurück ins Fenster (ab BT1 − 1 s): kurzer Rim-Fill, auf der Eins von 02 ein weicher Sub-Schlag (Ankunft)
+    for k in range(int(1.0 / S16)):
+        tt = BT1 - 1.0 + k * S16
+        if k % 2 == 0 or k > 4: B['rim'].add(rim(0.25 + 0.45 * prog(tt, BT1 - 1.0, BT1)), tt, 0.40 * prog(tt, BT1 - 1.0, BT1) + 0.12)
+    B['bass'].add(sub_boom(55.0, 0.9, 0.9), BT1, 0.30)
     # Aufbau-Fill vor dem Drop-out: 16tel-Snare-Rolle (Rim) in den 1,5 s vor dem Drop-out
     for k in range(int(1.5 / S16)):
         tt = cut_a - 1.5 + k * S16

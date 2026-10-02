@@ -37,26 +37,26 @@
   ],
 
   "hits": [
-    { "t": 0.8,    "kind": "ping",    "voice": 0, "note": "Hook: „funktioniert.“" },
-    { "t": 1.8,    "kind": "ping",    "voice": 0, "note": "Hook: „Nur nicht“" },
-    { "t": 2.4,    "kind": "ping",    "voice": 0, "note": "Hook: „dazwischen.“ (Buchstaben öffnen sich, steht bis 3,3 s)" },
+    { "t": 1.0,    "kind": "ping",    "voice": 0, "note": "Hook: „funktioniert.“" },
+    { "t": 2.0,    "kind": "ping",    "voice": 0, "note": "Hook: „Nur nicht“" },
+    { "t": 2.5,    "kind": "ping",    "voice": 0, "note": "Hook: „dazwischen.“ (Buchstaben öffnen sich, steht bis 3,8 s)" },
 
     { "t": 4.0,    "kind": "card",    "voice": 1, "note": "Alltagsmoment „Der Allrounder“ schlägt ein (Ton A)" },
-    { "t": 4.8,    "kind": "ping",    "voice": 1, "note": "Satz 1 mit Profilbild" },
-    { "t": 5.7,   "kind": "ping",    "voice": 1, "note": "Satz 2" },
-    { "t": 6.6,    "kind": "ping",    "voice": 1, "note": "Satz 3" },
+    { "t": 4.75,    "kind": "ping",    "voice": 1, "note": "Satz 1 mit Profilbild" },
+    { "t": 5.5,   "kind": "ping",    "voice": 1, "note": "Satz 2" },
+    { "t": 6.25,    "kind": "ping",    "voice": 1, "note": "Satz 3" },
     { "t": 8.0,    "kind": "shove",   "voice": 1, "note": "Moment wird nach hinten geschoben" },
 
     { "t": 8.5,    "kind": "card",    "voice": 2, "note": "Alltagsmoment „Das fertige Portal“ (Ton C)" },
-    { "t": 9.3,    "kind": "ping",    "voice": 2 },
-    { "t": 10.2,  "kind": "ping",    "voice": 2 },
-    { "t": 11.1,   "kind": "ping",    "voice": 2 },
+    { "t": 9.25,    "kind": "ping",    "voice": 2 },
+    { "t": 10.0,  "kind": "ping",    "voice": 2 },
+    { "t": 10.75,   "kind": "ping",    "voice": 2 },
     { "t": 12.5,  "kind": "shove",   "voice": 2 },
 
     { "t": 13.0,  "kind": "card",    "voice": 3, "note": "Alltagsmoment „Die offene Basis“ (Ton E)" },
-    { "t": 13.8,  "kind": "ping",    "voice": 3 },
-    { "t": 14.7, "kind": "ping",    "voice": 3 },
-    { "t": 15.6,  "kind": "ping",    "voice": 3 },
+    { "t": 13.75,  "kind": "ping",    "voice": 3 },
+    { "t": 14.5, "kind": "ping",    "voice": 3 },
+    { "t": 15.25,  "kind": "ping",    "voice": 3 },
     { "t": 17.0,  "kind": "shove",   "voice": 3 },
 
     { "t": 17.5,  "kind": "riser",   "end": 22.0, "note": "Überforderung: alles stapelt sich, Spannung steigt" },

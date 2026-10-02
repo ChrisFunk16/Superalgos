@@ -18,6 +18,7 @@ export default function register(E) {
   const T0 = { m365: hit('card', 1)[0], opendesk: hit('card', 2)[0], nextcloud: hit('card', 3)[0] };
   const PING = { m365: hit('ping', 1), opendesk: hit('ping', 2), nextcloud: hit('ping', 3) };
   const SHOVE = { m365: hit('shove', 1)[0], opendesk: hit('shove', 2)[0], nextcloud: hit('shove', 3)[0] };
+  const HP = E.hits('ping', 0).map((x) => x.t).filter((x) => x < T0.m365);   // Hook-Pings (1.0 · 2.0 · 2.5) = Wortauftritte „funktioniert.“ · „Nur nicht“ · „dazwischen.“
   const T_HOOK = T0.m365;                            // 3.5 – Ende des Hooks = erster Karten-Schlag
   const CUT = E.hits('cut')[0].t;                    // 22.0 – harter Schnitt
   const DROP = E.hits('drop')[0].t;                  // 24.0
@@ -296,14 +297,14 @@ export default function register(E) {
         tf(w.el, { x: w.x + 6 * Math.sin(t * 0.7 + i), y: w.y + 5 * Math.cos(t * 0.6 + i) + 20 * (1 - p), r: w.rot, s: 1 + 0.12 * ov, o });
       });
 
-      /* ---- Hook (0–4): ruhig gesetzt, „dazwischen.“ landet bei 2,4 und steht 1,6 s, bevor der Schnitt kommt ---- */
+      /* ---- Hook (0–4): ruhig gesetzt, Wörter landen auf dem Raster (0,25 · 1,0 · 2,0 · 2,5); „dazwischen.“ steht ca. 1,3 s, bevor der Schnitt kommt ---- */
       const hk = (el, t0) => tf(el.firstChild, { y: 130 * (1 - tw(t, t0, t0 + 0.9, ease.ui)) });
-      hk(s.w1, 0.3); hk(s.w2, 0.8); hk(s.w3, 1.8); hk(s.w4, 2.4);
-      const gq = tw(t, 2.6, 3.5, ease.out3), gap = 34 * gq; tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
+      hk(s.w1, 0.25); hk(s.w2, HP[0]); hk(s.w3, HP[1]); hk(s.w4, HP[2]);
+      const gq = tw(t, HP[2] + 0.2, HP[2] + 1.1, ease.out3), gap = 34 * gq; tf(s.hl, { x: 0 }); tf(s.hr, { x: gap });
       s.stroke.style.left = (-gap / 2 - 2).toFixed(2) + 'px'; s.stroke.style.opacity = (gq * (0.75 + 0.25 * Math.sin(t * 5))).toFixed(3);
       const hx = tw(t, T_HOOK - 0.2, T_HOOK, ease.in3);                // harter Schnitt auf den Karten-Schlag
       show(s.hook, t < T_HOOK + 0.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
-      s.hookBadges.forEach((b, k) => { const t0 = [0.8, 1.8, 2.4][k], p = tw(t, t0, t0 + 0.45, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
+      s.hookBadges.forEach((b, k) => { const t0 = HP[k], p = tw(t, t0, t0 + 0.45, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
 
       /* ---- Karten-Gruppen ---- */
       s.groups.forEach((G, gi) => {
