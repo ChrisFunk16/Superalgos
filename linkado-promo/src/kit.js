@@ -24,7 +24,7 @@ function ensureCss(E) {
   .a2-title .ln { display:block; overflow:hidden; padding:4px 0 6px; margin:-4px 0 -6px; }
   .a2-title .ln > span { display:block; will-change:transform; }
   .a2-title em { font-style:normal; color:var(--orange-deep); }
-  .a2-sub { margin:30px 0 0; font-size:36px; line-height:1.4; color:var(--text-2); font-weight:400; max-width:720px; }
+  .a2-sub { margin:30px 0 0; font-size:36px; line-height:1.4; color:var(--text-2); font-weight:400; max-width:720px; text-wrap:balance; }
   .a2-title .mu { color:var(--warm-gray); }
   `);
 }

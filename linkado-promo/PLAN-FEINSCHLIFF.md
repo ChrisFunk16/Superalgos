@@ -1,5 +1,7 @@
 # Plan „Feinschliff“ (v2, geprüft) – 76-s-Fassung
 
+> **Stand der Umsetzung:** Welle 1 (M1–M7) und Welle 2 (S1–S15) sind umgesetzt, dazu die Entscheidungen D1 („SNEAK PEEK“ ganz entfernt), D2 (gekürzte Sätze), D3 (Datenschutz-Zeile in der Assistent-Antwort) und D5 (Hook +4 dB). Offen: Welle 3 und D4 (Du/Sie).
+
 **Stand:** Die erste Fassung dieses Plans (13 Befunde) wurde von **8 unabhängigen Gutachten** geprüft: 5 Prüfer
 (Pause · Geräte-Beat · Schluss · Akt I · Ton) haben jeden Befund am fertigen MP4 und im Code nachgemessen,
 3 „frische Augen“ (Lesbarkeit · Bildfehler · Dramaturgie) haben nach Übersehenem gesucht.

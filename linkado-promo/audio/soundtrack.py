@@ -276,14 +276,14 @@ def render():
     def soft_kick(level, cutoff): return filt(kick(1.0, 0.0, 0.5), 'lp', cutoff, 0.7, order=2) * level
     # Drone: reine Quinte A2 + E3 (hohl und ruhig, kein Sub), Filter öffnet sich über die ganzen 18 s
     n = idx(CUT); t = np.arange(n) / SR
-    dy = osc_tri(110.0, n) + osc_tri(110.0 * 1.002, n, 0.3) + osc_tri(164.81, n, 0.6) + osc_tri(164.81 * 0.998, n, 0.9)      # Dreieck: kaum Terz-Obertöne (kein C♯ gegen das C)
-    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.4 * (0.30 + 0.70 * np.clip(t / OV, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
+    dy = osc_tri(110.0, n) + 0.35 * osc_tri(110.0 * 1.002, n, 0.3) + osc_tri(164.81, n, 0.6) + 0.35 * osc_tri(164.81 * 0.998, n, 0.9)      # Dreieck: kaum Terz-Obertöne (kein C♯ gegen das C); Detune-Partner nur leise, sonst löschen sie sich aus (Loch bei 5–6 s)
+    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.85 * (0.475 + 0.525 * np.clip(t / OV, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
     air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / M3, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
     B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
     for k in range(int(M3 / BEAT)):                             # Uhr-Ticks: im Hook nur jede zweite Zählzeit und leiser (ruhiger Start), danach jede Zählzeit
         tt = k * BEAT
         if tt < T1 and k % 2: continue
-        A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5 * (0.6 if tt < T1 else 1.0), pan=-0.2 if k % 2 else 0.2)
+        A1.add(tick(2300 if k % 2 == 0 else 1500, 0.30 if k % 4 == 0 else 0.18), tt, 0.5 * (0.8 if tt < T1 else 1.0), pan=-0.2 if k % 2 else 0.2)
     # Puls: gedämpfter Kick in halber Zeit (Hook + erster Alltagsmoment), ab dem zweiten Moment auf jeder Zählzeit, Filter öffnet sich bis zum Schnitt
     for k in range(int(CUT / BEAT)):
         tk = k * BEAT
@@ -335,8 +335,8 @@ def render():
     # Hook (0–4 s): aufsteigender Moll-Dreiklang A – C – E auf „funktioniert. / Nur nicht / dazwischen.“ – bleibt offen, die Auflösung kommt erst im Finale
     HOOKP = [h for h in hits('ping') if h.get('voice', 0) == 0 and h['t'] < hits('card', 1)[0]['t']]
     for hk_, nn in zip(HOOKP, [69, 72, 76]):
-        A1V.add(marimba(midi(nn), 1.0), hk_['t'], 0.20, pan=(-1) ** int(hk_['t'] * 2) * 0.3)
-    A1V.add(bell(midi(76), 1.6, 0.7, tail=0.5), HOOKP[-1]['t'], 0.10)             # „dazwischen.“ klingt nach – das Wort steht 1,6 s
+        A1V.add(marimba(midi(nn), 1.0), hk_['t'], 0.32, pan=(-1) ** int(hk_['t'] * 2) * 0.3)
+    A1V.add(bell(midi(76), 1.6, 0.7, tail=0.5), HOOKP[-1]['t'], 0.16)             # „dazwischen.“ klingt nach – das Wort steht 1,6 s
     # Kartenschläge: Grundton A / C / E (Sub-Impuls + gezupfte Note), danach je Lücke ein heller Ton derselben Stimme
     for h in hits('card'):
         tt, v = h['t'], h['voice']; f0 = {1: 110.0, 2: 130.81, 3: 164.81}[v]
@@ -553,7 +553,7 @@ def render():
     B['bell'].add(bell(midi(81), 4.0, 1.0, tail=2.2), END_GROOVE, 0.55); B['bell'].add(bell(midi(69), 4.0, 1.0, tail=2.2), END_GROOVE, 0.45)
 
     # Vakuum: 80 ms Stille direkt vor dem Drop (Pad, Perkussion, Fx), der Schlag danach wirkt dadurch größer
-    V0 = (hits('vacuum') or [{'t': DROP - 0.08}])[0]['t']; vg = np.ones(N); i0, i1 = idx(V0), idx(DROP); vg[i0:i1] = 0.0; vg[i0 - 144:i0] = np.linspace(1, 0, 144)
+    V0 = (hits('vacuum') or [{'t': DROP - 0.08}])[0]['t']; vg = np.ones(N); i0, i1 = idx(V0), idx(DROP); vg[i0:i1] = 0.0; vg[i0 - 144:i0] = np.linspace(1, 0, 144); vg[i1 - 48:i1] = np.linspace(0, 1, 48)
     for k in ('a1', 'a1v', 'pad', 'fx', 'drone', 'rim', 'hats', 'stab', 'arp', 'arp2'): B[k].x *= vg[:, None]
     print(f'  Ereignisse gerendert in {time.time() - t0:.1f} s')
 
@@ -592,7 +592,7 @@ def render():
     mix = sum(stems.values())
     norm = 0.85 / (np.abs(mix).max() + 1e-9)
     mix = np.tanh(mix * norm * 1.15) / np.tanh(1.15)            # sanfte Sättigung
-    fi = int(0.02 * SR); fo = int(0.7 * SR)
+    fi = int(0.02 * SR); fo = int(1.6 * SR)
     env = np.ones(N); env[:fi] = np.linspace(0, 1, fi); env[-fo:] = 0.5 * (1 + np.cos(np.linspace(0, np.pi, fo)))   # Anfang/Ende ohne Klick
     mix = mix * env[:, None]
     stems = {k: v * norm * 1.2 * env[:, None] for k, v in stems.items()}

@@ -20,7 +20,7 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 >   die Pfade in `LOGO.parts` ersetzen – alle Szenen greifen nur auf `LOGO` zu.
 > * **Farben** sind aus Screenshots/Logo geschätzt (`src/brand.css`, Block `:root`). Exakte Hex-Werte dort eintragen.
 > * Die **Oberflächen** (Startseite „Ihr Tag“, Apps und Pakete, Support, Leiste) sind nach **echten Screenshots der Cloud** nachgebaut (`src/ui.js`). Die Instanz war leer;
->   **alle Inhalte (Termine, Dateien, Anfragen, Namen, Assistent-Antworten) sind erfundene Demo-Daten**. Szenen 02–04 tragen „SNEAK PEEK“.
+>   **alle Inhalte (Termine, Dateien, Anfragen, Namen, Assistent-Antworten) sind erfundene Demo-Daten**. Die „SNEAK PEEK“-Marke ist entfernt – bitte vor Veröffentlichung die gezeigten Funktionen freigeben.
 >   Die Original-Screenshots liegen lokal in `refs/` (nicht im Repository: enthalten Instanz-Daten).
 > * Im Chaos-Teil werden **keine Produkt- oder Firmennamen** genannt: drei allgemeine Ansätze (Allrounder, fertiges Portal, offene Basis), jeweils „erst Stärke, dann *Aber:*“. Bitte inhaltlich freigeben.
 >   Nextcloud kommt nur als eure eigene Basis vor (Szene 01, Schlusszeile).

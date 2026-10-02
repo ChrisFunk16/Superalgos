@@ -112,7 +112,7 @@ Faustregel: sichtbar ≥ 1 s + 0,3 s je Wort; Titel in Versalien eher 0,4 s je W
 
 * Keine erfundenen Zahlen, Logos oder Kundenstimmen. Die Alltagssätze sind klar als *Beispiele* erkennbar (erfundene Personen, illustriert, keine Firmen).
 * Keine Produkt- oder Firmennamen im Chaos-Teil, keine Angstbilder, keine „Nur heute“-Dringlichkeit.
-* Geplante Funktionen bleiben als **Sneak Peek** markiert.
+* (Die „Sneak Peek“-Kennzeichnung wurde auf Wunsch entfernt – die Freigabe der gezeigten Funktionen liegt bei den Inhabern.)
 * Echte Fotos nur mit Lizenz oder Einverständnis – die Illustrationen sind dafür ein sauberer Platzhalter.
 
 Warum das Wirkung ist: Vertrauen ist die Voraussetzung dafür, dass die Marke überhaupt gespeichert wird; ein einziger erkennbarer Bluff löscht den Rest.

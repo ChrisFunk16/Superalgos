@@ -256,7 +256,8 @@ export function installUiCss(E) {
   .ui-dot { position:relative; width:26px; height:26px; border-radius:50%; border:2px solid #E2C9A8; display:flex; align-items:center; justify-content:center; font:700 12.5px/1 var(--font-body); color:#B08A5E; flex:none; background:#fff; }
   .ui-dot .ck { position:absolute; inset:-2px; border-radius:50%; background:var(--orange); display:flex; align-items:center; justify-content:center; }
   .ui-aif { margin-top:6px; font:500 12px/1.3 var(--font-body); color:#8A6A44; display:flex; align-items:center; gap:7px; }
-  .ui-reqh { position:absolute; left:0; top:650px; width:556px; display:flex; align-items:baseline; justify-content:space-between; }
+  .ui-aip { margin-top:10px; display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 9px; border-radius:99px; background:#FBEBDD; border:1px solid #F1D3AE; font:700 13px/1 var(--font-body); color:#8A4A10; }
+  .ui-reqh { position:absolute; left:0; top:692px; width:556px; display:flex; align-items:baseline; justify-content:space-between; }
   .ui-reqh .lk { font:500 12.5px/1 var(--font-body); color:#171A22; text-decoration:underline; }
   .ui-req { position:absolute; left:0; width:556px; border-radius:10px; background:#fff; border:1px solid #EEE8DF; padding:0 16px; display:flex; align-items:center; gap:14px; overflow:hidden; }
   .ui-req .ic { width:34px; height:34px; border-radius:9px; background:#F1ECE7; display:flex; align-items:center; justify-content:center; flex:none; }
@@ -319,8 +320,8 @@ export function installUiCss(E) {
   .ui-tcall-btn { height:36px; border-radius:8px; background:var(--orange-deep); color:#fff; display:flex; align-items:center; gap:8px; padding:0 14px; font:700 14px/1 var(--font-body); }
   .ui-tmsgs { position:absolute; left:0; right:0; top:56px; bottom:70px; overflow:hidden; }
   .ui-tdate { position:absolute; left:50%; top:14px; transform:translateX(-50%); padding:6px 14px; border-radius:99px; background:#F1ECE7; font:500 13px/1 var(--font-body); color:#5E6168; white-space:nowrap; }
-  .ui-tm { position:absolute; max-width:500px; padding:12px 16px; border-radius:14px; font:500 15px/1.4 var(--font-body); color:#171A22; }
-  .ui-tm.out { right:30px; background:#FCE3C9; border-bottom-right-radius:4px; }
+  .ui-tm { position:absolute; max-width:580px; padding:12px 16px; border-radius:14px; font:500 19px/1.4 var(--font-body); color:#171A22; }
+  .ui-tm.out { right:62px; background:#FCE3C9; border-bottom-right-radius:4px; }
   .ui-tm.in { left:62px; background:#F1ECE7; border-bottom-left-radius:4px; }
   .ui-tm small { display:block; margin-top:5px; font:500 11px/1 var(--font-body); color:#8A867D; text-align:right; }
   .ui-tmav { position:absolute; left:18px; width:34px; height:34px; border-radius:50%; background:#1E2430; color:#fff; font:700 14px/34px var(--font-body); text-align:center; }
@@ -565,7 +566,8 @@ export function buildUI(E) {
     const ai = h('div', { class: 'ui-ai' },
       h('div', { class: 'ui-aih' }, h('span', { class: 'ic', html: icon('sparkles', 17, '#fff', 2.2) }), T('', 'So teilen Sie einen Ordner'), T('', 'Antwort des Assistenten', 'small')),
       h('div', { style: { height: 8 } }), steps.map((s) => s.el),
-      h('div', { class: 'ui-aif' }, ic('book-open', 14, '#8A6A44', 2), T('', 'Quelle: Anleitung „Ordner teilen“ · Hilfreich?')));
+      h('div', { class: 'ui-aif' }, ic('book-open', 14, '#8A6A44', 2), T('', 'Quelle: Anleitung „Ordner teilen“ · Hilfreich?')),
+      h('div', { class: 'ui-aip' }, ic('lock', 14, '#8A4A10', 2.4), T('', 'Daten bleiben in Ihrer Cloud')));
     const zone = h('div', { class: 'ui-zone' }, artsLbl, ...artEls, ai);
     const chips = h('div', { class: 'ui-schips' }, ['Zugang', 'Dateien', 'Kalender', 'Freigaben'].map((c) => h('div', { class: 'ui-sch' }, T('', c))));
     const banner = h('div', { class: 'ui-banner' }, h('div', { class: 'ic', html: icon('user-round', 19, '#171A22', 2.2) }),
@@ -656,9 +658,9 @@ export function buildUI(E) {
     const av = h('span', { class: 'ui-tmav', style: { top: 164, background: 'none' }, html: avatarHTML('mira', 34) });
     const dots = h('div', { class: 'ui-tdots', style: { top: 164 } }, h('i'), h('i'), h('i'));
     const m2 = msg('in', 164, 'Hallo Anna! Das geht in drei Schritten – hier ist dein Einladungslink.', '09:42');
-    const lk = h('div', { class: 'ui-tlink', style: { top: 262 } }, h('div', { class: 'ic', html: icon('link', 20, 'currentColor', 2.2) }), h('div', {}, h('b', { class: 't', text: 'Einladung · Team Vertrieb' }), h('small', { class: 't', text: 'Link gültig 7 Tage' })), h('div', { class: 'cp' }, ic('copy', 14, '#171A22', 2.2), T_('', 'Kopieren')));
-    const m3 = msg('out', 348, 'Super, danke! Können wir kurz sprechen?', '09:43');
-    const av3 = h('span', { class: 'ui-tmav', style: { top: 354, left: 'auto', right: 14, background: 'none' }, html: avatarHTML('anna', 34) });
+    const lk = h('div', { class: 'ui-tlink', style: { top: 278 } }, h('div', { class: 'ic', html: icon('link', 20, 'currentColor', 2.2) }), h('div', {}, h('b', { class: 't', text: 'Einladung · Team Vertrieb' }), h('small', { class: 't', text: 'Link gültig 7 Tage' })), h('div', { class: 'cp' }, ic('copy', 14, '#171A22', 2.2), T_('', 'Kopieren')));
+    const m3 = msg('out', 366, 'Super, danke! Können wir kurz sprechen?', '09:43');
+    const av3 = h('span', { class: 'ui-tmav', style: { top: 372, left: 'auto', right: 14, background: 'none' }, html: avatarHTML('anna', 34) });
     const date = h('div', { class: 'ui-tdate t', text: 'Heute, 14. Oktober' });
     const input = h('div', { class: 'ui-tinput' }, ic('plus', 22, '#2A2F3A', 2.2), h('div', { class: 'box' }, ic('smile', 20, '#2A2F3A', 2), T_('', 'Nachricht schreiben …')), h('span', { html: icon('ellipsis', 20, '#2A2F3A', 2) }), h('span', { html: micSvg(20, '#2A2F3A') }));
     const msgs = h('div', { class: 'ui-tmsgs' }, date, m1, av1, nm, av, dots, m2, lk, m3, av3);

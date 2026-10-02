@@ -1,6 +1,6 @@
 // ============================================================
 // Act I – Chaos (0–20 s). Dunkel, kühl, bewusst „designtes“ Chaos.
-//   hook 0–4 (letztes Wort steht 1,6 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (+0.8)
+//   hook 0–4 (letztes Wort steht ≈ 1,3 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (+0.8)
 //   Alle Zeiten kommen aus timeline.json (Karten, Pings, Shoves, Texte, Cut, Drop) – nur Feinheiten sind relativ dazu notiert.
 //   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
 // Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Alltagssätze – sie poppen auf den
@@ -19,12 +19,13 @@ export default function register(E) {
   const PING = { m365: hit('ping', 1), opendesk: hit('ping', 2), nextcloud: hit('ping', 3) };
   const SHOVE = { m365: hit('shove', 1)[0], opendesk: hit('shove', 2)[0], nextcloud: hit('shove', 3)[0] };
   const HP = E.hits('ping', 0).map((x) => x.t).filter((x) => x < T0.m365);   // Hook-Pings (1.0 · 2.0 · 2.5) = Wortauftritte „funktioniert.“ · „Nur nicht“ · „dazwischen.“
-  const T_HOOK = T0.m365;                            // 3.5 – Ende des Hooks = erster Karten-Schlag
+  const T_HOOK = T0.m365;                            // 4.0 – Ende des Hooks = erster Karten-Schlag
   const CUT = E.hits('cut')[0].t;                    // 22.0 – harter Schnitt
   const DROP = E.hits('drop')[0].t;                  // 24.0
   const TEXTS = E.hits('text').filter((x) => x.t >= CUT - 5 && x.t < CUT).map((x) => x.t);   // fünf Blickwinkel im 0,75-s-Raster
   const OV = TEXTS[0];                               // 17.5 – Beginn der Überforderung
-  const ASK = E.hits('text').find((x) => x.t > CUT && x.t < DROP).t;                  // 23.0
+  const ASK = E.hits('text').find((x) => x.t > CUT && x.t < DROP).t;                  // 22.5 – „Es geht auch anders.“ setzt auf dem ersten Herzschlag ein
+  const BUILD = E.hits('build')[0].t;                // 23.0 – Faden, Glühen und Flagge bauen sich erst ab hier auf (Ton: Sog in den Drop)
 
   // Position der weggeschobenen Gruppen (um die Bildmitte 960/540)
   const PILE = { m365: { x: -600, y: -300, s: 0.46, r: -7 }, opendesk: { x: 600, y: -318, s: 0.44, r: 6 }, nextcloud: { x: -560, y: 330, s: 0.46, r: 5 } };
@@ -62,7 +63,7 @@ export default function register(E) {
   .a1-login h6 { margin:0 0 14px; font:700 20px/1 var(--font-display); text-transform:uppercase; letter-spacing:.04em; }
   .a1-login .f { height:42px; border-radius:9px; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.14); margin-bottom:10px; display:flex; align-items:center; padding:0 12px; font:500 17px/1 var(--font-body); color:#9AA3B8; }
   .a1-login .bt { height:44px; border-radius:9px; display:flex; align-items:center; justify-content:center; font:700 17px/1 var(--font-body); color:#fff; }
-  .a1-big { position:absolute; left:0; right:0; text-align:center; text-transform:uppercase; font-family:var(--font-display); font-weight:700; color:${CREAM}; letter-spacing:-.005em; white-space:nowrap; }
+  .a1-big { position:absolute; left:0; right:0; text-align:center; text-transform:uppercase; font-family:var(--font-display); font-weight:700; color:${CREAM}; letter-spacing:-.005em; white-space:nowrap; text-shadow:0 0 18px rgba(14,19,30,.9), 0 3px 22px rgba(14,19,30,.85); }
   .a1-ai { position:absolute; left:0; top:0; width:300px; border-radius:14px; background:#1B2335; border:1.5px solid rgba(255,255,255,.16); box-shadow:0 14px 34px rgba(0,0,0,.55); overflow:hidden; font-family:var(--font-body); color:${CREAM}; }
   .a1-ai .hd { height:44px; display:flex; align-items:center; gap:10px; padding:0 16px; font:700 19px/1 var(--font-body); color:#fff; }
   .a1-ai .bd { padding:16px 16px 8px; } .a1-ai .bd i { display:block; height:11px; border-radius:4px; background:rgba(255,255,255,.18); margin-bottom:10px; }
@@ -97,9 +98,9 @@ export default function register(E) {
       });
 
       /* ---- Hintergrund-Oberflächen: unterschiedliche Fenster füllen nach und nach den Bildschirm (dim im Hook/den Alltagsmomenten, hell in der Überforderung) ---- */
-      const BGW = [['mail', 40, 650, 300, 200, -4, 0.8], ['chat', 1500, 60, 320, 210, 3, 1.2], ['cal', 700, 30, 300, 200, -2, 1.8], ['sheet', 1580, 700, 300, 200, 4, 2.4], ['video', 60, 80, 280, 190, 3, 3.0],
+      const BGW = [['mail', 40, 650, 300, 200, -4, 0.4], ['chat', 1500, 60, 320, 210, 3, 0.9], ['cal', 700, 30, 300, 200, -2, 1.3], ['sheet', 1580, 700, 300, 200, 4, 2.4], ['video', 60, 80, 280, 190, 3, 3.0],
         ['ticket', 840, 770, 320, 210, -3, 3.6], ['ai', 1300, 20, 280, 190, -3, 4.4], ['files', 20, 340, 260, 180, -2, 5.2], ['kanban', 1250, 790, 300, 200, 2, 6.0], ['form', 560, 870, 300, 190, -4, 7.0]];
-      const bgw = BGW.map(([k, x, y, w, hh, rot, tIn]) => { const el = h('div', { class: 'abs', style: { left: 0, top: 0, zIndex: 2 } }, mini(E, k, w, hh)); root.append(el); return { el, x, y, rot, tIn }; });
+      const bgw = BGW.map(([k, x, y, w, hh, rot, tIn]) => { const el = h('div', { class: 'abs', style: { left: 0, top: 0, zIndex: 2 } }, mini(E, k, w, hh)); root.append(el); return { el, x, y, w, hh, rot, tIn }; });
 
       /* ---- Hook ---- */
       const word = (s, c) => h('span', { class: 'w' }, h('span', { text: s, style: { color: c } }));
@@ -109,10 +110,11 @@ export default function register(E) {
       // der Faden zeigt sich zum ersten Mal: ein dünner oranger Strich in der Lücke (noch ohne Namen, ohne Logo)
       const stroke = h('i', { style: { position: 'absolute', left: '0px', top: '16px', width: '4px', height: '84px', borderRadius: '2px', background: '#E67E22', boxShadow: '0 0 22px rgba(230,126,34,.85)', opacity: 0, display: 'block' } });
       hr.style.position = 'relative'; hr.append(stroke);
-      const w4 = h('span', { class: 'w' }, h('span', { style: { color: CREAM } }, hl, hr));
+      const w4 = h('span', { class: 'w', style: { paddingRight: '56px', marginRight: '-56px' } }, h('span', { style: { color: CREAM } }, hl, hr));   // Platz für die nach rechts wandernde Hälfte (inkl. Schlusspunkt)
       const hook = h('div', { class: 'a1-hook' }, h('div', {}, w1, ' ', w2), h('div', {}, w3, ' ', w4));
       root.append(hook);
-      const hookBadges = [[430, 250, '3'], [1500, 330, '12'], [1280, 780, '7']].map(([x, y, n]) => { const b = h('div', { class: 'a1-badge', text: n }); root.append(b); return { el: b, x, y }; });
+      // die roten Zähler sind Benachrichtigungen der ersten drei Hintergrund-Fenster (Posteingang · Team-Chat · Kalender)
+      const hookBadges = [[0, '3'], [1, '12'], [2, '7']].map(([k, n]) => { const b = h('div', { class: 'a1-badge', text: n, style: { margin: '-22px 0 0 -22px', zIndex: 3 } }); root.append(b); return { el: b, k, x: 0, y: 0 }; });
 
       /* ---- Drei Alltagsmomente (statt Kartenliste): Titel + Stärke, darunter Sätze von Kolleg*innen mit Profilbild; rechts Laptop/Handy voller Apps ---- */
       const mkGroup = (cfg, i) => {
@@ -146,12 +148,12 @@ export default function register(E) {
         const badges = [];
         for (let k = 0; k < 20; k++) { const ic = h('div', { class: 'abs', style: { left: 22 + (k % 4) * 70, top: 76 + Math.floor(k / 4) * 92, width: 58, height: 58, borderRadius: 15, background: APPCOL[(k * 3) % 8], display: 'flex', alignItems: 'center', justifyContent: 'center' }, html: icon(APPICO[(k * 5) % 8], 28, '#fff', 2) }); if (k % 3 !== 1) { const b = h('div', { class: 'a1-badge', text: String(2 + ((k * 7) % 40)), style: { left: 38, top: -10, transform: 'scale(.7)', transformOrigin: '0 50%', display: 'none' } }); ic.append(b); badges.push(b); } ph.screen.append(ic); }
         const tags = ['+ LIZENZ', '+ ADD-ON', '+ SPEICHER', '+ KI-ZUSATZ'].map((txt) => { const el = h('div', { class: 'a1-tag', style: { zIndex: 8 } }, h('span', { html: icon('euro', 24, '#E5565B', 2.6) }), txt); g.append(el); return el; });
-        const peeks = [['mail', 940, 40, -4], ['cal', 1290, 30, 3]].map(([k, x, y, r]) => { const el = mini(E, k, 300, 190); Object.assign(el.style, { left: x + 'px', top: y + 'px', zIndex: 1 }); g.append(el); return { el, r }; });
+        const peeks = [['mail', 940, 84, -4], ['cal', 1290, 76, 3]].map(([k, x, y, r]) => { const el = mini(E, k, 300, 190); Object.assign(el.style, { left: x + 'px', top: y + 'px', zIndex: 1 }); g.append(el); return { el, r }; });
         return {
           update(t, t0, P) {
             const a = t - t0, p = tw(a, 0, 0.7, ease.ui);
             tf(lap.el, { x: 90 * (1 - p), y: 24 * (1 - p), o: tw(a, 0, 0.5), r: -1.2 });
-            tiles.forEach((el, k) => { const q = tw(a, 0.25 + k * 0.06, 0.7 + k * 0.06, ease.snap); const j = k === 7 ? tw(t, P[1], P[1] + 0.35, ease.snap) : 0; tf(el, { s: 0.6 + 0.4 * q, o: clamp(q * 1.5), x: 36 * j, y: -30 * j, r: 12 * j }); });
+            tiles.forEach((el, k) => { const q = tw(a, 0.05 + k * 0.05, 0.45 + k * 0.05, ease.snap); const j = k === 7 ? tw(t, P[1], P[1] + 0.35, ease.snap) : 0; tf(el, { s: 0.6 + 0.4 * q, o: clamp(q * 1.5), x: 36 * j, y: -30 * j, r: 12 * j }); });
             show(ghost, t >= P[1]); tf(ghost, { o: tw(t, P[1], P[1] + 0.3, ease.out3) });
             const pp = tw(a, 0.55, 1.2, ease.ui); tf(ph.el, { x: 0, y: 160 * (1 - pp), s: 0.56, o: pp });
             badges.forEach((b, k) => { const tt = P[2] - 0.2 + k * 0.05; show(b, t >= tt); });
@@ -171,7 +173,7 @@ export default function register(E) {
           h('div', { style: { height: 48, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 14 } }), h('div', { style: { height: 48, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 24 } }), h('div', { style: { height: 52, borderRadius: 10, background: '#7B6CF6' } }));
         ph.screen.append(panel);
         const hl = h('div', { class: 'abs', style: { left: 16, top: 122, width: 274, height: 396, borderRadius: 26, border: '4px solid #7B6CF6', boxShadow: '0 0 40px rgba(123,108,246,.6)', zIndex: 3 } }); ph.screen.append(hl);
-        const AROUND = [['files', 960, 210, 300, 200, -4], ['chat', 950, 560, 290, 200, 3], ['mail', 1620, 170, 300, 200, 4], ['sheet', 1630, 580, 290, 200, -3], ['ticket', 1290, 880, 320, 190, 2]];
+        const AROUND = [['files', 960, 210, 300, 200, -4], ['chat', 950, 560, 290, 200, 3], ['mail', 1596, 170, 290, 200, 4], ['sheet', 1604, 580, 280, 200, -3], ['ticket', 975, 810, 280, 190, -2]];
         const wins = AROUND.map(([k, x, y, w, hh, r], i) => { const el = mini(E, k, w, hh); Object.assign(el.style, { left: x + 'px', top: y + 'px', zIndex: 2 }); g.append(el); return { el, r, i }; });
         return {
           update(t, t0, P) {
@@ -181,7 +183,7 @@ export default function register(E) {
             const door = ease.io3(prog(t, P[0], P[0] + 0.7));
             panel.style.transform = `perspective(900px) rotateY(${(-80 * door).toFixed(2)}deg)`; panel.style.opacity = 1 - 0.95 * door;
             tilesP.forEach((el, k) => { const q = tw(t, P[0] + 0.2 + k * 0.06, P[0] + 0.6 + k * 0.06, ease.snap); tf(el, { s: 0.6 + 0.4 * q, o: clamp(q * 2) }); });
-            wins.forEach((w, k) => { const tt = P[1] + k * 0.12, q = tw(t, tt, tt + 0.5, ease.snap), sp = tw(t, P[2], P[2] + 0.6, ease.snap); show(w.el, t >= tt); tf(w.el, { x: [-24, -20, 22, 24, 0][k] * sp, y: [-14, 12, -12, 14, 18][k] * sp + 8 * Math.sin(t * 2 + k), r: w.r + [-3, 3, -3, 3, 2][k] * sp, s: 0.6 + 0.4 * q, o: clamp(q * 2) }); });
+            wins.forEach((w, k) => { const tt = P[1] + k * 0.12, q = tw(t, tt, tt + 0.5, ease.snap), sp = tw(t, P[2], P[2] + 0.6, ease.snap); show(w.el, t >= tt); tf(w.el, { x: [-24, -20, 6, 6, -10][k] * sp, y: [-14, 12, -12, 14, 18][k] * sp + 8 * Math.sin(t * 2 + k), r: w.r + [-3, 3, -3, 3, 2][k] * sp, s: 0.6 + 0.4 * q, o: clamp(q * 2) }); });
           },
         };
       };
@@ -195,9 +197,9 @@ export default function register(E) {
           h('span', { html: icon('triangle-alert', 30, '#36A9E8', 2.4) }), h('span', { text: 'UPDATES: SELBST ERLEDIGEN', style: { font: '700 20px/1 var(--font-body)', letterSpacing: '.1em', color: CREAM, whiteSpace: 'nowrap' } }),
           h('div', { style: { flex: 1, height: 14, borderRadius: 7, background: 'rgba(255,255,255,.12)', position: 'relative', overflow: 'hidden' } }, h('div', { class: 'fillbar', style: { position: 'absolute', left: 0, top: 0, bottom: 0, width: '0%', background: '#36A9E8', borderRadius: 7 } })));
         g.append(bar);
-        const tools = ['wrench', 'server', 'hammer'].map((n, k) => { const el = h('div', { class: 'abs', style: { left: 1000 + k * 300, top: 200, width: 76, height: 76, borderRadius: 20, background: '#36A9E8', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 18px rgba(0,0,0,.45)', zIndex: 6 }, html: icon(n, 40, '#fff', 2.2) }); g.append(el); return el; });
-        const tk = mini(E, 'ticket', 300, 190); Object.assign(tk.style, { left: '1560px', top: '30px', zIndex: 2 }); g.append(tk);
-        const mailg = mini(E, 'files', 280, 180); Object.assign(mailg.style, { left: '1250px', top: '20px', zIndex: 1 }); g.append(mailg);
+        const tools = ['wrench', 'server', 'hammer'].map((n, k) => { const el = h('div', { class: 'abs', style: { left: 1000 + k * 96, top: 148, width: 76, height: 76, borderRadius: 20, background: '#36A9E8', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 18px rgba(0,0,0,.45)', zIndex: 6 }, html: icon(n, 40, '#fff', 2.2) }); g.append(el); return el; });
+        const tk = mini(E, 'ticket', 300, 190); Object.assign(tk.style, { left: '1580px', top: '60px', zIndex: 2 }); g.append(tk);
+        const mailg = mini(E, 'files', 280, 180); Object.assign(mailg.style, { left: '1290px', top: '54px', zIndex: 1 }); g.append(mailg);
         return {
           update(t, t0, P) {
             const a = t - t0, sc = 1;
@@ -213,13 +215,13 @@ export default function register(E) {
       // Bewusst ohne Produkt- oder Firmennamen: drei Ansätze, die jeder kennt – erst die Stärke, dann das „Aber“, ausgedrückt in Alltagssätzen.
       const cfgs = [
         { id: 'm365', name: 'DER ALLROUNDER', size: 84, ok: 'ALLES AUS EINER HAND.', acc: ACC.m365, visual: vSuite,
-          quotes: [['anna', 'Vertrieb', 'Und wenn der Anbieter die Regeln ändert?'], ['jonas', 'Einkauf', 'Jede Erweiterung kostet extra – und die nächste auch.'], ['lena', 'Projekte', 'Wir passen uns der Software an. Nicht umgekehrt.']],
+          quotes: [['anna', 'Vertrieb', 'Und wenn der Anbieter die Regeln ändert?'], ['jonas', 'Einkauf', 'Jede Erweiterung kostet extra.'], ['lena', 'Projekte', 'Wir passen uns der Software an. Nicht umgekehrt.']],
           qpos: [[110, 380], [200, 540], [130, 700]], qw: [640, 700, 680], qrot: [-1, 0.8, -0.6], cam: { s0: 0, s1: 0.05, x0: 0, x1: -34, y0: 0, y1: -8 } },
         { id: 'opendesk', name: 'DAS FERTIGE PORTAL', size: 68, ok: 'OFFEN UND LOKAL GEDACHT.', acc: ACC.opendesk, visual: vPortal,
-          quotes: [['tom', 'Geschäftsführung', 'Ein Login, schön. Dahinter ist alles anders.'], ['aylin', 'Büro', 'Die Mail sieht anders aus als der Chat – und der anders als die Dateien.'], ['ben', 'Buchhaltung', 'Es fühlt sich nicht wie ein Ganzes an.']],
-          qpos: [[110, 380], [190, 540], [130, 730]], qw: [660, 720, 620], qrot: [0.8, -0.8, 0.6], cam: { s0: 0.06, s1: 0, x0: 24, x1: 0, y0: 10, y1: 0 } },
+          quotes: [['tom', 'Geschäftsführung', 'Ein Login, schön. Dahinter ist alles anders.'], ['aylin', 'Büro', 'Mail, Chat, Dateien – alles sieht anders aus.'], ['ben', 'Buchhaltung', 'Es fühlt sich nicht wie ein Ganzes an.']],
+          qpos: [[110, 380], [190, 540], [130, 730]], qw: [660, 800, 620], qrot: [0.8, -0.8, 0.6], cam: { s0: 0.06, s1: 0, x0: 24, x1: 0, y0: 10, y1: 0 } },
         { id: 'nextcloud', name: 'DIE OFFENE BASIS', size: 76, ok: 'MÄCHTIG UND FREI.', acc: ACC.nextcloud, visual: vBase,
-          quotes: [['ben', 'Buchhaltung', 'Das Update spielen wir natürlich selbst ein.'], ['lena', 'Projekte', 'Mächtig, ja. Im Alltag sieht es noch roh aus.'], ['tom', 'Geschäftsführung', 'Für die Kolleg*innen ist das einfach zu technisch.']],
+          quotes: [['ben', 'Buchhaltung', 'Das Update spielen wir natürlich selbst ein.'], ['lena', 'Projekte', 'Mächtig – aber im Alltag noch roh.'], ['tom', 'Geschäftsführung', 'Für die Kolleg*innen ist das einfach zu technisch.']],
           qpos: [[110, 380], [200, 540], [120, 700]], qw: [650, 660, 700], qrot: [-0.8, 0.8, -0.6], cam: { s0: 0.015, s1: 0.015, x0: 44, x1: -44, y0: 0, y1: 0 } },
       ];
       const groups = cfgs.map(mkGroup);
@@ -246,7 +248,7 @@ export default function register(E) {
       // Blickwinkel IT: Fragen
       const asks = ['Wo ist die Datei?', 'Passwort vergessen?', 'Wer hat Zugriff?', 'Ticket #4711 offen', 'Welche Version gilt?', 'Darf die KI das?'].map((txt, k) => { const el = h('div', { class: 'a1-bubble', text: txt }); root.append(el); return { el, x: [160, 1380, 620, 1250, 260, 900][k], y: [250, 330, 820, 860, 640, 180][k], rot: [-4, 3, -2, 4, -3, 2][k] }; });
       const vig = h('div', { class: 'abs', style: { left: 160, top: 300, width: 1600, height: 480, background: 'radial-gradient(closest-side, rgba(14,19,30,.94), rgba(14,19,30,.86) 55%, rgba(14,19,30,0))', zIndex: 40 } });
-      const BIGS = [['NOCH EIN LOGIN.', 120], ['NOCH EIN TOOL.', 120], ['NOCH EIN ABO.', 120], ['NOCH EINE KI.', 120], ['NOCH EINE FRAGE AN DIE IT.', 100]];
+      const BIGS = [['NOCH EIN LOGIN.', 120], ['NOCH EIN TOOL.', 120], ['NOCH EIN ABO.', 120], ['NOCH EINE KI.', 120], ['NOCH EINE IT-FRAGE.', 120]];
       const bigs = BIGS.map(([txt, sz], k) => {
         const mk = (col, extra = {}) => h('div', { class: 'a1-big', text: txt, style: { top: 470 - sz / 2, fontSize: sz, color: col, zIndex: 42, ...extra } }); const main = mk(CREAM); const gr = mk('#E5565B', { zIndex: 41 }); const gc = mk('#36A9E8', { zIndex: 41 });
         root.append(gr, gc, main); return { main, gr, gc };
@@ -273,7 +275,6 @@ export default function register(E) {
       /* ---- Hintergrund ---- */
       s.grid.style.transform = `translate(${(-t * 6).toFixed(2)}px,${(-t * 3).toFixed(2)}px)`;
       s.glow.style.opacity = pre ? 1 : 0.55;
-      const dk = t < CUT ? 0 : (t < ASK + 0.9 ? 1 : 1);      // ab dem Schnitt komplett dunkel (Atempause)
       show(s.dark, !pre); s.dark.style.opacity = 1;
       s.grid.style.opacity = pre ? 1 : 0.4;
 
@@ -294,7 +295,8 @@ export default function register(E) {
       s.bgw.forEach((w, i) => {
         const p = tw(t, w.tIn * 1.3, w.tIn * 1.3 + 0.9, ease.ui), o = (t < OV ? 0.26 : lerp(0.26, 0.6, ease.out2(ov))) * p;
         show(w.el, pre && o > 0.01);
-        tf(w.el, { x: w.x + 6 * Math.sin(t * 0.7 + i), y: w.y + 5 * Math.cos(t * 0.6 + i) + 20 * (1 - p), r: w.rot, s: 1 + 0.12 * ov, o });
+        w.px = w.x + 6 * Math.sin(t * 0.7 + i); w.py = w.y + 5 * Math.cos(t * 0.6 + i) + 20 * (1 - p);
+        tf(w.el, { x: w.px, y: w.py, r: w.rot, s: 1 + 0.12 * ov, o });
       });
 
       /* ---- Hook (0–4): ruhig gesetzt, Wörter landen auf dem Raster (0,25 · 1,0 · 2,0 · 2,5); „dazwischen.“ steht ca. 1,3 s, bevor der Schnitt kommt ---- */
@@ -304,7 +306,7 @@ export default function register(E) {
       s.stroke.style.left = (-gap / 2 - 2).toFixed(2) + 'px'; s.stroke.style.opacity = (gq * (0.75 + 0.25 * Math.sin(t * 5))).toFixed(3);
       const hx = tw(t, T_HOOK - 0.2, T_HOOK, ease.in3);                // harter Schnitt auf den Karten-Schlag
       show(s.hook, t < T_HOOK + 0.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
-      s.hookBadges.forEach((b, k) => { const t0 = HP[k], p = tw(t, t0, t0 + 0.45, ease.snap); show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
+      s.hookBadges.forEach((b, k) => { const t0 = HP[k], p = tw(t, t0, t0 + 0.45, ease.snap), W = s.bgw[b.k]; b.x = W.px + W.w - 14; b.y = W.py + 8; show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
 
       /* ---- Karten-Gruppen ---- */
       s.groups.forEach((G, gi) => {
@@ -312,7 +314,7 @@ export default function register(E) {
         const visible = pre && t >= G.t0 - 0.02;
         show(G.g, visible); if (!visible) return;
         // Auftritt (Slam) + Wegschieben (Pile) + leichter Drift
-        const slam = tw(a, 0, 0.5, ease.snap), sh = tw(t, G.shove, G.shove + 0.55, ease.uiInOut);
+        const slam = tw(a, 0, 0.5, ease.snap), sh = tw(t, G.shove, G.shove + 0.30, ease.uiInOut);
         const grow = 1 + 0.1 * prog(t, OV, CUT - 0.2) * sh;
         const P = G.pile;
         const cq = ease.io2(prog(t, G.t0, G.shove)), cm = G.cam, cf = 1 - sh;          // jeder Moment bekommt seine eigene Kamerabewegung (Schub · Rückzug · Schwenk)
@@ -321,9 +323,9 @@ export default function register(E) {
         tf(G.g, { x: tx, y: ty + 34 * (1 - slam) * (1 - sh), s: sc * (sh > 0 ? 1 : sl), r: rot, o: clamp(slam * 2) * (1 - 0.8 * sh * (t < OV ? 1 : 1 - 0.15 * prog(t, OV, CUT - 1))) });
         G.g.style.zIndex = String(10 + gi + (sh > 0.5 ? -8 : 0));
         // Titel, Stärke und Alltagssätze (die Sätze erscheinen auf den Pings; beim Wegschieben bleiben nur Gerät und Titel als Schatten)
-        tf(G.name, { y: 18 * (1 - tw(a, 0.05, 0.5, ease.ui)), o: tw(a, 0.05, 0.45) * (1 - 0.5 * sh) });
-        tf(G.ok, { y: 16 * (1 - tw(a, 0.3, 0.7, ease.ui)), o: tw(a, 0.3, 0.65) * (1 - 0.5 * sh) });
-        G.qs.forEach((q, k) => { const tt = G.pings[k] != null ? G.pings[k] : G.t0 + 0.75 * (k + 1), p = tw(t, tt, tt + 0.45, ease.snap); tf(q, { x: -34 * (1 - p), y: 14 * (1 - p), s: 0.92 + 0.08 * p, r: G.qrot[k], o: clamp(p * 2) * (1 - tw(t, G.shove + 0.1, G.shove + 0.45)) }); });
+        tf(G.name, { y: 18 * (1 - tw(a, 0.05, 0.5, ease.ui)), o: tw(a, 0.05, 0.45) * (1 - sh) });
+        tf(G.ok, { y: 16 * (1 - tw(a, 0.3, 0.7, ease.ui)), o: tw(a, 0.3, 0.65) * (1 - sh) });
+        G.qs.forEach((q, k) => { const tt = G.pings[k] != null ? G.pings[k] : G.t0 + 0.75 * (k + 1), p = tw(t, tt, tt + 0.45, ease.snap); tf(q, { x: -34 * (1 - p), y: 14 * (1 - p), s: 0.92 + 0.08 * p, r: G.qrot[k], o: clamp(p * 2) * (1 - tw(t, G.shove + 0.05, G.shove + 0.30)) }); });
         G.vis.update(t, G.t0, G.pings);
       });
 
@@ -340,7 +342,7 @@ export default function register(E) {
       const nAbo = Math.floor(lerp(2, 9, ease.out2(prog(t, B[2], B[2] + 0.7)))); s.aboCount.textContent = nAbo + ' ABOS';
       show(s.aboCount, pre && t >= B[2]); tf(s.aboCount, { x: 1390, y: 100, s: 0.7 + 0.3 * tw(t, B[2], B[2] + 0.3, ease.snap), o: tw(t, B[2], B[2] + 0.15) });
       s.ais.forEach((a, k) => { const t0 = B[3] + k * 0.09, p = tw(t, t0, t0 + 0.4, ease.snap); show(a.el, pre && t >= t0); tf(a.el, { x: a.x, y: a.y + 8 * Math.sin(t * 2.1 + k), r: a.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * 0.96 }); });
-      const capP = tw(t, B[3] + 0.3, B[3] + 0.62, ease.snap); show(s.aiCap, pre && t >= B[3] + 0.28); tf(s.aiCap, { y: 24 * (1 - capP), s: 0.92 + 0.08 * capP, o: clamp(capP * 2) * (1 - tw(t, B[4], B[4] + 0.12)) });
+      const capP = tw(t, B[3] + 0.08, B[3] + 0.4, ease.snap); show(s.aiCap, pre && t >= B[3] + 0.06); tf(s.aiCap, { y: 24 * (1 - capP), s: 0.92 + 0.08 * capP, o: clamp(capP * 2) * (1 - tw(t, B[4] + 0.3, B[4] + 0.45)) });   // steht ≈ 1,0 s
       s.asks.forEach((b, k) => { const t0 = B[4] + k * 0.12, p = tw(t, t0, t0 + 0.3, ease.snap); show(b.el, pre && t >= t0); tf(b.el, { x: b.x, y: b.y, r: b.rot, s: 0.6 + 0.4 * p, o: clamp(p * 2) }); });
       // Text-Salven + Rollen-Pille („Blickwinkel“)
       const inBig = pre && t >= OV - 0.05;
@@ -362,18 +364,17 @@ export default function register(E) {
       // Freeze-Flackern direkt vor dem Schnitt
       if (t > CUT - 0.2 && t < CUT) s.vig.style.opacity = 0.7 + 0.3 * Math.sign(Math.sin(t * 120));
 
-      /* ---- Pause (18–20): Stille, ein Satz, der orange Faden ---- */
+      /* ---- Pause (22–24): erst der Satz (22,5), dann baut sich der orange Faden auf (23,0) ---- */
       const inPause = !pre;
       show(s.ask, inPause && t >= ASK - 0.05);
-      s.askLetters.forEach((el, k) => { const p = tw(t, ASK + k * 0.035, ASK + k * 0.035 + 0.45, ease.out3); tf(el, { y: 26 * (1 - p), o: p, blur: 0 }); });
-      const thrP = ease.io2(prog(t, ASK, DROP));
-      show(s.thr, inPause && t >= ASK); s.thr.firstChild.setAttribute('x2', (1860 * thrP).toFixed(1));
-      const pg = tw(t, ASK, DROP - 0.1, ease.in2), inh = tw(t, DROP - 0.14, DROP - 0.01, ease.in2);          // Aufbau → kurzes Einatmen direkt vor dem Drop
+      s.askLetters.forEach((el, k) => { const p = tw(t, ASK + k * 0.02, ASK + k * 0.02 + 0.35, ease.out3); tf(el, { y: 26 * (1 - p), o: p, blur: 0 }); });
+      const thrP = ease.io2(prog(t, BUILD, DROP));
+      show(s.thr, inPause && t >= BUILD); s.thr.firstChild.setAttribute('x2', (1860 * thrP).toFixed(1));
+      const pg = tw(t, BUILD, DROP - 0.1, ease.in2), inh = tw(t, DROP - 0.14, DROP - 0.01, ease.in2);          // Aufbau → kurzes Einatmen direkt vor dem Drop
       s.thr.firstChild.setAttribute('stroke-width', (4 + 8 * pg).toFixed(2));
-      show(s.pGlow, inPause && t >= ASK); tf(s.pGlow, { s: (0.25 + 0.75 * pg) * (1 - 0.35 * inh), o: 0.95 * pg * (1 - 0.5 * inh) });
+      show(s.pGlow, inPause && t >= BUILD); tf(s.pGlow, { s: (0.25 + 0.75 * pg) * (1 - 0.35 * inh), o: 0.95 * pg * (1 - 0.5 * inh) });
       tf(s.ask, { s: 1 + 0.03 * pg - 0.05 * inh });
-      if (inPause) s.grid.style.opacity = 0.4 + 0.5 * pg;
-      show(s.thrFlag, inPause && t >= ASK); Object.assign(s.thrFlag.style, { left: (1860 * thrP - 2) + 'px', top: (THREAD_Y - 7) + 'px' });
+      show(s.thrFlag, inPause && t >= BUILD); Object.assign(s.thrFlag.style, { left: (1860 * thrP - 2) + 'px', top: (THREAD_Y - 7) + 'px' });
       // alles andere ist ab dem Schnitt aus
       [s.hook].forEach((el) => { if (!pre) show(el, false); });
       s.hookBadges.forEach((b) => { if (!pre) show(b.el, false); });

@@ -14,7 +14,7 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | 4–8,5 | Der Allrounder (Laptop + Handy, Sätze mit Profilbild) | „Alles aus einer Hand – aber abhängig vom Anbieter, die Kosten wachsen mit, und zugeschnitten ist es nicht auf dich.“ |
 | 8,5–13 | Das fertige Portal (Handy-Login, fünf Oberflächen) | „Offen und lokal gedacht – aber oft nur Oberfläche und Anmeldung. Die Werkzeuge bleiben einzeln.“ |
 | 13–17,5 | Die offene Basis (Laptop, Wireframe) | „Mächtig und frei – aber die Pflege bleibt bei dir, und im Alltag ist es roh.“ |
-| 17,5–22 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine Frage an die IT.“ |
+| 17,5–22 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine IT-Frage.“ |
 | 23–24 | Pause | „Es geht auch anders.“ |
 | 24–28 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
 | 28–32 | Ein Browser genügt | „Ein Browser. Ein Login. Alle Geräte.“ (oder ohne Sprache: nur die Zeilen im Bild) |

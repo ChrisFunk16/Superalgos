@@ -42,7 +42,7 @@ jeweils mit **eigener Bildidee** und eigenem Akkord:
 | 14.75 | Teams | Noch ein Tool. | Tab-Leiste füllt sich (3 → 36 Tabs), Tool-Kacheln mit Badges | F |
 | 15.50 | Geschäftsführung | Noch ein Abo. | Preisschilder „+ Lizenz / + Add-on / + KI-Zusatz …“, Zähler 2 → 9 Abos | C |
 | 16.25 | Datenschutz | Noch eine KI. | Chat-, Notiz-, Bild-, Meeting-KI mit „sendet Daten …“, Pille „Wohin gehen die Daten?“ | G |
-| 17.00 | IT | Noch eine Frage an die IT. | Fragen-Blasen („Darf die KI das?“), Glitch, Schnitt | Am |
+| 17.00 | IT | Noch eine IT-Frage. | Fragen-Blasen („Darf die KI das?“), Glitch, Schnitt | Am |
 
 **Weitere mögliche Blickwinkel** (austauschbar, je 1 Zeile + 1 Bild): *Neue Kollegin* („Wo finde ich was?“), *Außendienst* („Nur mit VPN.“), *Betriebsrat* („Wer sieht was?“),
 *Einkauf* („Noch ein Vertrag.“), *Kunde* („Bitte nochmal als PDF.“). Für Zielgruppen-Versionen (Verwaltung, Mittelstand, Schule) ändert man nur diese Zeile.

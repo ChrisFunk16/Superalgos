@@ -29,7 +29,7 @@ export default function register(E) {
   .a2b-card { position:absolute; left:890px; top:196px; width:920px; height:700px; border-radius:28px; background:#fff; box-shadow:0 2px 6px rgba(31,37,50,.08), 0 36px 80px rgba(31,37,50,.20); }
   .a2b-cap { position:absolute; left:60px; top:34px; display:flex; align-items:center; gap:14px; font:700 20px/1 var(--font-body); letter-spacing:.14em; color:var(--navy); }
   .a2b-hr { position:absolute; top:92px; width:80px; font:600 15px/1 var(--font-body); color:#A19B90; padding-left:6px; }
-  .a2b-blk { position:absolute; top:122px; height:112px; border-radius:14px; display:flex; align-items:center; padding:0 14px; font:700 17px/1.15 var(--font-body); letter-spacing:.05em; text-transform:uppercase; overflow:hidden; white-space:nowrap; }
+  .a2b-blk { position:absolute; top:122px; height:112px; border-radius:14px; display:flex; align-items:center; padding:0 8px; font:700 14px/1.15 var(--font-body); letter-spacing:.04em; text-transform:uppercase; overflow:hidden; white-space:nowrap; }
   .a2b-gray { background:repeating-linear-gradient(135deg,#E8E1D3 0 7px,#F3EEE3 7px 14px); color:#8B837A; }
   .a2b-doc { position:absolute; left:60px; top:318px; width:800px; height:320px; border-radius:18px; background:#FBF8F2; border:1.5px solid #E7DFCF; overflow:hidden; }
   .a2b-av { position:absolute; width:46px; height:46px; border-radius:50%; font:800 18px/46px var(--font-display); text-align:center; color:#fff; border:3px solid #FBF8F2; }
@@ -113,9 +113,9 @@ export default function register(E) {
       for (let i = 0; i < 10; i++) card.append(h('div', { class: 'a2b-hr', style: { left: 60 + i * 80 }, text: String(8 + i).padStart(2, '0') }));
       // Zeitleiste: graue Technik-Blöcke + wesentliche Blöcke (Summe der Breiten = 800)
       const defs = [
-        { id: 'a1', g: 1, txt: 'ANMELDEN', w0: 90, w1: 0 }, { id: 'a2', g: 1, txt: 'SUCHEN', w0: 110, w1: 0 }, { id: 'c1', g: 0, txt: 'PROJEKT', w0: 90, w1: 330, bg: '#1F2532', fg: '#fff' },
-        { id: 'a3', g: 1, txt: 'TOOL WECHSELN', w0: 150, w1: 0 }, { id: 'a4', g: 1, txt: 'IT FRAGEN', w0: 100, w1: 0 }, { id: 'c2', g: 0, txt: 'AUSTAUSCH', w0: 70, w1: 220, bg: '#E67E22', fg: '#fff' },
-        { id: 'a5', g: 1, txt: 'SUCHEN', w0: 120, w1: 0 }, { id: 'c3', g: 0, txt: 'FOKUS', w0: 70, w1: 250, bg: '#343D56', fg: '#fff' },
+        { id: 'a1', g: 1, txt: 'LOGIN', w0: 90, w1: 0 }, { id: 'a2', g: 1, txt: 'SUCHEN', w0: 110, w1: 0 }, { id: 'c1', g: 0, txt: 'PROJEKT', w0: 90, w1: 330, need: 100, bg: '#1F2532', fg: '#fff' },
+        { id: 'a3', g: 1, txt: 'WECHSELN', w0: 140, w1: 0 }, { id: 'a4', g: 1, txt: 'IT-FRAGE', w0: 110, w1: 0 }, { id: 'c2', g: 0, txt: 'AUSTAUSCH', w0: 70, w1: 220, need: 125, bg: '#E67E22', fg: '#fff' },
+        { id: 'a5', g: 1, txt: 'SUCHEN', w0: 120, w1: 0 }, { id: 'c3', g: 0, txt: 'FOKUS', w0: 70, w1: 250, need: 80, bg: '#343D56', fg: '#fff' },
       ];
       const blocks = defs.map((d) => { const el = h('div', { class: 'a2b-blk ' + (d.g ? 'a2b-gray' : ''), style: d.g ? {} : { background: d.bg, color: d.fg } }, h('span', { text: d.txt })); card.append(el); return { ...d, el }; });
       // Legende
@@ -147,7 +147,7 @@ export default function register(E) {
       // Ruhiger Takt (8 s statt 6 s): jeder Zustand bleibt ≥ 1,3 s stehen – Blöcke erscheinen (46.4), kurz halten, schrumpfen/wachsen (48.0–50.0),
       // halten, Dokument (50.2), Cursor tippen (50.8–52.7), halten, Auflösung in Knoten (53.2) – Übergabe ans Finale bei 54.0
       s.head.update(t, 46.2, 53.4);
-      const cin = tw(t, 46.0, 46.8, ease.ui), cout = tw(t, 53.2, 53.7, ease.in2);
+      const cin = tw(t, 46.0, 46.8, ease.ui), cout = tw(t, 52.9, 53.4, ease.in2);
       show(s.card, t < 53.75);
       tf(s.card, { x: 80 * (1 - cin), y: 20 * (1 - cin), o: cin * (1 - cout), s: 1 - 0.02 * cout });
       // Zeitleiste: Blöcke erscheinen, dann schrumpfen die grauen
@@ -158,7 +158,7 @@ export default function register(E) {
         const e = ease.uiInOut(prog(t, st, st + 1.8));
         const w = lerp(b.w0, b.w1, e);
         Object.assign(b.el.style, { left: x + 'px', width: Math.max(0, w - 4) + 'px', opacity: pin * (b.g ? clamp(1 - (e - 0.7) / 0.3) : 1), display: w < 3 ? 'none' : 'flex' });
-        b.el.firstChild.style.opacity = b.g ? clamp((w - 40) / 60) : 1;
+        b.el.firstChild.style.opacity = b.g ? clamp((w - 40) / 60) : clamp((w - b.need) / 40);   // Beschriftung erst, wenn sie ganz hineinpasst
         x += w;
       });
       // Dokument + Cursor
@@ -167,7 +167,7 @@ export default function register(E) {
       s.lineEls.forEach((L, i) => {
         const tt = 50.8 + i * 0.4, p = ease.out2(prog(t, tt, tt + 1.1));
         L.bar.style.width = (L.w * p) + 'px'; L.bar2.style.width = (L.w * 0.62 * ease.out2(prog(t, tt + 0.5, tt + 1.4))) + 'px';
-        const cx = 28 + L.w * p, vis = t >= tt - 0.1 && t < 53.0;
+        const cx = 28 + L.w * p, vis = t >= tt - 0.1 && t < 53.4;   // Fahnen und Cursor verblassen mit der Karte
         show(L.caret, vis); show(L.flag, vis);
         L.caret.style.left = cx + 'px'; L.caret.style.opacity = (Math.floor(t * 2.2 + i) % 2 === 0 || p < 1) ? 1 : 0.15;
         L.flag.style.left = (cx + 6) + 'px';
