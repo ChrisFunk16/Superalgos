@@ -4,6 +4,7 @@
 Idee: **Alles funktioniert – nur nicht dazwischen. Linkado verbindet das Dazwischen, und am Ende kristallisiert das Logo heraus.**
 Weiterführende Konzepte (Cutdowns, 9:16, KI-Ebene, Faden als Bildelement, Ton): [`KONZEPTE-WEITERDENKEN.md`](KONZEPTE-WEITERDENKEN.md).
 Feinheiten für Wirkung und Erinnerung (Marke, Funktionen, Oberfläche): [`PLAN-WIRKUNG.md`](PLAN-WIRKUNG.md).
+Zweiter Durchgang mit konkreten Nähten und kleinen Bildfehlern (Zeitstempel, Änderung, Aufwand): [`PLAN-FEINSCHLIFF.md`](PLAN-FEINSCHLIFF.md).
 
 ## Dramaturgie (38 Takte à 2 s bei 120 BPM)
 
