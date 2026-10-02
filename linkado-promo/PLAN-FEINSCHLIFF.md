@@ -1,61 +1,81 @@
-# Plan „Feinschliff“ – zweiter Durchgang über die 76-s-Fassung
+# Plan „Feinschliff“ (v2, geprüft) – 76-s-Fassung
 
-Grundlage: alle 152 Standbilder des fertigen Films (alle 0,5 s), zwölf Detailbilder in voller Auflösung an den
-verdächtigen Stellen, dazu der Pegelverlauf des Tons in 0,25-s-Fenstern. Der Ton wurde **nur gemessen, nicht gehört**.
+**Stand:** Die erste Fassung dieses Plans (13 Befunde) wurde von **8 unabhängigen Gutachten** geprüft: 5 Prüfer
+(Pause · Geräte-Beat · Schluss · Akt I · Ton) haben jeden Befund am fertigen MP4 und im Code nachgemessen,
+3 „frische Augen“ (Lesbarkeit · Bildfehler · Dramaturgie) haben nach Übersehenem gesucht.
+Der Ton wurde **nur gemessen, nicht gehört**. Alle Zeiten sind globale Filmzeit.
 
-Kurzfazit: Dramaturgie, Tempo und Bildsprache stimmen. Was bleibt, sind **Nähte** – sechs Übergänge, die noch nicht
-sauber sind, und ein paar kleine Bildfehler. Alles davon ist klein; zusammen ist es ein Nachmittag und ein Render.
+## 0. Ergebnis der Prüfung
+
+* **Kein Befund wurde widerlegt.** 8 von 13 bestätigt, 5 teilweise (Zahl oder Lösung war zu knapp).
+* **Zwei echte Fehler, die ich selbst übersehen hatte** (Abschnitt 1, M1 und M5):
+  * **Die Kette in Szene 05 baut sich nie auf.** Vier Ton-/Bild-Hits stehen noch auf alten Zeiten (49/50/51/52 statt 53/54/55/56), seit ich die Akt-II-Hits verschoben habe. Ich hatte das im ersten Plan als „2 s Ruhe, gewollt“ gelesen – es war ein Datenfehler. Folge: Kette steht 6 s fertig und statisch im Bild, die Glockenleiter A–C–E und der Lock-Boom fehlen im Ton.
+  * **Loch im Drone bei 5,25–6,0 s.** Zwei fast gleich laute, leicht verstimmte Töne löschen sich aus; danach springt der Kick um +11,5 dB. Der „12 dB hohe Herzschlag“ war keine Absicht, sondern ein Mischfehler (Plan C hatte ihn als gewollt durchgewinkt).
+* **Zahlen im ersten Plan, die nicht stimmten:** „Es geht auch anders“ steht mit 22,5 s / 25 ms nicht ≥ 1,1 s, sondern 0,78 s (mit 20 ms / 0,35 s: ≈ 0,93 s). Der Callback hat 4 Wörter, nicht 6, und steht heute 1,4 s (nicht 1,8). Der Beat-Untertitel steht 1,2 s (nicht 1,4). „Tickets“ ist nur 3–23 px beschnitten; größer ist der Beschnitt rechts bei Posteingang/Tabelle (17–52 px).
+* **Größter Hebel in Akt I ist nicht Zeit, sondern Text:** Die Alltagssätze haben pro Moment 23–29 Wörter in ≈ 3,4 s (einer 14 Wörter in 2,6 s). Kürzen wirkt mehr als länger stehen lassen.
+* Meine Kontaktblätter liefen stellenweise bis 0,4 s vor dem MP4; die Prüfer haben deshalb direkt am MP4 gemessen.
 
 ---
 
-## A. Übergänge und Timing – würde ich auf jeden Fall ändern
+## 1. MUSS – echte Fehler (Welle 1)
 
-| # | Zeit | Befund (im Bild geprüft) | Änderung | Aufwand · Datei |
-|---|---|---|---|---|
-| 1 | 23,0–24,0 | **„Es geht auch anders.“ ist nur ~0,3 s komplett lesbar.** Die Buchstaben laufen bis 23,7 s ein, bei 24,0 kommt der Drop. Der wichtigste Satz des Films geht unter. | Satz bei **22,5 s** beginnen (direkt auf dem ersten Herzschlag-Kick, 0,5 s nach dem Schnitt), Buchstaben etwas schneller (25 ms statt 35 ms Abstand) → der Satz steht ≥ 1,1 s, Faden und Glühen bauen weiter bis 24,0 auf. | S · `timeline.json` (text-Hit), `act1.js` liest `ASK` |
-| 2 | 27,2–28,0 | **Kamera „pumpt“ vor dem Geräte-Beat:** Sie zoomt erst in die Menü-Pose von Szene 02 hinein (Fenster wird rechts beschnitten), um 0,2 s später wieder aus dem Gerät herauszuziehen. Rein–raus–rein. | Kamera bleibt bis zum Beat in der Vollansicht; der Beat zieht aus der Vollansicht heraus und kehrt in sie zurück; die Fahrt in die Menü-Pose kommt **nach** dem Beat (32,0–32,7). Eine Richtung, kein Pumpen. | S · `act2.js` (`POSES`, `beatCam`) |
-| 3 | 31,0–31,5 | **Handy und „1 TAB“-Chip werden am rechten Bildrand abgeschnitten**, während die Kamera zurück ins Fenster fährt – das Handy ist noch voll sichtbar und rutscht aus dem Bild. | Rückfahrt erst ab 31,0 (1 s statt 1,5 s), Handy gleitet 30,8–31,3 nach rechts hinaus und blendet aus, Browser-Leiste blendet 31,0–31,5 aus. Nichts wird beschnitten. | S · `act2.js` (Geräte-Beat) |
-| 4 | 51,9–52,8 | **Talk-Fenster liegt noch unter der Kette.** Das Fenster fliegt in die „away“-Pose genau dorthin, wo die drei Glieder erscheinen; „05“ fährt über das halbtransparente Fenster hoch. | Fenster-Abgang direkt nach dem „Anruf verlassen“-Klick (51,5): 51,55–52,05 statt 51,9–52,8; Cursor 51,5–51,8 aus. Die Kette bleibt, wie sie ist. | S · `act2.js` (`wo`, `POSES` away) |
-| 5 | 66,1–67,9 | **Callback „Alles funktioniert. Auch dazwischen.“ steht 1,8 s** – für sechs Wörter knapp, und er ist die Antwort auf den Hook. | Start bei **65,6** (sobald „06“ weg ist), Ausblenden erst mit dem Kristall-Blitz bei 68,0 → 2,4 s. | S · `finale.js` |
-| 6 | 28,0–32,0 | **Fortschrittsfaden parkt 4 s** auf dem Knoten von 02, weil die Oberflächen-Zeit im Beat eingefroren ist. | Overlay läuft ungefroren; Knotenzeiten kommen aus `timeline.json`. Der Faden erreicht den Knoten 02 erst bei 32,0. | S · `act2.js` (`a2-ov`, `NODE_T`) |
+| # | Zeit | Befund | Änderung (Datei) |
+|---|---|---|---|
+| M1 | 49–58 | **Kette 05 animiert nicht**, Ton ohne Glockenleiter A–C–E und Lock-Boom. Test mit korrigierten Hits: ein Glied je Sekunde (52,4–55,0), Einrasten 56, Halt bis 57,5 – genau der gedachte Rhythmus. | `timeline.json`: snap 49/50/51 → **53/54/55**, lock 52 → **56**, swipe „Fenster verlässt das Bild“ 48,0 → **51,55**. Ton danach neu rendern (liest `snap` in 53–55,1 und `lock`). |
+| M2 | 51,9–52,8 | Talk-Fenster liegt unter der Kette, „05“ fährt über das halbtransparente Fenster. **Nur zusammen mit M1.** | `act2.js` Z. 205: `wo = tw(t, 43.55, 44.05, ease.io2)` (nicht `in3`, sonst ruckt es); optional `[44.8,'away']` aus `POSES` streichen. |
+| M3 | 22,5–24,0 | „Es geht auch anders.“ ist nur ≈ 0,1–0,3 s komplett lesbar, davor 1,0 s leerer Bildschirm. | `timeline.json`: text-Hit 23,0 → **22,5**; `act1.js`: Buchstabenabstand 35 → **20 ms**, Dauer 0,45 → **0,35 s**; Faden/Glühen/Flagge an `build` (23,0) koppeln (`BUILD = E.hits('build')[0].t`), sonst ändert sich der Look. Ton: keine Änderung. Nicht vor 22,4 beginnen. |
+| M4 | 27,2–32,0 | **Kamera pumpt** (zoomt ab 27,2 in die Menü-Pose, fährt bei 28,0 wieder heraus; Fenster 336 px über den Rand). Dazu: Rückfahrt schneidet **Handy und „1 TAB“-Chip am Rand ab**; **Widgets stehen im Beat schief** (Einrast-Vorstufe eingefroren); **1-%-Maßstabssprung** an fünf Kamera-Starts (27,2 · 35,4 · 41,4 · 45,4 · 51,4). | `act2.js`: neue Pose `full2 {s:0.7084, px:872, py:214}`, `POSES` = `[[20,'full'],[24.0,'full2'],[24.8,'search'],…]`; Rückfahrt `BEATN − 1.0`; Leiste/Bezel 31,0–31,5; Handy 30,8–31,3; `drift = 1`; `loose` nur in der letzten Beat-Sekunde. `timeline.json`: swipe 30,5 → **30,8**. |
+| M5 | 4–8 · 0–4 | **Drone-Loch 5,25–6,0 s** (siehe 0). **Hook sehr leise** (−35 LUFS, ≈ 21 LU unter dem Groove; auf Laptop-Lautsprechern fast unhörbar). | `soundtrack.py` Z. 279/280: Detune-Partner × 0,35, Gesamtpegel × 1,85. Hook: Drone und Marimba um ≈ 4 dB anheben (Rampe bis 8 s), danach nach Gehör. Dazu: 1-ms-Rampe nach dem Vakuum (24,0), Ausklang 0,7 → 1,6 s. |
+| M6 | 58,4–61,2 | **06: Beschriftungen mitten im Wort abgeschnitten** (ANMELD, PROJEK, TOOL WECHSE, AUST, FOKU) – 2,5 s lang. | `act2b.js`: Labels kürzen (LOGIN · WECHSELN · IT-FRAGE), Schrift 14 px, bunte Labels erst ab Blockbreite (PROJEKT 125 · AUSTAUSCH 165 · FOKUS 100 px). |
+| M7 | 66,8 | **„SNEAK PEEK“-Chip verschwindet hart** (Bild 66,7 voll, 66,8 weg). | `act2.js` Z. 83: ausblenden statt hartem Ende (Zeitpunkt: Entscheidung D1). |
 
-## B. Bild und Komposition – klein, aber sichtbar
+## 2. SOLLTE – Lesbarkeit und Komposition (Welle 2)
 
-| # | Zeit | Befund | Änderung | Aufwand · Datei |
-|---|---|---|---|---|
-| 7 | 0,8–3,9 | Die roten Zähler **„3 · 12 · 7“ schweben frei** über dem Hook – ohne Bezug wirken sie wie Flecken. | An die Hintergrund-Fenster hängen (Team-Chat 12, Kalender 7, Posteingang 3) – dann sind es Benachrichtigungen und erzählen „alles funktioniert“. | S · `act1.js` |
-| 8 | 11,0–12,5 | **„Tickets“-Fenster am unteren Bildrand beschnitten** (Das fertige Portal). | 60 px höher (y 820). | XS · `act1.js` (`AROUND`) |
-| 9 | 14,5–17,0 | Werkzeug-Symbole **sitzen auf dem Laptop-Rahmen**; die Fenster „Dateien“/„Tickets“ kleben am oberen Rand (Die offene Basis). | Symbole auf y 150, Fenster auf y 50/60. | XS · `act1.js` (`vBase`) |
-| 10 | je Moment | Der **dritte Alltagssatz** steht nur 1,75 s, bevor der Moment weggeschoben wird. | Shove 0,25 s später (S + 4,25 statt S + 4,0); der Übergang zum nächsten Schlag bleibt sauber. | XS · `timeline.json` |
-| 11 | 29,5–30,9 | Untertitel des Beats („Ein Tab genügt: Linkado läuft im Browser – auf jedem Gerät.“, 10 Wörter) steht 1,4 s. | Kürzer: **„Ein Tab genügt – auf jedem Gerät.“**, steht bis 31,2. | XS · `act2.js` |
-| 12 | 28–32 | **Uhrzeit** auf dem Handy „9:41“, auf dem Laptop „Jetzt 09:13“; Adresse „cloud.ihre-firma.de“ sagt „Sie“, der Film sagt „du“. | Handy auf 09:13; Adresse **cloud.musterfirma.de** (neutral, unabhängig von Du/Sie). | XS · `devices.js` |
-| 13 | 4,0–4,25 | Laptop erscheint mit **leerem weißem Fenster**, die App-Kacheln kommen 0,25 s später. | Fensterkopf „Alle Apps“ und schwache Kacheln ab 4,0, Kacheln rasten dann ein. *(optional, fällt kaum auf)* | XS · `act1.js` (`vSuite`) |
+| # | Zeit | Befund | Änderung |
+|---|---|---|---|
+| S1 | 4–17,5 | Alltagssätze zu lang für ihre Standzeit. Satz 3 steht nur 1,85 s. | `timeline.json`: shove 8,0/12,5/17,0 → **8,25/12,75/17,25**; `act1.js`: Schub 0,55 → 0,30 s, Satz-Fade (shove+0,05 … +0,30). **Texte kürzen** (siehe D2): „Jede Erweiterung kostet extra.“ · „Mail, Chat, Dateien – alles sieht anders aus.“ · „Mächtig – aber im Alltag noch roh.“ |
+| S2 | 20,5–22,0 | „NOCH EINE FRAGE AN DIE IT.“ ist 6 Wörter (Serie: 3), liegt auf hellen Chips; Datenschutz-Chip „WOHIN GEHEN DIE DATEN?“ steht nur 0,4 s. | „NOCH EINE IT-FRAGE.“ + Text-Schatten; Chip früher/länger (≈ 1,0 s). |
+| S3 | 1,0–3,9 | Rote Zähler „3 · 12 · 7“ schweben frei; „12“ klebt am Punkt von „FUNKTIONIERT.“ | An die Hintergrund-Fenster hängen (Posteingang 3, Chat 12, Kalender 7), `zIndex: 3`, Fenster 0,4 s früher einblenden. |
+| S4 | 2,9–3,9 | **Schlusspunkt von „DAZWISCHEN.“ ist beschnitten** (rechte Hälfte wandert 34 px über das Wort-Fenster). | `act1.js`: `w4` `paddingRight: 56px; marginRight: −56px`. |
+| S5 | 10,7–12,5 | Posteingang/Tabelle rechts 17–52 px beschnitten, „Tickets“ unten bis 23 px. | `AROUND`: mail 1596/170 (w 290), sheet 1604/580 (w 280), ticket 975/810 (w 280); Spread-Array `[-24,-20,6,6,-10]`. |
+| S6 | 14,5–17 | Werkzeug-Symbole sitzen auf dem Laptop-Rahmen; „Dateien“/„Tickets“ oben beschnitten. | Symbole `left 1000 + k·96`, `top 148`; Tickets `left 1580, top 60`; Dateien `left 1290, top 54`. |
+| S7 | 6,5–8,0 | Peek-Fenster Posteingang/Kalender oben 5–19 px beschnitten. | y 84 / 76. |
+| S8 | 8,5–22 | Beschnittene Geister-Titel („R ALLROUNDER“) stehen 13 s neben dem aktiven Titel. | Titel/„ALLES AUS EINER HAND“ der weggeschobenen Gruppen ausblenden (`1 − sh` statt `1 − 0,5·sh`). |
+| S9 | 28,0–31,5 | Beat-Untertitel 10 Wörter, steht 1,2 s; sagt nicht, *was* drin ist. Chip „1 TAB“ nur ≈ 9 px hoch. | Untertitel **„Dateien, Kalender, Chat – in einem Tab.“** (7 Wörter), `tOut` 27,2; Chip 17 → 22 px. |
+| S10 | 29,3–31,5 | Handy und Laptop widersprechen sich (Uhr 9:41 vs. 09:13; „Projektbesprechung“ vs. „Teamtermin“; 3 vs. 5 Termine; „Dateien“ vs. „Deck“); Adresse „ihre-firma“. | `devices.js`: 09:13, „10:00 · Teamtermin“, „5 Termine, 2 Aufgaben“, „Fällig heute · Deck“, **cloud.musterfirma.de**; `KONZEPT.md` nachziehen. |
+| S11 | 65,6–68,0 | Callback steht 1,4 s, ist 60 px klein (Hook: 100 px) und sitzt am Rand. | `finale.js`: Start **65,6**, Ausblenden 67,8–68,0, Schrift **76 px**, `top 235`. Dazu M7 (Chip nicht daneben). |
+| S12 | 46,4–48,3 | Talk-Chat: Avatar der gesendeten Nachrichten überlappt die Blase; Text nur 15 px, Antwort 1,3 s. | `ui.js`: `.ui-tm.out { right: 62px }`, Schrift 19 px, `max-width 580`. |
+| S13 | 28–52 | Untertitel enden in Witwen („machen.“, „entstehen.“, „in Talk.“). | `kit.js`: `.a2-sub { text-wrap: balance }`. |
+| S14 | 28–32 · 64–66,8 | Faden parkt 4 s im Beat; am Übergang 06 → Finale überdeckt der Fadenkopf die „L“-Kachel, die Namensfahnen verschwinden in einem Bild. | `a2-ov` ohne `map`, `NODE_T` + 4 s (Zeiten ≥ 58 mitziehen); Kachel `zIndex`, Fahnen 0,3 s ausblenden. |
+| S15 | 4,0 | Laptop erscheint mit leerem Fenster. | Kacheln früher: `tw(a, 0.05 + k·0.05, 0.45 + k·0.05)` (der Fensterkopf aus dem ersten Plan ist nicht nötig). |
 
-## C. Ton – nur gemessen
+## 3. KANN – nach Gehör oder nach Entscheidung (Welle 3)
 
-* **Keine Löcher, keine ungewollten Sprünge.** Alle Pegelsprünge > 7 dB liegen an gewollten Stellen: Schnitt 22,0, Herzschlag 22,5, Aufbau 23,0, Drop-out 67,5, Kristall 68,0. Der Übergang Geräte-Beat → 02 (30–33 s) ist gleichmäßig.
-* **4–8 s:** Der halbe Kick steht ~12 dB über dem Bett (Drone + Ticks). Das ist der „Herzschlag“ und so gewollt – falls er beim Hören zu einzeln wirkt: Drone in diesem Fenster +3 dB oder Kick −2 dB. **Entscheidung nach Gehör.**
-* Punkt 1 (Satz bei 22,5) legt den Satz genau auf den ersten Herzschlag – Bild und Ton setzen gemeinsam ein.
+* **Antwort auf „Noch eine KI. Wohin gehen die Daten?“** (zwei der fünf Chaos-Klagen werden nie beantwortet; „Noch ein Abo“ kann ohne Preisangaben nicht beantwortet werden). Da bestätigt ist, dass die Daten in der eigenen Cloud bleiben: **als Zeile in der Assistent-Antwort der Oberfläche** (kein neues Overlay), z. B. „Antwort aus dem Handbuch · Daten bleiben in deiner Cloud“.
+* **Szene 06:** untere Kartenhälfte 3,8 s leer (Dokument kommt erst 62,2) → Zeitleiste tiefer setzen oder Dokument 0,6 s früher; Beschriftung „· BEISPIEL“ und kein „Technik = 0“-Versprechen (schmaler Rest bleibt).
+* **Ton:** Callback hat keinen Klangakzent (optional Dur-Motiv A–C♯–E); Marimba-Ping bei 44,3 liegt durch die 16tel-Rundung 50 ms **vor** dem Bild (aufrunden); Kick 4–8 s nach Gehör −1,5 dB (erst nach dem Drone-Fix beurteilen).
+* **Fenster 02–04 steht rechts über den Bildrand** (Menü-Pose 0,95): Absicht (Zoom auf das Menü) oder `search` auf 0,86 wie `shop`? Erst nach Ansehen entscheiden.
+* **Marke früher:** Wortmarke erscheint erst bei 68,5 s (nur Orange/Faden/Flagge davor) – optional „LINKADO“ am Fadenende.
+* **Formulierungen zu „Das fertige Portal“** als Erlebnis der Kolleg*innen („Für mich fühlt sich das nicht wie ein Ganzes an.“) statt Feststellung; vor Veröffentlichung kurz juristisch ansehen (vergleichende Werbung).
+* **Aufräumen:** toter Code `ASK` in `soundtrack.py`, veraltete Kommentare (act1.js „0–20 s“, „3.5“), ungenutzte Rasterwerte in der Pause.
 
-## D. Was ich bewusst so lasse
+## 4. Gestrichen / bewusst so lassen
 
-* **05 (Kette) steht 2 s still (55,5–57,5).** Das ist die Ruhe vor 06; Bewegung dort würde dem ruhigeren Takt widersprechen.
-* **02 ist die dichteste Szene (Titel + Untertitel + Menü + Tippen + Treffer in 4 s).** Mit dem Beat davor kommt das Auge ruhiger an. Erst ändern, wenn es nach dem nächsten Sehen noch hetzt (dann: Tippen 0,3 s früher, Treffer länger stehen).
-* **Schlussbild 4,5 s statisch** mit Lichtreflex: richtig so.
-* **Hook-Rhythmus** (0,25 · 1,0 · 2,0 · 2,5 s) und die 24 s von Akt I: passen jetzt.
-* **„SNEAK PEEK“-Chip** bleibt, bis die Funktionen freigegeben sind.
+* **A1-Konflikt mit dem harten Schnitt:** kein Problem (0,5 s Dunkel + Hall-Schwanz genügen, der Satz setzt auf dem ersten Herzschlag ein). Nicht früher als 22,4.
+* **Ton-Raster, Stereo, Pegelgrenzen:** unauffällig (Kicks σ 0,4 ms, Bass exakt mono, Spitze −2,4 dBFS, 0 Samples > −1 dBFS).
+* **Hook-Rhythmus, Dramaturgie-Reihenfolge, Titelsystem Akt II, Schlussbild:** tragen. Zu bewahren laut Gutachten: Lücke in „DAZWI|SCHEN“, „1 TAB“ als Spiegel zu „36 TABS“, Drop-Blitz, Callback als Klammer, ein einziger CTA.
+* **Szene 02** bleibt dicht – erst nach neuem Sehen ändern.
 
-## E. Vorgehen
+## 5. Entscheidungen (von euch)
 
-1. **A1–A6 und B7–B12 in einem Durchgang** (ca. 1–2 h Arbeit), ein Render (≈ 15 min), dann wieder 1080p zum Ansehen.
-2. **C nach Gehör:** Ihr hört 4–8 s und 22–24 s; ich ziehe nach, falls nötig.
-3. Danach ist die Fassung aus meiner Sicht **abnahmereif** – offen bleiben nur eure Entscheidungen (Du/Sie, Sprecher, Fotos, Cutdowns).
+* **D1 – „SNEAK PEEK“-Chip:** bis 66 s lassen (wie jetzt, nur weich ausblenden) · **ab 52 s ausblenden** (05/06 sind Konzeptgrafiken, keine Oberfläche) · in „VORSCHAU“ umbenennen? *(Mein Vorschlag: ab 52 s ausblenden.)*
+* **D2 – Gekürzte Alltagssätze** (S1): so in Ordnung?
+* **D3 – Datenschutz-Zeile in der Assistent-Antwort** (Welle 3): ja/nein?
+* **D4 – Du/Sie:** Die Oberfläche siezt, „Dein Arbeitstag“, die Support-Antwort und die Schlusszeile duzen – teils in derselben Szene. Die Schlusszeile ist euer Wortlaut („deinen“). Eine Vereinheitlichung auf „Sie“ wären 4 Strings, auf „du“ ca. 25 in der Oberfläche. Nach dem 5-Personen-Test entscheiden.
+* **D5 – Hook-Lautstärke:** nach Gehör (Vorschlag +4 dB, Rampe bis 8 s).
 
-## F. Worauf ihr beim nächsten Ansehen achten könnt
+## 6. Vorgehen
 
-* 22–24 s: Ist der Satz jetzt lesbar, und sitzt er auf dem Herzschlag?
-* 27–32 s: Fährt die Kamera in einer Linie (raus – halten – rein), ohne Pumpen, nichts beschnitten?
-* 51–53 s: Ist das Talk-Fenster weg, bevor die Kette kommt?
-* 65–68 s: Reicht die Zeit für „Alles funktioniert. Auch dazwischen.“?
-* Akt I: Lassen sich die drei Sätze je Moment lesen?
-* Musik 4–8 s: Trägt der halbe Kick, oder steht er zu allein?
+1. **Welle 1 + 2 in einem Durchgang** (M1–M7, S1–S15; ca. 2–3 h Arbeit), danach Ton neu rendern (M1/M3/M4/M5 betreffen ihn) und **ein** voller Render + Kodierung (≈ 25 min).
+2. Danach 1080p zum Ansehen; **Welle 3** nach eurem Gehör-/Seheindruck und den Entscheidungen D1–D5.
+3. **Abnahme-Check nach dem Render:** Kette 52–58 s baut sich auf (Glied 1/2/3 bei 53/54/55, Boom 56) · Talk-Fenster vor 52,4 weg · 22,5–24,0 s Satz lesbar und auf dem Herzschlag · 27–32 s Kamera in einer Linie, nichts beschnitten · 58–61 s Beschriftungen vollständig · Hook (0–4 s) hörbar.
