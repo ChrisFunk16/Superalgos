@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """
-Linkado – Werbefilm: synthetischer Soundtrack (ruhiger, melodischer Techno), 64,000 s.
+Linkado – Werbefilm: synthetischer Soundtrack (ruhiger, melodischer Techno), 76,000 s.
 
-Dramaturgie (siehe timeline.json):  CHAOS  →  KLARHEIT  →  KRISTALLISATION
-  Takte 1–10  (0–20 s)  drei Stimmen, die aneinander vorbeireden (verstimmt, polymetrisch, leise)
-  Takt 10     (18–20 s) harter Schnitt, Atemzug, Pad schwillt an, Rückwärts-Hall saugt in den Drop
-  Takte 11–26 (20–52 s) alles rastet ein (120 BPM, A-Moll), Schicht für Schicht entsteht der Groove
-  Takte 28–32 (54–64 s) Aufbau, Halbtakt-Drop-out, bei 56.0 Aufhellung nach A-Dur, Ausklang (Endbild 59–64 s)
+Dramaturgie (siehe timeline.json, 120 BPM, 1 Takt = 2 s, Zeiten werden aus der Timeline gelesen):
+  Takte 1–12  (0–24 s)  Akt I: Hook (nur Drone, Ticks, drei Marimba-Töne A–C–E), drei Alltagsmomente (Kick ab dem ersten Moment in halber Zeit,
+                        volle Zeit + Hats auf der Taktgrenze vor dem zweiten, offene Hats + Bass vor dem dritten), Überforderung (fünf Akkord-Stabs),
+                        harter Schnitt 22.0, Herzschlag-Kicks ab 22.5, Sog in den Drop (80 ms Vakuum vor 24.0)
+  Takt 13     (24 s)    Drop: Crash, Sonic Logo A–C–E–A (Moll), Groove startet sofort voll (A-Moll)
+  Takte 13–33 (24–66 s) Klarheit: Schicht für Schicht (Arpeggio erst luftig – auch im Geräte-Beat 28–32 s –, voll ab Szene 03, zweite Stimme ab 04/05),
+                        Kette 05: Glocken A–C–E bei den snap-Hits, Einrast-Boom beim lock-Hit (Kick setzt dort aus)
+  Takt 34–35  (66–68 s) Aufbau, Halbtakt-Drop-out, Aufhellung nach A-Dur beim Kristall (68.0)
+  Takte 35–38 (68–76 s) Finale: Sonic Logo A–C♯–E–A (Dur), Groove bis 72.0, danach nur Glocken und Pad, Ausklang
 
 Alle Zeitpunkte der Bild-Akzente (hits) werden zur Laufzeit aus ../timeline.json gelesen.
-Ausgabe: audio/soundtrack.wav (48 kHz / 16 Bit / Stereo / exakt 60,000 s), soundtrack.mp3, Analyse-Bilder.
+Ausgabe: audio/soundtrack.wav (48 kHz / 16 Bit / Stereo / Länge = timeline.json), soundtrack.mp3, Analyse-Bilder.
 Aufruf:  python3 audio/soundtrack.py           (rendert + analysiert)
          python3 audio/soundtrack.py --no-analysis
 """
@@ -276,8 +280,8 @@ def render():
     def soft_kick(level, cutoff): return filt(kick(1.0, 0.0, 0.5), 'lp', cutoff, 0.7, order=2) * level
     # Drone: reine Quinte A2 + E3 (hohl und ruhig, kein Sub), Filter öffnet sich über die ganzen 18 s
     n = idx(CUT); t = np.arange(n) / SR
-    dy = osc_tri(110.0, n) + 0.35 * osc_tri(110.0 * 1.002, n, 0.3) + osc_tri(164.81, n, 0.6) + 0.35 * osc_tri(164.81 * 0.998, n, 0.9)      # Dreieck: kaum Terz-Obertöne (kein C♯ gegen das C); Detune-Partner nur leise, sonst löschen sie sich aus (Loch bei 5–6 s)
-    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.85 * (0.475 + 0.525 * np.clip(t / OV, 0, 1) ** 1.3) * (0.88 + 0.12 * np.sin(2 * np.pi * 0.13 * t))
+    dy = osc_tri(110.0, n) + 0.15 * osc_tri(110.0 * 1.002, n, 0.3) + osc_tri(164.81, n, 0.6) + 0.15 * osc_tri(164.81 * 0.998, n, 0.9)      # Dreieck: kaum Terz-Obertöne (kein C♯ gegen das C); Detune-Partner nur leise, sonst löschen sie sich aus (Loch bei 5–6 s)
+    dy = sweep(dy, 'lp', 380, 1100, q=0.8, block=256, order=2, mode='lin') * 1.85 * (0.475 + 0.525 * np.clip(t / OV, 0, 1) ** 1.3) * (0.96 + 0.04 * np.sin(2 * np.pi * 0.13 * t))
     air = filt(noise(n), 'bp', 7500, 0.7) * 0.012 * (0.4 + 0.6 * np.clip(t / M3, 0, 1)) * (1 + 0.5 * np.sin(2 * np.pi * 0.2 * t))
     B['drone'].add(fade_edges(dy * 0.085, 0.8, 0.01), 0.0); B['drone'].add(air, 0.0, pan=0.0)
     for k in range(int(M3 / BEAT)):                             # Uhr-Ticks: im Hook nur jede zweite Zählzeit und leiser (ruhiger Start), danach jede Zählzeit
@@ -377,7 +381,6 @@ def render():
     n = idx(2.0); t = np.arange(n) / SR; sw = np.sin(2 * np.pi * 55.0 * t) * np.clip((t - 0.4) / 1.5, 0, 1) ** 2
     B['fx'].add(fade_edges(sw * 0.45, 0.01, 0.01), CUT, 1.0)
     nr = idx(1.3); rc = filt(noise(nr), 'hp', 3800, 0.7, order=2) * np.linspace(0, 1, nr) ** 2.4; B['fx'].add(fade_edges(np.stack([rc, np.roll(rc, 150)], axis=1) * 0.55, 0.01, 0.002), DROP - 1.3, 1.0)
-    ASK = [h['t'] for h in hits('text') if CUT < h['t'] < DROP][0]
     chord = pad_chord(CH['Am9']['stab'], 0.25, attack=0.01, release=0.2, cutoff=2400.0)
     suck = _suck_back(chord)
     B['fx'].add(suck, DROP - len(suck) / SR, 0.55)
@@ -397,7 +400,7 @@ def render():
     nbeats = int(DUR / BEAT)
     for k in range(nbeats):
         tk = k * BEAT
-        if tk >= DROP and kick_on(tk):
+        if tk >= DROP and kick_on(tk) and not any(abs(tk - h_['t']) < 1e-6 for h_ in hits('lock')):      # beim Einrasten der Kette steht der Boom frei
             lv = 0.82 + 0.18 * prog(tk, DROP, DROP + 16)
             B['kick'].add(kick(1.0 * lv, 0.0), tk, 1.0); kicks.append((tk, lv))
     # Bass: Pedal auf Akkordgrund, 8tel auf den Offbeats; Sub-Teppich am Anfang
@@ -508,13 +511,13 @@ def render():
             elif abs(tt - (CRY + 0.5)) < 0.01: B['bell'].add(bell(midi(88), 3.0, 1.0), tt, 0.80)
             else: B['bell'].add(tick(3200, 1.0), tt, 0.5); B['bell'].add(marimba(midi(93), 0.7), tt, 0.25)
         elif kd == 'lock':
-            B['bass'].add(sub_boom(55.0, 1.8, 1.0), tt, 0.5)
-            for nn in (67, 71, 74, 79): B['bell'].add(bell(midi(nn), 3.0, 0.7), tt + 0.01 * (nn % 3), 0.4)
+            B['bass'].add(sub_boom(55.0, 1.8, 1.0), tt, 0.9)
+            for nn in (67, 71, 74, 79): B['bell'].add(bell(midi(nn), 3.0, 0.7), tt + 0.01 * (nn % 3), 0.65)
         elif kd == 'click':
             var = h.get('variant', 'tap'); B['ui'].add(ui_tap(1.0 if var != 'nav' else 0.8), tt, 0.8)
             if var == 'add':    B['ui'].add(marimba(midi(76), 0.8, 0.30), tt + 0.03, 0.5); B['ui'].add(marimba(midi(81), 1.0, 0.40), tt + 0.10, 0.6)
             if var == 'toggle': B['ui'].add(ui_blip(midi(81), 0.08), tt + 0.04, 0.35); B['ui'].add(ui_blip(midi(88), 0.10), tt + 0.11, 0.35)
-        elif kd == 'swipe':  B['ui'].add(ui_swipe(0.42), tt - 0.05, 0.5)
+        elif kd == 'swipe':  B['ui'].add(ui_swipe(0.42), tt - 0.05, 0.85)
         elif kd == 'msg':    B['ui'].add(ui_tap(0.5), tt, 0.3); B['ui'].add(ui_blip(midi(81), 0.07), tt, 0.32); B['ui'].add(ui_blip(midi(88), 0.09), tt + 0.06, 0.32)
         elif kd == 'ring':
             for k_ in range(2): B['ui'].add(bell(midi(81 if k_ == 0 else 76), 0.9, 0.7, tail=0.3), tt + 0.5 * k_, 0.38)

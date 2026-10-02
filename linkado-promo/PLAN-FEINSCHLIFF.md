@@ -1,5 +1,7 @@
 # Plan „Feinschliff“ (v2, geprüft) – 76-s-Fassung
 
+> **Abnahme:** Sechs unabhängige Prüfer haben den neu gerenderten Film gegen diese Liste geprüft (22 von 33 Punkten sofort bestanden, 10 teilweise, 1 Kommentar-Rest). Die Restpunkte (Kettenglied 1 über der Überschrift und 0,3 s vor dem Ton, Beat-Untertitel zu kurz, Handy am Rand, Chat-Standzeit, graue Labels beim Schrumpfen, Zipfel hinter der „L“-Kachel, Portal-Blase/Fenster, Laptop-Sockel am Rand, Drone-Restschwankung, Boom der Kette) sind in einem zweiten Durchgang behoben.
+>
 > **Stand der Umsetzung:** Welle 1 (M1–M7) und Welle 2 (S1–S15) sind umgesetzt, dazu die Entscheidungen D1 („SNEAK PEEK“ ganz entfernt), D2 (gekürzte Sätze), D3 (Datenschutz-Zeile in der Assistent-Antwort) und D5 (Hook +4 dB). Offen: Welle 3 und D4 (Du/Sie).
 
 **Stand:** Die erste Fassung dieses Plans (13 Befunde) wurde von **8 unabhängigen Gutachten** geprüft: 5 Prüfer

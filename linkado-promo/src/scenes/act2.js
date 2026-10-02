@@ -83,7 +83,7 @@ export default function register(E) {
       const L = progressX(t);
       const y = lerp(THREAD_Y, BAR_Y, e), x0 = lerp(0, 110, e), x1 = lerp(1860, L, e);
       Object.assign(s.fill.style, { left: x0 + 'px', top: (y - 2) + 'px', width: Math.max(0, x1 - x0) + 'px', opacity: ovOut0(t) });
-      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: t < 57.9 + OB ? 1 : 1 - tw(t, 57.9 + OB, 58.25 + OB) });
+      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: (t < 57.9 + OB ? 1 : 1 - tw(t, 57.9 + OB, 58.25 + OB)) * (1 - clamp((x1 - (NODE_X(6) - 40)) / 30)) });   // Kopf verschwindet, sobald er die Ziel-Kachel erreicht (kein Zipfel dahinter)
       const ovOut = 1 - tw(t, 58.0 + OB, 58.7 + OB);
       s.track.style.opacity = e * ovOut; s.fade.style.opacity = e * (1 - tw(t, 56.6 + OB, 57.2 + OB));
       s.nodes.forEach((n, i) => {
@@ -93,7 +93,7 @@ export default function register(E) {
         n.style.borderColor = on ? 'var(--orange)' : 'rgba(31,37,50,.30)';
         n.style.opacity = e * (1 - tw(t, 57.6 + OB, 58.4 + OB)); n.style.transform = `scale(${pop})`;
       });
-      s.goal.style.opacity = e * (1 - tw(t, 58.2 + OB, 58.7 + OB)); s.goal.style.transform = `scale(${1 + 0.12 * Math.sin(t * 3)})`;
+      s.goal.style.opacity = e * (1 - tw(t, 58.0 + OB, 58.45 + OB)); s.goal.style.transform = `scale(${1 + 0.12 * Math.sin(t * 3)})`;
     },
   });
 
@@ -185,7 +185,7 @@ export default function register(E) {
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
-      const beatHead = K.headline(E, root, { num: '', size: 84, y: 300, lines: ['EIN <em>BROWSER.</em>', 'EIN LOGIN.', 'ALLE GERÄTE.'], delays: [0, 0.4, 0.8], subDelay: 0.5, sub: 'Dateien, Kalender, Chat – in einem Tab.' });
+      const beatHead = K.headline(E, root, { num: '', size: 84, y: 300, lines: ['EIN <em>BROWSER.</em>', 'EIN LOGIN.', 'ALLE GERÄTE.'], delays: [0, 0.4, 0.8], subDelay: 0.2, sub: 'Dateien, Kalender, Chat – in einem Tab.' });
       beatHead.el.querySelector('.a2-num').style.display = 'none';
       const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
       return { dev, beatHead, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
@@ -216,7 +216,7 @@ export default function register(E) {
       tf(s.capLk, { o: tw(t, 21.45, 21.85, ease.out2) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 21.45, 21.85, ease.ui)) });
 
       /* ---- Überschriften ---- */
-      s.heads[0].update(tg, 20.25, 24.6); s.beatHead.update(tg, 24.4, 27.2); s.heads[1].update(t, 24.0, 28.0); if (beat) s.heads[1].el.style.display = 'none'; s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
+      s.heads[0].update(tg, 20.25, 24.6); s.beatHead.update(tg, 24.4, 27.7); s.heads[1].update(t, 24.0, 28.0); if (beat) s.heads[1].el.style.display = 'none'; s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
       s.sub2.style.display = (t >= 37.95 && t < 44.0) ? 'block' : 'none'; tf(s.sub2, { y: 20 * (1 - tw(t, 38.0, 38.6, ease.ui)), o: tw(t, 38.0, 38.5, ease.out2) * (1 - tw(t, 43.6, 44.0, ease.in2)) });
 
       /* ---- Geräte-Beat „Ein Browser genügt“ ---- */
@@ -227,7 +227,7 @@ export default function register(E) {
         tf(D.chrome, { y: -14 * (1 - tw(u, 0.15, 0.95, ease.ui)), o: fin });
         const pp = tw(u, 1.0, 1.4, ease.outBack); tf(D.pill, { s: 0.4 + 0.6 * pp, o: clamp(pp * 2) });
         const ph = tw(u, 1.3, 2.0, ease.ui) * (1 - tw(u, BEATN - 1.2, BEATN - 0.7, ease.in2));
-        tf(D.phone, { x: 200 * (1 - ph), y: 110 * (1 - ph), r: 5 * (1 - ph), s: 1.25, o: clamp(ph * 1.6) });
+        tf(D.phone, { x: 90 * (1 - ph), y: 110 * (1 - ph), r: 5 * (1 - ph), s: 1.25, o: clamp(ph * 1.6) });
       }
 
       /* ---- 02: Übersicht – Widgets rasten ein, Suche mit Assistent ---- */
@@ -331,10 +331,10 @@ export default function register(E) {
       show(talk.chat, !inCall || t < 40.65); show(talk.call, inCall); talk.call.style.opacity = tw(t, 40.3, 40.6, ease.out2);
       talk.convEls.forEach((c, i) => { const p = tw(t, 38.05 + i * 0.06, 38.5 + i * 0.06, ease.ui); tf(c, { x: -14 * (1 - p), o: p }); });
       const pop = (el, t0, d = 0.4) => { const p = tw(t, t0, t0 + d, ease.ui); show(el, t >= t0 - 0.01); tf(el, { y: 26 * (1 - p), o: p, s: 0.97 + 0.03 * p }); };
-      pop(talk.m1, 38.4);
-      const typing = t >= 38.7 && t < 39.0;
+      pop(talk.m1, 38.15);
+      const typing = t >= 38.45 && t < 38.75;
       show(talk.dots, typing); if (typing) Array.from(talk.dots.querySelectorAll('i')).forEach((d, i) => { d.style.transform = `translateY(${(-5 * Math.max(0, Math.sin((t * 10) - i * 0.9))).toFixed(2)}px)`; });
-      pop(talk.nm, 39.0); pop(talk.av, 39.0); pop(talk.av1, 38.4); pop(talk.av3, 39.7); pop(talk.m2, 39.0); pop(talk.lk, 39.28); pop(talk.m3, 39.7);
+      pop(talk.nm, 38.75); pop(talk.av, 38.75); pop(talk.av1, 38.15); pop(talk.av3, 39.4); pop(talk.m2, 38.75); pop(talk.lk, 39.0); pop(talk.m3, 39.4);
       talk.callBtn.style.boxShadow = (t >= 40.0 && t < 40.4) ? '0 0 0 4px rgba(230,126,34,.45)' : '';
       // Anrufansicht: Warten → Mira tritt bei (41.4) → Jonas (42.3) → Auflegen (43.3)
       const sec = Math.floor(clamp(t - 40.4, 0, 99)); talk.timer.textContent = '00 : ' + String(sec).padStart(2, '0');

@@ -22,6 +22,7 @@ export function installBits(E) {
   .b1-q { position:absolute; display:flex; align-items:flex-end; gap:16px; }
   .b1-q .av { width:58px; height:58px; border-radius:50%; flex:none; overflow:hidden; box-shadow:0 6px 14px rgba(0,0,0,.4); }
   .b1-q .bd { padding:16px 26px 18px; border-radius:26px 26px 26px 6px; background:rgba(34,43,64,.97); border:1.5px solid rgba(255,255,255,.2); color:#F4EEE3; font:500 31px/1.28 var(--font-body); box-shadow:0 12px 28px rgba(0,0,0,.35); }
+  .b1-q .bd { text-wrap:balance; }
   .b1-q .nm { display:block; font:600 16px/1 var(--font-body); color:#9AA3B8; letter-spacing:.05em; margin-bottom:9px; text-transform:uppercase; }
   `);
 }
@@ -68,7 +69,6 @@ export function mini(E, kind, w = 300, hgt = 200) {
     case 'video':
       el.style.background = '#151A26'; el.append(h('div', { style: { position: 'absolute', left: 0, top: 0, right: 0, height: 28, background: '#0E121C' } }));
       ['#C9825A', '#5B7FA8', '#7B6CF6', '#3FA187'].forEach((col, i) => el.append(h('div', { style: { position: 'absolute', left: 10 + (i % 2) * ((w - 30) / 2 + 10), top: 38 + Math.floor(i / 2) * ((hgt - 86) / 2 + 8), width: (w - 30) / 2, height: (hgt - 86) / 2, borderRadius: 8, background: col, opacity: 0.85 } }, h('div', { style: { position: 'absolute', left: '50%', top: '28%', width: 26, height: 26, marginLeft: -13, borderRadius: '50%', background: 'rgba(0,0,0,.28)' } }))));
-      el.append(h('div', { style: { position: 'absolute', left: '50%', bottom: 8, width: 30, height: 30, marginLeft: -15, borderRadius: '50%', background: '#E5565B' } }));
       break;
     case 'ticket':
       el.append(hd('#14A8A8', 'Tickets', 'clipboard-list'), ...[['offen', '#E5565B'], ['in Arbeit', '#E8A33D'], ['offen', '#E5565B'], ['erledigt', '#3FBF8A']].map(([st, col], i) => h('div', { style: { position: 'absolute', left: 12, right: 12, top: 42 + i * 38, height: 30, display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #E6EAF1' } }, h('b', { style: { font: '700 12px/1 var(--font-body)', color: '#667' }, text: '#' + (4700 + i * 11) }), h('div', { class: 'bar', style: { width: [120, 96, 110, 80][i] } }), h('span', { style: { marginLeft: 'auto', padding: '4px 8px', borderRadius: 99, background: col, color: '#fff', font: '700 10.5px/1 var(--font-body)' }, text: st }))));

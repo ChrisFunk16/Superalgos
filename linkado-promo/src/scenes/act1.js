@@ -1,6 +1,6 @@
 // ============================================================
-// Act I – Chaos (0–20 s). Dunkel, kühl, bewusst „designtes“ Chaos.
-//   hook 0–4 (letztes Wort steht ≈ 1,3 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (+0.8)
+// Act I – Chaos (0–24 s). Dunkel, kühl, bewusst „designtes“ Chaos.
+//   hook 0–4 (letztes Wort steht ≈ 1,3 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (Satz 22,5, Faden/Glühen ab 23,0; post 0.8)
 //   Alle Zeiten kommen aus timeline.json (Karten, Pings, Shoves, Texte, Cut, Drop) – nur Feinheiten sind relativ dazu notiert.
 //   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
 // Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Alltagssätze – sie poppen auf den
@@ -173,7 +173,7 @@ export default function register(E) {
           h('div', { style: { height: 48, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 14 } }), h('div', { style: { height: 48, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 24 } }), h('div', { style: { height: 52, borderRadius: 10, background: '#7B6CF6' } }));
         ph.screen.append(panel);
         const hl = h('div', { class: 'abs', style: { left: 16, top: 122, width: 274, height: 396, borderRadius: 26, border: '4px solid #7B6CF6', boxShadow: '0 0 40px rgba(123,108,246,.6)', zIndex: 3 } }); ph.screen.append(hl);
-        const AROUND = [['files', 960, 210, 300, 200, -4], ['chat', 950, 560, 290, 200, 3], ['mail', 1596, 170, 290, 200, 4], ['sheet', 1604, 580, 280, 200, -3], ['ticket', 975, 810, 280, 190, -2]];
+        const AROUND = [['files', 960, 210, 300, 200, -4], ['chat', 985, 575, 290, 200, 3], ['mail', 1576, 170, 290, 200, 4], ['sheet', 1584, 580, 280, 200, -3], ['ticket', 975, 810, 280, 190, -2]];
         const wins = AROUND.map(([k, x, y, w, hh, r], i) => { const el = mini(E, k, w, hh); Object.assign(el.style, { left: x + 'px', top: y + 'px', zIndex: 2 }); g.append(el); return { el, r, i }; });
         return {
           update(t, t0, P) {
@@ -219,14 +219,14 @@ export default function register(E) {
           qpos: [[110, 380], [200, 540], [130, 700]], qw: [640, 700, 680], qrot: [-1, 0.8, -0.6], cam: { s0: 0, s1: 0.05, x0: 0, x1: -34, y0: 0, y1: -8 } },
         { id: 'opendesk', name: 'DAS FERTIGE PORTAL', size: 68, ok: 'OFFEN UND LOKAL GEDACHT.', acc: ACC.opendesk, visual: vPortal,
           quotes: [['tom', 'Geschäftsführung', 'Ein Login, schön. Dahinter ist alles anders.'], ['aylin', 'Büro', 'Mail, Chat, Dateien – alles sieht anders aus.'], ['ben', 'Buchhaltung', 'Es fühlt sich nicht wie ein Ganzes an.']],
-          qpos: [[110, 380], [190, 540], [130, 730]], qw: [660, 800, 620], qrot: [0.8, -0.8, 0.6], cam: { s0: 0.06, s1: 0, x0: 24, x1: 0, y0: 10, y1: 0 } },
+          qpos: [[110, 380], [150, 540], [130, 730]], qw: [660, 780, 620], qrot: [0.8, -0.8, 0.6], cam: { s0: 0.06, s1: 0, x0: 24, x1: 0, y0: 10, y1: 0 } },
         { id: 'nextcloud', name: 'DIE OFFENE BASIS', size: 76, ok: 'MÄCHTIG UND FREI.', acc: ACC.nextcloud, visual: vBase,
           quotes: [['ben', 'Buchhaltung', 'Das Update spielen wir natürlich selbst ein.'], ['lena', 'Projekte', 'Mächtig – aber im Alltag noch roh.'], ['tom', 'Geschäftsführung', 'Für die Kolleg*innen ist das einfach zu technisch.']],
-          qpos: [[110, 380], [200, 540], [120, 700]], qw: [650, 660, 700], qrot: [-0.8, 0.8, -0.6], cam: { s0: 0.015, s1: 0.015, x0: 44, x1: -44, y0: 0, y1: 0 } },
+          qpos: [[110, 380], [200, 540], [120, 700]], qw: [650, 660, 700], qrot: [-0.8, 0.8, -0.6], cam: { s0: 0.015, s1: 0.015, x0: 14, x1: -14, y0: 0, y1: 0 } },
       ];
       const groups = cfgs.map(mkGroup);
 
-      /* ---- Überforderung (14–18): fünf Blickwinkel – Login · Tool · Abo · KI · IT ---- */
+      /* ---- Überforderung (17,5–22): fünf Blickwinkel – Login · Tool · Abo · KI · IT ---- */
       const logins = [[120, 120, '#E5565B', 'Firmen-Konto'], [1480, 150, '#7B6CF6', 'Portal-Login'], [1360, 700, '#36A9E8', 'Cloud-Zugang'], [150, 700, '#8E97AE', 'VPN']].map(([x, y, c, ttl], k) => {
         const el = h('div', { class: 'a1-login', style: { borderTop: `6px solid ${c}` } }, h('h6', { text: ttl }), h('div', { class: 'f', text: 'Benutzername' }), h('div', { class: 'f', text: '••••••••' }), h('div', { class: 'bt', style: { background: c }, text: 'Anmelden' }));
         root.append(el); return { el, x, y, c, rot: [-6, 5, -4, 7][k] };
@@ -264,7 +264,7 @@ export default function register(E) {
       const thrFlag = h('span', { class: 'flag abs', style: { width: 28, height: 14, zIndex: 51 } });
       root.append(ask, thr, thrFlag);
       const dark = h('div', { class: 'abs', style: { inset: 0, background: '#0E131E', zIndex: 35 } }); root.append(dark);
-      // Sog in den Drop: der Faden glüht auf, ein orangenes Licht wächst aus der Linie, kurz vor 20.0 „atmet alles ein“
+      // Sog in den Drop: der Faden glüht auf, ein orangenes Licht wächst aus der Linie, kurz vor dem Drop (24.0) „atmet alles ein“
       const pGlow = h('div', { class: 'abs', style: { left: 60, top: THREAD_Y - 900, width: 1800, height: 1800, background: 'radial-gradient(closest-side, rgba(230,126,34,.55), rgba(230,126,34,.18) 45%, rgba(230,126,34,0) 100%)', zIndex: 36 } }); root.append(pGlow);
 
       return { stroke, pGlow, bgw, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, groups, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, ask, askLetters, thr, thrFlag, dark };
@@ -330,7 +330,7 @@ export default function register(E) {
       });
 
       /* ---- Überforderung (14–18): fünf Blickwinkel auf dem 3/16-Raster (0,75 s) ---- */
-      const B = TEXTS;                                                // 14.0 · 14.75 · 15.5 · 16.25 · 17.0
+      const B = TEXTS;                                                // 17.5 · 18.25 · 19.0 · 19.75 · 20.5
       s.logins.forEach((lg, k) => { const t0 = B[0] + k * 0.12, p = tw(t, t0, t0 + 0.4, ease.snap); show(lg.el, pre && t >= t0); tf(lg.el, { x: lg.x, y: lg.y + 8 * Math.sin(t * 2 + k), r: lg.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * (t > B[4] ? 1 : 0.92) }); });
       const tabsOn = pre && t >= B[1] - 0.05;
       show(s.tabBar, tabsOn); tf(s.tabBar, { y: -70 * (1 - tw(t, B[1] - 0.05, B[1] + 0.3, ease.ui)) });
@@ -342,7 +342,7 @@ export default function register(E) {
       const nAbo = Math.floor(lerp(2, 9, ease.out2(prog(t, B[2], B[2] + 0.7)))); s.aboCount.textContent = nAbo + ' ABOS';
       show(s.aboCount, pre && t >= B[2]); tf(s.aboCount, { x: 1390, y: 100, s: 0.7 + 0.3 * tw(t, B[2], B[2] + 0.3, ease.snap), o: tw(t, B[2], B[2] + 0.15) });
       s.ais.forEach((a, k) => { const t0 = B[3] + k * 0.09, p = tw(t, t0, t0 + 0.4, ease.snap); show(a.el, pre && t >= t0); tf(a.el, { x: a.x, y: a.y + 8 * Math.sin(t * 2.1 + k), r: a.rot, s: 0.7 + 0.3 * p, o: clamp(p * 2) * 0.96 }); });
-      const capP = tw(t, B[3] + 0.08, B[3] + 0.4, ease.snap); show(s.aiCap, pre && t >= B[3] + 0.06); tf(s.aiCap, { y: 24 * (1 - capP), s: 0.92 + 0.08 * capP, o: clamp(capP * 2) * (1 - tw(t, B[4] + 0.3, B[4] + 0.45)) });   // steht ≈ 1,0 s
+      const capP = tw(t, B[3] + 0.02, B[3] + 0.34, ease.snap); show(s.aiCap, pre && t >= B[3]); tf(s.aiCap, { y: 24 * (1 - capP), s: 0.92 + 0.08 * capP, o: clamp(capP * 2) * (1 - tw(t, B[4] + 0.12, B[4] + 0.27)) });   // steht ≈ 0,9 s, fast ganz vor der IT-Frage
       s.asks.forEach((b, k) => { const t0 = B[4] + k * 0.12, p = tw(t, t0, t0 + 0.3, ease.snap); show(b.el, pre && t >= t0); tf(b.el, { x: b.x, y: b.y, r: b.rot, s: 0.6 + 0.4 * p, o: clamp(p * 2) }); });
       // Text-Salven + Rollen-Pille („Blickwinkel“)
       const inBig = pre && t >= OV - 0.05;

@@ -1,6 +1,6 @@
 // ============================================================
 // Act II, Teil 2: 05 Ein stimmiges Gesamtpaket (44–50) · 06 Mehr Zeit fürs Wesentliche (50–58)
-//  05: drei Kettenglieder (Oberfläche · Erweiterungen · Betreuung) greifen ineinander – snap 41/42/43, lock 44
+//  05: drei Kettenglieder (Oberfläche · Erweiterungen · Betreuung) greifen ineinander – snap 53/54/55, lock 56 (lokal 45–48)
 //  06: ein Arbeitstag als Zeitleiste: Technik-Reibung schrumpft, Wesentliches wächst; gemeinsam im Dokument.
 //      Ab ~53.2 löst sich alles in Knoten auf (Übergabe ans Finale, siehe handoffDots).
 // ============================================================
@@ -71,14 +71,14 @@ export default function register(E) {
     },
     update(t, s) {
       s.head.update(t, 44.2, 50.0);
-      const OFF = [[-760, 0], [720, -70], [760, 90]], tS = SNAP;
+      const OFF = [[0, 340], [720, -70], [760, 90]], tS = SNAP;          // Glied 1 steigt von unten auf (nicht über die Überschrift)
       const pos = [];
       s.links.forEach((g, i) => {
-        const p = ease.snap(prog(t, tS[i] - 0.6, tS[i]));
+        const p = ease.snap(prog(t, tS[i] - 0.3, tS[i] + 0.3));       // erste Berührung (≈ 55 % der Strecke) liegt auf dem Hit
         const lockP = tw(t, LOCK, LOCK + 0.35, ease.snap);
         const dx = OFF[i][0] * (1 - p) + (i === 0 ? 16 * lockP : i === 2 ? -16 * lockP : 0), dy = OFF[i][1] * (1 - p) * (1 - p);
         const squash = 1 + 0.05 * Math.sin(Math.PI * clamp((t - tS[i]) / 0.22)) * (t > tS[i] ? 1 : 0) + 0.025 * Math.sin(Math.PI * clamp((t - LOCK) / 0.3)) * (t > LOCK ? 1 : 0);
-        const o = clamp((t - (tS[i] - 0.6)) / 0.12);
+        const o = clamp((t - (tS[i] - 0.3)) / 0.12);
         const breath = t > LOCK + 0.4 ? 1 + 0.006 * Math.sin((t - LOCK) * 2.4) : 1;
         const tr = `translate(${dx.toFixed(2)} ${dy.toFixed(2)}) translate(${s.CX[i]} ${s.CY}) scale(${(squash * breath).toFixed(4)}) translate(${-s.CX[i]} ${-s.CY})`;
         g.setAttribute('transform', tr); g.style.opacity = o;
@@ -117,6 +117,7 @@ export default function register(E) {
         { id: 'a3', g: 1, txt: 'WECHSELN', w0: 140, w1: 0 }, { id: 'a4', g: 1, txt: 'IT-FRAGE', w0: 110, w1: 0 }, { id: 'c2', g: 0, txt: 'AUSTAUSCH', w0: 70, w1: 220, need: 125, bg: '#E67E22', fg: '#fff' },
         { id: 'a5', g: 1, txt: 'SUCHEN', w0: 120, w1: 0 }, { id: 'c3', g: 0, txt: 'FOKUS', w0: 70, w1: 250, need: 80, bg: '#343D56', fg: '#fff' },
       ];
+      defs.forEach((d) => { if (d.need == null) d.need = Math.round(d.txt.length * 10.2 + 20); });          // graue Blöcke: Textbreite ≈ 10,2 px je Zeichen + Innenabstand
       const blocks = defs.map((d) => { const el = h('div', { class: 'a2b-blk ' + (d.g ? 'a2b-gray' : ''), style: d.g ? {} : { background: d.bg, color: d.fg } }, h('span', { text: d.txt })); card.append(el); return { ...d, el }; });
       // Legende
       card.append(h('div', { class: 'abs', style: { left: 60, top: 258, display: 'flex', gap: 34, alignItems: 'center', font: '700 16px/1 var(--font-body)', letterSpacing: '.1em', color: '#6B6F78' } },
@@ -158,7 +159,7 @@ export default function register(E) {
         const e = ease.uiInOut(prog(t, st, st + 1.8));
         const w = lerp(b.w0, b.w1, e);
         Object.assign(b.el.style, { left: x + 'px', width: Math.max(0, w - 4) + 'px', opacity: pin * (b.g ? clamp(1 - (e - 0.7) / 0.3) : 1), display: w < 3 ? 'none' : 'flex' });
-        b.el.firstChild.style.opacity = b.g ? clamp((w - 40) / 60) : clamp((w - b.need) / 40);   // Beschriftung erst, wenn sie ganz hineinpasst
+        b.el.firstChild.style.opacity = clamp((w - b.need) / (b.g ? 16 : 40));   // Beschriftung nur, solange sie ganz hineinpasst
         x += w;
       });
       // Dokument + Cursor

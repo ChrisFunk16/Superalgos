@@ -657,7 +657,7 @@ export function buildUI(E) {
     const nm = h('div', { class: 'ui-tname t', text: 'Mira Koch · Linkado Support', style: { top: 146 } });
     const av = h('span', { class: 'ui-tmav', style: { top: 164, background: 'none' }, html: avatarHTML('mira', 34) });
     const dots = h('div', { class: 'ui-tdots', style: { top: 164 } }, h('i'), h('i'), h('i'));
-    const m2 = msg('in', 164, 'Hallo Anna! Das geht in drei Schritten – hier ist dein Einladungslink.', '09:42');
+    const m2 = msg('in', 164, 'Hallo Anna! Hier ist dein Einladungslink.', '09:42');
     const lk = h('div', { class: 'ui-tlink', style: { top: 278 } }, h('div', { class: 'ic', html: icon('link', 20, 'currentColor', 2.2) }), h('div', {}, h('b', { class: 't', text: 'Einladung · Team Vertrieb' }), h('small', { class: 't', text: 'Link gültig 7 Tage' })), h('div', { class: 'cp' }, ic('copy', 14, '#171A22', 2.2), T_('', 'Kopieren')));
     const m3 = msg('out', 366, 'Super, danke! Können wir kurz sprechen?', '09:43');
     const av3 = h('span', { class: 'ui-tmav', style: { top: 372, left: 'auto', right: 14, background: 'none' }, html: avatarHTML('anna', 34) });

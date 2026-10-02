@@ -22,7 +22,7 @@ export function installDevices(E) {
   .dv-plus { position:absolute; left:470px; top:14px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#7D8598; }
   .dv-url { position:absolute; left:0; top:48px; width:1480px; height:48px; background:#fff; border-top:1.5px solid #D5D9E3; display:flex; align-items:center; gap:14px; padding:0 22px; color:#7D8598; }
   .dv-url .pill { flex:none; display:flex; align-items:center; gap:10px; width:720px; height:34px; border-radius:17px; background:#EEF0F5; padding:0 16px; font:500 20px/1 var(--font-body); color:#2B3345; }
-  .dv-one { position:absolute; right:26px; top:6px; height:42px; padding:0 18px; border-radius:21px; background:var(--orange); color:#fff; font:700 22px/42px var(--font-body); letter-spacing:.1em; box-shadow:0 8px 18px rgba(230,126,34,.4); }
+  .dv-one { position:absolute; right:26px; top:4px; height:46px; padding:0 20px; border-radius:23px; background:var(--orange); color:#fff; font:700 26px/46px var(--font-body); letter-spacing:.1em; box-shadow:0 8px 18px rgba(230,126,34,.4); }
   .dv-ph { font-family:var(--font-body); color:#1F2532; }
   .dv-tab .fav svg, .dv-ph .fav svg { display:block; width:100%; height:100%; }
   `);
@@ -48,7 +48,7 @@ const HOME = (E, h, icon) => {
   const card = (top, ico, col, t1, t2) => h('div', { class: 'abs', style: { left: 16, top, right: 16, height: 80, borderRadius: 18, background: '#fff', boxShadow: '0 6px 16px rgba(31,37,50,.1)', display: 'flex', alignItems: 'center', gap: 14, padding: '0 16px' } },
     h('span', { style: { width: 46, height: 46, borderRadius: 14, background: col, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }, html: icon(ico, 24, '#fff', 2.2) }),
     h('div', {}, h('div', { text: t1, style: { font: '700 16px/1.15 var(--font-body)' } }), h('div', { text: t2, style: { font: '500 13px/1.3 var(--font-body)', color: '#6B7385', marginTop: 4 } })));
-  sc.push(card(330, 'calendar', '#E67E22', '10:00 · Teamtermin', 'Besprechungsraum 2 · 60 Min.'));
+  sc.push(card(330, 'calendar', '#E67E22', '10:00 · Teamtermin', 'Raum 2 · 60 Min.'));
   sc.push(card(420, 'file-text', '#2F6FDE', 'Angebot Hartmann', 'Karte fällig · Deck'));
   // App-Reihe
   const apps = [['folder', '#36A9E8', 'Dateien'], ['calendar', '#E5565B', 'Kalender'], ['message-square', '#7B6CF6', 'Talk'], ['users', '#1E9E6A', 'Kontakte']];
