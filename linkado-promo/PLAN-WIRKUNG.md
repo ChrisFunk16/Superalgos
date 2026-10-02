@@ -14,7 +14,7 @@ Alles bleibt überprüfbar (keine erfundenen Zahlen, keine Fake-Testimonials, ke
 | Orange-Strich in der Lücke von „DAZWI SCHEN“ | umgesetzt (`act1.js`) |
 | Callback „Alles funktioniert. *Auch* dazwischen.“ vor dem Kristall | umgesetzt (`finale.js`) |
 | Kette (05) mit den Symbolen aus 02/03/04 | umgesetzt (`act2b.js`) |
-| Rollen-Pillen mit Haken (Teams · IT · Geschäftsführung; Datenschutz bewusst offen) | umgesetzt (`kit.js` `rolePill`, 03/04/05) |
+| Rollen-Pillen mit Haken (Teams · IT · Geschäftsführung) | probeweise umgesetzt, **wieder entfernt** (störten das Bild) – bleibt als Idee, nur falls ein ruhigerer Ort gefunden wird |
 | Lesezeit Szene 02 | durch den neuen Geräte-Beat davor entschärft (kein Umbau nötig) |
 | Erfolgs-Chime = Sonic-Logo-Ton | nicht nötig – der Chime (E6 → A6) *ist* bereits der Schluss des Sonic Logos |
 | **Neu:** Geräte-Beat „Ein Browser genügt“ (Zoom aus dem Gerät, 1 Tab, Handy) | umgesetzt (`devices.js`, `act2.js`) |

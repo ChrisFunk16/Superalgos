@@ -67,11 +67,10 @@ export default function register(E) {
       const grp = h('div', { class: 'abs', style: { inset: 0 } }, glow, svg, ...rings, ...icons, ...labs);
       root.append(grp);
       const head = K.headline(E, root, { num: '05', size: 80, y: 330, lines: ['EIN STIMMIGES', '<em>GESAMTPAKET.</em>'], sub: 'Oberfläche, Erweiterungen und Betreuung greifen ineinander.' });
-      const pill = K.rolePill(E, head, { ico: 'banknote', role: 'GESCHÄFTSFÜHRUNG', said: 'Noch ein Abo.' });
-      return { pill, CX, CY, W, H, links, o0, o1, shineRect, glow, rings, icons, labs, grp, head, svg };
+      return { CX, CY, W, H, links, o0, o1, shineRect, glow, rings, icons, labs, grp, head, svg };
     },
     update(t, s) {
-      s.head.update(t, 44.2, 50.0); s.pill.update(t, 46.2);
+      s.head.update(t, 44.2, 50.0);
       const OFF = [[-760, 0], [720, -70], [760, 90]], tS = SNAP;
       const pos = [];
       s.links.forEach((g, i) => {

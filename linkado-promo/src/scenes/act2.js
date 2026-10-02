@@ -188,11 +188,10 @@ export default function register(E) {
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
-      const pills = [K.rolePill(E, heads[2], { ico: 'users', role: 'TEAMS', said: 'Noch ein Tool.' }), K.rolePill(E, heads[3], { ico: 'headphones', role: 'IT', said: 'Noch eine Frage an die IT.' })];
       const beatHead = K.headline(E, root, { num: '', size: 84, y: 300, lines: ['EIN <em>BROWSER.</em>', 'EIN LOGIN.', 'ALLE GERÄTE.'], delays: [0, 0.4, 0.8], subDelay: 0.5, sub: 'Ein Tab genügt: Linkado läuft im Browser – auf jedem Gerät.' });
       beatHead.el.querySelector('.a2-num').style.display = 'none';
       const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
-      return { pills, dev, beatHead, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      return { dev, beatHead, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s, _E, tGlobal) {
@@ -220,7 +219,6 @@ export default function register(E) {
       tf(s.capLk, { o: tw(t, 21.45, 21.85, ease.out2) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 21.45, 21.85, ease.ui)) });
 
       /* ---- Überschriften ---- */
-      s.pills[0].update(t, 29.5); s.pills[1].update(t, 35.2, 37.9);
       s.heads[0].update(tg, 20.25, 24.6); s.beatHead.update(tg, 24.4, 26.9); s.heads[1].update(t, 24.0, 28.0); if (beat) s.heads[1].el.style.display = 'none'; s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
       s.sub2.style.display = (t >= 37.95 && t < 44.0) ? 'block' : 'none'; tf(s.sub2, { y: 20 * (1 - tw(t, 38.0, 38.6, ease.ui)), o: tw(t, 38.0, 38.5, ease.out2) * (1 - tw(t, 43.6, 44.0, ease.in2)) });
 
