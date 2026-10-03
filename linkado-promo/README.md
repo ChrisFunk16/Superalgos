@@ -36,13 +36,17 @@ timeline.json            Zeitplan: 39 Takte à 2 s (120 BPM), Szenen und „hits
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
-  scenes/act1.js           Chaos: Hook (4 s), drei Büro-Szenen (je 4,5 s: Tom, Lena, Anna – ohne Produkt-/Firmennamen, auf den Bildschirmen nur angedeutete Standardprogramme), Überforderung in fünf Blickwinkeln
-  scenes/office.js         die drei Büro-Szenen (Tom: Zusatzkosten + Telefon · Lena: Login, dahinter alles anders · Anna: Tab-Flut, Haareraufen)
-  scenes/figures.js        große Büro-Figuren (Oberkörper mit zwei Armen, Zwei-Knochen-IK, Mimik) aus den Porträts der Oberfläche
-  scenes/transition.js     Übergang 22,5–30 s in Annas Büro: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy, Zoom in den Bildschirm
+  scenes/act1.js           Chaos: Hook (4 s) und Überforderung in fünf Blickwinkeln (die Büro-Szenen 4–17,5 s liegen im 3D-Büro, office3d.js)
+  scenes/office3d.js       3D-Büro in Vogelperspektive (three.js, WebGL): Akt I mit Tom, Lena, Anna (je 4,5 s, Kamera gleitet von Platz zu Platz) und der Übergang 22,5–30 s (nachts, Zoom in den Bildschirm); Bildschirme sind DOM, per matrix3d auf die 3D-Monitore gelegt
+  scenes/o3d/world.js      das Büro: Boden, Rückwand mit Nachtfenster, sieben Arbeitsplätze (drei Hauptfiguren + vier Kolleg*innen), Möbel, Pflanzen, Licht
+  scenes/o3d/figure.js     3D-Figuren (Kugeln/Zylinder, erfundene Personen): Rig mit Arm-IK, Mimik (Brauen, Augen, verformbarer Mund), Blick, Haare mit Nachschwingen
+  scenes/o3d/actors.js     Spielanweisungen je Person, gebunden an die hits (Tippen, Schreck, Telefonat, Schulterzucken, Haareraufen, Kopf in den Händen, Klick, Lächeln)
+  scenes/o3d/anim.js       Animations-Werkzeuge (Easing, Spuren, Atmen, Blinzeln, Blickwechsel, Sprechen); domquad.js = DOM auf 3D-Flächen (Homographie)
+  vendor/three.module.js   three.js (MIT-Lizenz, siehe vendor/three-LICENSE.txt)
+  scenes/transition.js     Übergang 22,5–30 s: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy (die Oberfläche liegt auf dem 3D-Monitor; die Kamera landet exakt in Szene 01)
   scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
   scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
-  scenes/devices.js        Geräte im Übergang: Laptop-Rahmen, Browser-Leiste (36 Tabs → 1 Tab), Handy mit derselben Oberfläche
+  scenes/devices.js        Oberflächen im Übergang: Browser-Leiste (36 Tabs → 1 Tab) und Handy mit derselben Oberfläche (das Gehäuse zeichnet das 3D-Büro)
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
 audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
@@ -56,6 +60,7 @@ build.sh                 komplette Produktion (Ton → Bilder → ffmpeg)
 ```bash
 npm install                          # Playwright, Schriften, Icons (Chromium liegt unter /opt/pw-browsers)
 pip install numpy scipy soundfile matplotlib pyloudnorm
+# WebGL für das 3D-Büro läuft im Headless-Chromium von selbst (SwiftShader, Software-Rendering) – keine GPU nötig; 3D-Bilder dauern ≈ 3 s je 4K-Bild
 bash build.sh                        # 4K + 1080p nach out/
 # oder einzeln:
 python3 audio/soundtrack.py          # Ton (≈ 30 s) inkl. Spektrogramm

@@ -7,7 +7,6 @@
 // ping-hits der timeline.json. Linkado-Orange kommt hier kaum vor: nur der erste Faden-Strich im Hook und Faden+Flagge in der Pause.
 // ============================================================
 import { mini } from './act1-bits.js';
-import { buildVignettes } from './office.js';
 
 export default function register(E) {
   const { h, tf, tw, ease, prog, clamp, lerp, show, rng, icon } = E;
@@ -110,8 +109,7 @@ export default function register(E) {
       // die roten Zähler sind Benachrichtigungen der ersten drei Hintergrund-Fenster (Posteingang · Team-Chat · Kalender)
       const hookBadges = [[0, '3'], [1, '12'], [2, '7']].map(([k, n]) => { const b = h('div', { class: 'a1-badge', text: n, style: { margin: '-22px 0 0 -22px', zIndex: 3 } }); root.append(b); return { el: b, k, x: 0, y: 0 }; });
 
-      /* ---- Drei Büro-Szenen (statt der Fenster-Momente): Tom · Lena · Anna – siehe office.js ---- */
-      const offices = buildVignettes(E, root, { m365: { T0: T0.m365, PING: PING.m365, SHOVE: SHOVE.m365 }, opendesk: { T0: T0.opendesk, PING: PING.opendesk, SHOVE: SHOVE.opendesk }, nextcloud: { T0: T0.nextcloud, PING: PING.nextcloud, SHOVE: SHOVE.nextcloud } });
+      /* ---- Die drei Büro-Szenen (4–17,5 s) liegen im 3D-Büro (office3d.js, eigene Szene über diesem Hintergrund) ---- */
 
       /* ---- Überforderung (17,5–22): fünf Blickwinkel – Login · Tool · Abo · KI · IT ---- */
       const logins = [[120, 120, '#E5565B', 'Firmen-Konto'], [1480, 150, '#7B6CF6', 'Portal-Login'], [1360, 700, '#36A9E8', 'Cloud-Zugang'], [150, 700, '#8E97AE', 'VPN']].map(([x, y, c, ttl], k) => {
@@ -147,7 +145,7 @@ export default function register(E) {
       /* ---- Pause: 22,0–22,5 Schwarz; danach übernimmt das Büro (a2-ui) mit der Cliffhanger-Frage; Faden und Glühen liegen im Overlay (a2-ov) ---- */
       const dark = h('div', { class: 'abs', style: { inset: 0, background: '#0E131E', zIndex: 35 } }); root.append(dark);
 
-      return { stroke, offices, bgw, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, dark };
+      return { stroke, bgw, glow, grid, chips, hook, w1, w2, w3, w4, hl, hr, hookBadges, logins, tabBar, tabs, tabCount, toolTiles, aboTags, aboCount, ais, aiCap, asks, vig, bigs, roles, dark };
     },
 
     update(t, s) {
@@ -187,9 +185,6 @@ export default function register(E) {
       const hx = tw(t, T_HOOK - 0.2, T_HOOK, ease.in3);                // harter Schnitt auf den Karten-Schlag
       show(s.hook, t < T_HOOK + 0.02); tf(s.hook, { y: -50 * hx, o: 1 - hx });
       s.hookBadges.forEach((b, k) => { const t0 = HP[k], p = tw(t, t0, t0 + 0.45, ease.snap), W = s.bgw[b.k]; b.x = W.px + W.w - 14; b.y = W.py + 8; show(b.el, t >= t0 && t < T_HOOK + 0.02); tf(b.el, { x: b.x, y: b.y, s: 0.3 + 0.7 * p, o: clamp(p * 2) * (1 - hx) }); });
-
-      /* ---- Büro-Szenen ---- */
-      if (pre) s.offices.forEach((V) => V.update(t));
 
       /* ---- Überforderung (14–18): fünf Blickwinkel auf dem 3/16-Raster (0,75 s) ---- */
       const B = TEXTS;                                                // 17.5 · 18.25 · 19.0 · 19.75 · 20.5

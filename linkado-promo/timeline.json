@@ -44,12 +44,14 @@
     { "t": 4.75,    "kind": "ping",    "voice": 1, "note": "Satz 1 mit Profilbild" },
     { "t": 5.375, "kind": "ping",    "voice": 1, "note": "Satz 2" },
     { "t": 6.0, "kind": "ping",    "voice": 1, "note": "Satz 3" },
+    { "t": 8.0,    "kind": "glide",   "end": 8.95, "note": "Kamera gleitet im 3D-Büro von Toms zu Lenas Platz (leises Wischen)" },
     { "t": 8.25,   "kind": "shove",   "voice": 1, "note": "Moment wird nach hinten geschoben" },
 
     { "t": 8.5,    "kind": "card",    "voice": 2, "note": "Alltagsmoment „Das fertige Portal“ (Ton C)" },
     { "t": 9.25,    "kind": "ping",    "voice": 2 },
     { "t": 9.875, "kind": "ping",    "voice": 2 },
     { "t": 10.5, "kind": "ping",    "voice": 2 },
+    { "t": 12.5,  "kind": "glide",   "end": 13.45, "note": "Kamera gleitet von Lenas zu Annas Platz" },
     { "t": 12.75, "kind": "shove",   "voice": 2 },
 
     { "t": 13.0,  "kind": "card",    "voice": 3, "note": "Alltagsmoment „Die offene Basis“ (Ton E)" },

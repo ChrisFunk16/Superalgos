@@ -3,7 +3,7 @@
 Linkado – Werbefilm: synthetischer Soundtrack (ruhiger, melodischer Techno), 78,000 s.
 
 Dramaturgie (siehe timeline.json, 120 BPM, 1 Takt = 2 s, Zeiten werden aus der Timeline gelesen):
-  Takte 1–11  (0–22 s)  Akt I: Hook (nur Drone, Ticks, drei Marimba-Töne A–C–E), drei Büro-Szenen (Kick ab der ersten in halber Zeit, volle Zeit + Hats auf der Taktgrenze
+  Takte 1–11  (0–22 s)  Akt I: Hook (nur Drone, Ticks, drei Marimba-Töne A–C–E), drei Büro-Szenen im 3D-Büro (Kameragleiten 8,0 / 12,5 s: leises Wischen) (Kick ab der ersten in halber Zeit, volle Zeit + Hats auf der Taktgrenze
                         vor der zweiten, offene Hats + Bass vor der dritten), Überforderung (fünf Akkord-Stabs), harter Schnitt 22.0
   Takte 12–15 (22–30 s) Übergang in Annas Büro: leiser Herzschlag je Sekunde (auf x,5 s), Frage-Intonation 23,2–23,7, Pad Am9 → bei Annas Klick (25,0) E-sus (Dominante, offen),
                         Falt-Swoosh, drei Marimba-Töne A5 · H5 · E6 auf den Aussagen, Lichtwelle 27,5 (+ „Ah“-Ton E6), Sog 29,0–29,92 (Herzschlag beschleunigt, Riser,
@@ -475,6 +475,9 @@ def render():
     qq = np.sin(2 * np.pi * np.cumsum(fq) / SR) * np.minimum(1, tg_ / 0.04) * np.where(tg_ < Q1 - Q0, 0.30, 0.30 * np.exp(-(tg_ - (Q1 - Q0)) / 0.45))
     A1V.add(fade_edges(np.stack([qq, qq], axis=1), 0.004, 0.02), Q0, 0.30, pan=0.0)
     A1V.add(bell(midi(83), 1.0, 0.7, tail=0.4), Q1, 0.14)
+    # Kamera-Gleiten im 3D-Büro (8,0 und 12,5 s): ganz leises Wischen, damit die Fahrt von Platz zu Platz hörbar mitgeht
+    for h_ in HITS:
+        if h_['kind'] == 'glide' and h_['t'] < CUT: B['ui'].add(ui_swipe(h_['end'] - h_['t'], 0.5), h_['t'], 0.32)
     # Bild-Akzente des Übergangs (aus der Timeline): Klick · Tabs falten · drei Aussagen · Lichtwelle
     CHIP_N = iter([81, 83, 88])                                                        # A5 · B5 · E6
     for h_ in HITS:

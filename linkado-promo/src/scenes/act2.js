@@ -10,7 +10,8 @@
 // ============================================================
 import { buildUI, LAY } from '../ui.js';
 import { buildDevices } from './devices.js';
-import { buildTransition, transitionCam, T as TR } from './transition.js';
+import { buildTransition, T as TR } from './transition.js';
+import { matrixFor } from './o3d/domquad.js';
 
 export const THREAD_Y = 700;   // Höhe des orangenen Fadens in der Pause (Act I) – hier übernimmt er
 
@@ -180,23 +181,32 @@ export default function register(E) {
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
       const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
-      const tr = buildTransition(E, { root, cam, dev, raw, win }), transCam = transitionCam(E, POSE.full);
-      return { root, tr, transCam, dev, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      const tr = buildTransition(E, { root, cam, dev, raw, win });
+      root.insertBefore(dev.phone, root.children[1] || null); Object.assign(dev.phone.style, { left: '0px', top: '0px', transformOrigin: '0 0', display: 'none' });     // das Handy hängt am 3D-Handy (matrix3d), nicht am Fenster
+      return { root, tr, dev, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s, _E, tGlobal) {
       const { cam, outer, raw, win, dash, shop, sup, talk, menu, dim, gridTile, cur } = s;
       const pre = tGlobal < TR.drop;                                   // Übergang (Annas Büro) – vor dem Drop
 
-      /* ---- Kamera: Übergangs-Zoom bis zum Drop (landet exakt in „full“), danach die Szenen-Fahrten; Nachfedern ≈ 4,5 % ---- */
-      let c = pre ? s.transCam(tGlobal) : camAt(t);
-      if (!pre) {
+      /* ---- Kamera: im Übergang liegt die Oberfläche per matrix3d auf dem 3D-Monitor (Kamera des 3D-Büros, landet exakt in „full“), danach die Szenen-Fahrten; Nachfedern ≈ 4,5 % ---- */
+      let c;
+      if (pre && E.o3d && E.o3d.ready) {
+        const T3 = E.o3d.trans(tGlobal);
+        cam.style.transform = matrixFor(0, -96, 1480, 996, T3.quad.map((p) => [p[0], p[1]]));
+        c = { s: T3.scale, px: 0, py: 0 };
+        const pq = T3.phoneQuad, ph = s.dev.phone;
+        if (pq && (pq[1][0] - pq[0][0]) * (pq[2][1] - pq[0][1]) - (pq[2][0] - pq[0][0]) * (pq[1][1] - pq[0][1]) > 0 && tGlobal >= TR.in) { ph.style.display = 'block'; ph.style.transform = matrixFor(0, 0, 330, 680, pq.map((p) => [p[0], p[1]])); } else ph.style.display = 'none';
+      } else {
+        s.dev.phone.style.display = 'none';
+        c = camAt(t);
         const u = clamp((tGlobal - TR.drop) / 1.1), k = 1 + 0.045 * 1.6 * Math.sin(Math.PI * u) * (1 - u);
         if (u < 1) { const cx = c.px + 740 * c.s, cy = c.py + 450 * c.s, s2 = c.s * k; c = { s: s2, px: cx - 740 * s2, py: cy - 450 * s2 }; }
+        cam.style.transform = `translate(${c.px.toFixed(2)}px,${c.py.toFixed(2)}px) scale(${c.s.toFixed(4)})`;
       }
-      cam.style.transform = `translate(${c.px.toFixed(2)}px,${c.py.toFixed(2)}px) scale(${c.s.toFixed(4)})`;
       const wo = tw(t, 43.55, 44.05, ease.io2);
-      outer.style.opacity = 1 - wo;
+      outer.style.opacity = ((pre ? tw(tGlobal, TR.in, TR.in + 0.5, ease.out2) : 1) * (1 - wo)).toFixed(3);
       outer.style.transform = `translateY(${(-30 * wo).toFixed(2)}px)`;
       s.tr.update(tGlobal, c.s);
 

@@ -7,12 +7,13 @@ const E = createEngine(tl, stage);
 E.kit = kit;
 
 // Szenen-Module (jedes registriert seine Szenen selbst). Fehlende Module werden übersprungen.
-const MODULES = ['./scenes/act1.js', './scenes/act2.js', './scenes/act2b.js', './scenes/finale.js'];
+const MODULES = ['./scenes/act1.js', './scenes/office3d.js', './scenes/act2.js', './scenes/act2b.js', './scenes/finale.js'];
 for (const m of MODULES) {
   try { (await import(m)).default(E); }
   catch (e) { console.warn('Szenenmodul nicht geladen:', m, e && e.message); }
 }
 await E.start();
+window.__E = E;                       // Debug-Zugriff (Konsole, Prüfskripte)
 
 // Vorschau im normalen Browser:  index.html?t=21.5  (Standbild)  |  ?play  (Echtzeit)  |  ?fit  (skaliert)  |  ?debug
 const q = new URLSearchParams(location.search);
