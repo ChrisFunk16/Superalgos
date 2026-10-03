@@ -72,7 +72,7 @@
 
     { "t": 24.0,  "kind": "drop",    "note": "Drop: Lichtblitz, Druckwellen, Crash, Sonic Logo (Moll), Groove startet sofort voll (Kick, Bass, Hats, Clap)" },
     { "t": 24.25,"kind": "text",    "note": "Nextcloud als Basis." },
-    { "t": 24.2,  "kind": "orbit",   "end": 25.4, "note": "Kamera-Schwenk: Text und Fenster schwingen aus Schräge und Nähe in die frontale Ansicht (Perspektivwechsel)" },
+    { "t": 24.1,  "kind": "orbit",   "end": 25.7, "note": "Kamera-Schwenk (sanft): Text und Fenster gleiten aus leichter Schräge in die frontale Ansicht (Perspektivwechsel)" },
     { "t": 25.0,  "kind": "whoosh",  "end": 26.2, "note": "Kristall-Front verwandelt das graue Fenster in das Linkado-Erlebnis" },
     { "t": 25.5,  "kind": "text",    "note": "Linkado als Benutzererlebnis." },
 
