@@ -15,7 +15,7 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | 8,5–13 | Das fertige Portal (Handy-Login, fünf Oberflächen) | „Offen und lokal gedacht – aber oft nur Oberfläche und Anmeldung. Die Werkzeuge bleiben einzeln.“ |
 | 13–17,5 | Die offene Basis (Laptop, Wireframe) | „Mächtig und frei – aber die Pflege bleibt bei dir, und im Alltag ist es roh.“ |
 | 17,5–22 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine IT-Frage.“ |
-| 23–24 | Pause | „Es geht auch anders.“ |
+| 22,5–24 | Pause / Cliffhanger | „Keine Lust mehr, sich damit herumzuärgern?“ (die Antwort ist der Drop, kein Text) |
 | 24–28 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
 | 28–32 | Ein Browser genügt | „Ein Browser. Ein Login. Alle Geräte.“ (oder ohne Sprache: nur die Zeilen im Bild) |
 | 32–36 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |

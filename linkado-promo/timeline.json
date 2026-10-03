@@ -66,11 +66,11 @@
     { "t": 19.75,"kind": "text",    "note": "Blickwinkel 4 · Datenschutz: Noch eine KI." },
     { "t": 20.5,  "kind": "text",    "note": "Blickwinkel 5 · IT: Noch eine IT-Frage." },
     { "t": 22.0,  "kind": "cut",     "note": "harter Schnitt: Chaos-Stimmen stoppen, nur Hall-Schwanz + tiefer Puls bleiben" },
-    { "t": 22.5,  "kind": "text",    "note": "Es geht auch anders. – der Satz setzt auf dem ersten Herzschlag ein" },
+    { "t": 22.5,  "kind": "text",    "note": "Cliffhanger-Frage „Keine Lust mehr, sich damit herumzuärgern?“ – setzt auf dem ersten Herzschlag ein; Frage-Intonation 23.2–23.7, endet unaufgelöst auf der Dominante, der Drop (24.0) ist die Antwort" },
     { "t": 23.0,  "kind": "build",   "end": 23.92, "note": "Sog in den Drop: Herzschlag, A–C–E-Motiv, Rim-Wirbel, Riser; der Faden glüht auf" },
     { "t": 23.92,"kind": "vacuum",  "end": 24.0, "note": "kurzes Einatmen (80 ms Stille) direkt vor dem Drop" },
 
-    { "t": 24.0,  "kind": "drop",    "note": "Drop: Lichtblitz, Druckwellen, Crash, Sonic Logo (Moll), Groove startet sofort voll (Kick, Bass, Hats, Clap)" },
+    { "t": 24.0,  "kind": "drop",    "note": "Drop: Lichtblitz, Druckwellen, Crash, Sonic Logo (Dur: A–C♯–E–A), Groove startet sofort voll in A-Dur (Kick, federnder Bass, Hats, Clap)" },
     { "t": 24.25,"kind": "text",    "note": "Nextcloud als Basis." },
     { "t": 24.1,  "kind": "orbit",   "end": 25.7, "note": "Kamera-Schwenk (sanft): Text und Fenster gleiten aus leichter Schräge in die frontale Ansicht (Perspektivwechsel)" },
     { "t": 25.0,  "kind": "whoosh",  "end": 26.2, "note": "Kristall-Front verwandelt das graue Fenster in das Linkado-Erlebnis" },
@@ -134,7 +134,7 @@
 
     { "t": 66.0,  "kind": "riser",   "end": 68.0, "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren" },
     { "t": 67.5,  "kind": "cut",     "end": 68.0, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
-    { "t": 68.0,  "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Harmonie hellt auf (Moll -> Dur)" },
+    { "t": 68.0,  "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Die Dominante (E) löst sich nach A auf – Volltreffer, Glas-Kaskade" },
     { "t": 68.5,  "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
     { "t": 68.75, "kind": "tagline", "note": "Einfach für deinen Alltag. (einzige Schlusszeile, die Marke steht allein)" },
     { "t": 70.0,  "kind": "tagline", "note": "Strich unter „Alltag.“ (zweiter Glockenton)" },

@@ -1,6 +1,6 @@
 // ============================================================
 // Act I – Chaos (0–24 s). Dunkel, kühl, bewusst „designtes“ Chaos.
-//   hook 0–4 (letztes Wort steht ≈ 1,3 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (Satz 22,5, Faden/Glühen ab 23,0; post 0.8)
+//   hook 0–4 (letztes Wort steht ≈ 1,3 s) · m365 4–8,5 · opendesk 8,5–13 · nextcloud 13–17,5 · overwhelm 17,5–22 · pause 22–24 (Cliffhanger-Frage 22,5, Faden/Glühen ab 23,0; post 0.8)
 //   Alle Zeiten kommen aus timeline.json (Karten, Pings, Shoves, Texte, Cut, Drop) – nur Feinheiten sind relativ dazu notiert.
 //   Überforderung = fünf Blickwinkel im 0,75-s-Raster: Mitarbeitende (Login) · Teams (Tool) · Geschäftsführung (Abo) · Datenschutz (KI) · IT (Frage)
 // Muster je Lösung: erst die Stärke, dann „ABER:“, dann drei Alltagssätze – sie poppen auf den
@@ -24,7 +24,7 @@ export default function register(E) {
   const DROP = E.hits('drop')[0].t;                  // 24.0
   const TEXTS = E.hits('text').filter((x) => x.t >= CUT - 5 && x.t < CUT).map((x) => x.t);   // fünf Blickwinkel im 0,75-s-Raster
   const OV = TEXTS[0];                               // 17.5 – Beginn der Überforderung
-  const ASK = E.hits('text').find((x) => x.t > CUT && x.t < DROP).t;                  // 22.5 – „Es geht auch anders.“ setzt auf dem ersten Herzschlag ein
+  const ASK = E.hits('text').find((x) => x.t > CUT && x.t < DROP).t;                  // 22.5 – die Cliffhanger-Frage setzt auf dem ersten Herzschlag ein
   const BUILD = E.hits('build')[0].t;                // 23.0 – Faden, Glühen und Flagge bauen sich erst ab hier auf (Ton: Sog in den Drop)
 
   // Position der weggeschobenen Gruppen (um die Bildmitte 960/540)
@@ -258,8 +258,15 @@ export default function register(E) {
       root.append(vig);
 
       /* ---- Pause ---- */
-      const ask = h('div', { class: 'a1-big', style: { top: 428, fontSize: 112, zIndex: 50, fontWeight: 600 } });
-      const askLetters = 'ES GEHT AUCH ANDERS.'.split('').map((ch) => h('span', { text: ch === ' ' ? ' ' : ch, style: { display: 'inline-block' } })); ask.append(...askLetters);
+      // Cliffhanger-Frage (die Antwort steht nicht im Text: der Drop ist die Antwort); zwei ruhige, große Zeilen
+      const ASK_LINES = ['KEINE LUST MEHR,', 'SICH DAMIT HERUMZUÄRGERN?'];
+      const ask = h('div', { class: 'abs', style: { left: 0, right: 0, top: 318, height: 270, zIndex: 50 } });
+      const askLetters = [];
+      ASK_LINES.forEach((ln, li) => {
+        const row = h('div', { class: 'a1-big', style: { top: li * 126, fontSize: li ? 104 : 112, fontWeight: 600 } });
+        ln.split('').forEach((ch) => { const sp = h('span', { text: ch === ' ' ? '\u00a0' : ch, style: { display: 'inline-block' } }); row.append(sp); askLetters.push(sp); });
+        ask.append(row);
+      });
       const thr = h('svg', { class: 'abs', width: 1920, height: 1080, viewBox: '0 0 1920 1080', style: { left: 0, top: 0, zIndex: 50 } }, h('line', { x1: 0, y1: THREAD_Y, x2: 1860, y2: THREAD_Y, stroke: '#E67E22', 'stroke-width': 4, 'stroke-linecap': 'round' }));
       const thrFlag = h('span', { class: 'flag abs', style: { width: 28, height: 14, zIndex: 51 } });
       root.append(ask, thr, thrFlag);
@@ -364,7 +371,7 @@ export default function register(E) {
       // Freeze-Flackern direkt vor dem Schnitt
       if (t > CUT - 0.2 && t < CUT) s.vig.style.opacity = 0.7 + 0.3 * Math.sign(Math.sin(t * 120));
 
-      /* ---- Pause (22–24): erst der Satz (22,5), dann baut sich der orange Faden auf (23,0) ---- */
+      /* ---- Pause (22–24): erst die Cliffhanger-Frage (22,5), dann baut sich der orange Faden auf (23,0); der Drop beantwortet sie ---- */
       const inPause = !pre;
       show(s.ask, inPause && t >= ASK - 0.05);
       s.askLetters.forEach((el, k) => { const p = tw(t, ASK + k * 0.02, ASK + k * 0.02 + 0.35, ease.out3); tf(el, { y: 26 * (1 - p), o: p, blur: 0 }); });
