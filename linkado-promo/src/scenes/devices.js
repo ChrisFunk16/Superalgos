@@ -1,6 +1,5 @@
 // ============================================================
-// Geräte-Beat „Ein Browser genügt“ (Szene „browser“, direkt nach 01):
-// Die Kamera zieht aus dem Linkado-Fenster zurück und zeigt: ein Laptop mit EINEM Browser-Tab, daneben ein Handy mit derselben Oberfläche.
+// Geräte „Ein Browser genügt“ (Übergang zum Drop, siehe transition.js): Laptop mit Browser-Leiste (36 Tabs, die sich zu EINEM falten) und ein Handy mit derselben Oberfläche.
 // Alles gezeichnet in Fensterkoordinaten (1480 × 900), damit es mit der Kamera der Oberflächen-Szene mitläuft.
 // Bewusst generisch: erfundene Adresse, keine Marken außer Linkado.
 // ============================================================
@@ -38,7 +37,7 @@ const HOME = (E, h, icon) => {
   // Kopfzeile
   sc.push(h('div', { class: 'abs', style: { left: 16, top: 106, right: 16, height: 40, display: 'flex', alignItems: 'center', gap: 10 } },
     h('span', { html: icon('menu', 24, '#1F2532', 2.2) }), h('span', { class: 'fav', html: E.iconSVG({ rx: 60 }), style: { width: 26, height: 26, display: 'block', borderRadius: 7, overflow: 'hidden' } }),
-    h('span', { text: 'LINKADO', style: { font: '700 19px/1 var(--font-display)', letterSpacing: '.04em' } }), h('span', { style: { marginLeft: 'auto' }, html: avatarHTML('anna', 34) })));
+    h('span', { text: 'START', style: { font: '700 19px/1 var(--font-display)', letterSpacing: '.04em' } }), h('span', { style: { marginLeft: 'auto' }, html: avatarHTML('anna', 34) })));
   // Hero
   sc.push(h('div', { class: 'abs', style: { left: 16, top: 160, right: 16, height: 158, borderRadius: 22, background: 'linear-gradient(160deg,#E67E22,#D9701A)', padding: '18px 20px', color: '#fff', boxShadow: '0 10px 24px rgba(217,112,26,.35)' } },
     h('div', { text: 'MITTWOCH · 09:13', style: { font: '700 11px/1 var(--font-body)', letterSpacing: '.16em', opacity: 0.85, marginBottom: 12 } }),
@@ -67,17 +66,21 @@ export function buildDevices(E, cam, beforeEl) {
   const { h, icon } = E;
   const bezel = h('div', { class: 'dv-bezel' }), base = h('div', { class: 'dv-base' });
   const back = h('div', { class: 'abs', style: { left: 0, top: 0, width: 0, height: 0 } }, bezel, base);
-  const tab = h('div', { class: 'dv-tab' }, h('span', { class: 'fav', html: E.iconSVG({ rx: 70 }) }), h('span', { text: 'Linkado' }), h('span', { class: 'x', html: icon('x', 18, '#8A92A5', 2.4) }));
+  const tab = h('div', { class: 'dv-tab' }, h('span', { class: 'fav', html: E.iconSVG({ rx: 70 }) }), h('span', { text: 'Startseite' }), h('span', { class: 'x', html: icon('x', 18, '#8A92A5', 2.4) }));
   const pill = h('div', { class: 'dv-one', text: '1 TAB' });
   const chrome = h('div', { class: 'dv-chrome' },
     h('div', { class: 'dv-dots' }, h('i'), h('i'), h('i')), tab, h('div', { class: 'dv-plus', html: icon('plus', 18, '#7D8598', 2.4) }), pill,
-    h('div', { class: 'dv-url' }, h('span', { style: { transform: 'scaleX(-1)', display: 'flex' }, html: icon('chevron-right', 22, '#7D8598', 2.2) }), h('span', { html: icon('chevron-right', 22, '#B6BCC9', 2.2) }), h('span', { html: icon('refresh-cw', 19, '#7D8598', 2.2) }),
+    h('div', { class: 'dv-url' }, h('span', { style: { transform: 'scaleX(-1)', display: 'flex' }, html: icon('chevron-right', 22, '#7D8598', 2.2) }), h('span', { html: icon('chevron-right', 22, '#B6BCC9', 2.2) }), h('span', { html: icon('refresh-cw', 19, '#7D8598', 2.2) }), h('span', { class: 'home', html: icon('house', 24, '#4B5468', 2.3), style: { display: 'flex' } }),
       h('div', { class: 'pill' }, h('span', { html: icon('lock', 17, '#5E6678', 2.3) }), 'cloud.musterfirma.de'), h('span', { style: { marginLeft: 'auto' }, html: avatarHTML('anna', 32) }), h('span', { html: icon('ellipsis', 24, '#7D8598', 2.2) })));
+  const cols = ['#E5565B', '#7B6CF6', '#36A9E8', '#3FBF8A', '#8E97AE', '#D1497A'];
+  const tabs36 = Array.from({ length: 36 }, (_, k) => { const el = h('div', { class: 'abs', style: { top: 8, height: 40, width: 33, borderRadius: '10px 10px 0 0', background: '#fff', boxShadow: '0 -1px 0 #D5D9E3 inset', left: 112 + k * 35 } }, h('div', { class: 'abs', style: { left: 7, top: 12, width: 14, height: 14, borderRadius: 4, background: cols[k % 6] } }), h('div', { class: 'abs', style: { left: 7, top: 31, width: 19, height: 4, borderRadius: 2, background: 'rgba(31,37,50,.22)' } })); return el; });
+  tabs36.forEach((el) => chrome.insertBefore(el, tab));
   const ph = phone(E); ph.el.classList.add('dv-ph');
   HOME(E, h, icon).forEach((n) => ph.screen.append(n));
   ph.screen.style.background = '#FAF6EF';
-  Object.assign(ph.el.style, { left: '1390px', top: '236px', zIndex: 70 });
+  const phoneOff = h('div', { class: 'abs', style: { inset: 0, background: '#0B0F18', zIndex: 9 } }); ph.screen.append(phoneOff);       // Handy ist zuerst dunkel
+  Object.assign(ph.el.style, { left: '-540px', top: '296px', zIndex: 70 });                                                           // steht links neben dem Laptop auf dem Tisch
   if (beforeEl) cam.insertBefore(back, beforeEl); else cam.append(back);
   cam.append(chrome, ph.el);
-  return { back, bezel, base, chrome, tab, pill, phone: ph.el };
+  return { back, bezel, base, chrome, tab, pill, tabs36, phone: ph.el, phoneOff, homeX: 138, homeY: -24 };
 }

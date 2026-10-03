@@ -39,7 +39,8 @@ export const PEOPLE = {
 };
 let _pid = 0;
 const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const c = (sh) => Math.max(0, Math.min(255, Math.round(((n >> sh) & 255) * f))); return `rgb(${c(16)},${c(8)},${c(0)})`; };
-export function portraitSVG(key, mode = 'head', o = {}) {
+/** Einzelteile eines Porträts (300×225-Szene): wird von portraitSVG und von den großen Büro-Figuren (office.js) genutzt */
+export function portraitParts(key) {
   const P = PEOPLE[key], id = 'pt' + (++_pid), sk = P.skin, skd = shade(sk, 0.82), hr = P.hair;
   const bgs = {
     dark:   ['#3B4E6A', '#141B2A'], office: ['#EADFD0', '#C9B9A3'], warm: ['#F3D9BE', '#C98F5B'], cool: ['#CFE0EE', '#6F93B6'], books: ['#D8CFE6', '#8F7FB0'],
@@ -71,6 +72,10 @@ export function portraitSVG(key, mode = 'head', o = {}) {
     `<path d="M150 108 Q145 122 148 126 Q152 128 156 126" stroke="${skd}" stroke-width="2.6" fill="none" stroke-linecap="round"/>` +
     `<circle cx="126" cy="124" r="7" fill="#E57B6E" opacity=".22"/><circle cx="174" cy="124" r="7" fill="#E57B6E" opacity=".22"/>` +
     `<g class="mc"><path d="M137 134 Q150 145 163 134" stroke="#A4524A" stroke-width="3.2" fill="none" stroke-linecap="round"/></g><g class="mo" style="display:none"><ellipse cx="150" cy="137" rx="8" ry="6" fill="#7A2E2E"/><path d="M143 133 Q150 135 157 133" stroke="#fff" stroke-width="2" fill="none"/></g>`;
+  return { P, id, g1, g2, sk, skd, hr, scene, back, body, neck, face, front, feat, beard, glasses };
+}
+export function portraitSVG(key, mode = 'head', o = {}) {
+  const { id, g1, g2, scene, back, body, neck, face, front, feat, beard, glasses } = portraitParts(key);
   const vb = mode === 'head' ? '88 34 124 124' : '0 0 300 225';
   const par = mode === 'head' ? 'xMidYMid slice' : 'xMidYMid slice';
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="${par}" width="100%" height="100%" style="display:block"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="${g1}"/><stop offset="1" stop-color="${g2}"/></linearGradient></defs>` +

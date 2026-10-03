@@ -1,4 +1,4 @@
-# Linkado – Werbefilm (76 s)
+# Linkado – Werbefilm (78 s)
 
 **Zielgruppe:** Unternehmer und Entscheider sowie junge, moderne Beschäftigte – der Film soll modern, klar und dynamisch wirken (nicht „vereinfacht für Ältere“), aber nie überfordern: Texte stehen ≥ 1,3 s, keine Rollbewegungen, nichts Wichtiges wird angeschnitten.
 
@@ -32,14 +32,17 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 ## Aufbau
 
 ```
-timeline.json            Zeitplan: 38 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
+timeline.json            Zeitplan: 39 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
-  scenes/act1.js           Chaos: Hook (4 s), drei Alltagsmomente (je 4,5 s) (ohne Namen; Sätze mit Profilbild, Laptop/Handy), Überforderung in fünf Blickwinkeln, Pause/Sog in den Drop
+  scenes/act1.js           Chaos: Hook (4 s), drei Büro-Szenen (je 4,5 s: Tom, Lena, Anna – ohne Produkt-/Firmennamen, auf den Bildschirmen nur angedeutete Standardprogramme), Überforderung in fünf Blickwinkeln
+  scenes/office.js         die drei Büro-Szenen (Tom: Zusatzkosten + Telefon · Lena: Login, dahinter alles anders · Anna: Tab-Flut, Haareraufen)
+  scenes/figures.js        große Büro-Figuren (Oberkörper mit zwei Armen, Zwei-Knochen-IK, Mimik) aus den Porträts der Oberfläche
+  scenes/transition.js     Übergang 22,5–30 s in Annas Büro: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy, Zoom in den Bildschirm
   scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
   scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
-  scenes/devices.js        Geräte-Beat „Ein Browser genügt“: Laptop-Rahmen, Browser-Leiste mit einem Tab, Handy mit derselben Oberfläche
+  scenes/devices.js        Geräte im Übergang: Laptop-Rahmen, Browser-Leiste (36 Tabs → 1 Tab), Handy mit derselben Oberfläche
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
 audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
@@ -56,8 +59,8 @@ pip install numpy scipy soundfile matplotlib pyloudnorm
 bash build.sh                        # 4K + 1080p nach out/
 # oder einzeln:
 python3 audio/soundtrack.py          # Ton (≈ 30 s) inkl. Spektrogramm
-node render.mjs --times 21.5,54.3 --out out/preview/x --debug     # Standbilder zum Prüfen
-node render.mjs --from 20 --to 25 --out out/preview/seq            # Ausschnitt
+node render.mjs --times 6,25.2,29,56.3 --out out/preview/x --debug     # Standbilder zum Prüfen
+node render.mjs --from 22 --to 30 --out out/preview/seq            # Ausschnitt
 node render.mjs --scale 2                                           # 4K (deviceScaleFactor 2)
 ```
 
@@ -74,9 +77,9 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 ## Qualitätssicherung
 
 * Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
-* Ton: exakt 3 648 000 Samples (76 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
+* Ton: exakt 3 744 000 Samples (78 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
   Struktur im Spektrogramm (`audio/spektrogramm.png`).
-* Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 76 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften und die Absicht-Chaos-Szene 18–22 s erscheinen als Treffer, sind aber gewollt).
+* Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 78 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften, übereinanderliegende Mini-Fenster auf den Büro-Bildschirmen und die Absicht-Chaos-Szene 17,5–22 s erscheinen als Treffer, sind aber gewollt).
 * Lesbarkeit: Titel 70–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
 
 ## Offene Wünsche (leicht nachzuziehen)

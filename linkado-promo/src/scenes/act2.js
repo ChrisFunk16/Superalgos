@@ -1,15 +1,16 @@
 // ============================================================
-// Act II – Klarheit (24–66 s): Hintergrund + Lichtflut, Overlay (Fortschrittsfaden),
-// und die vier Oberflächen-Szenen 01–04 in EINEM durchgehenden Linkado-Fenster:
+// Act II – Klarheit (30–74 s): Hintergrund + Lichtflut, Overlay (Fortschrittsfaden),
+// und die vier Oberflächen-Szenen 01–04 in EINEM durchgehenden Linkado-Fenster (Zeiten lokal: Drop = 20,0):
 //   01 Nextcloud als Basis, Linkado als Benutzererlebnis   (20–24)
 //   02 Mehr Übersicht im Arbeitsalltag                      (24–28)
 //   03 Passende Werkzeuge an einem Ort (Appshop)            (28–34)
 //   04 Hilfe direkt in der Cloud                            (34–44)
-//   dazwischen der Geräte-Beat „Ein Browser genügt“ (lokal 24–28): die Zeit der Oberfläche steht still, die Kamera zieht zurück
-// Kamera-Zooms führen den Blick; Aktionen landen auf den hits der timeline.json.
+// Dasselbe Fenster ist schon vor dem Drop da: Es ist der Bildschirm in Annas Büro (transition.js, lokal 12,5–20); die Kamera fährt in der
+// Übergangs-Szene hinein und landet exakt in der Pose „full“. Kamera-Zooms führen den Blick; Aktionen landen auf den hits der timeline.json.
 // ============================================================
 import { buildUI, LAY } from '../ui.js';
 import { buildDevices } from './devices.js';
+import { buildTransition, transitionCam, T as TR } from './transition.js';
 
 export const THREAD_Y = 700;   // Höhe des orangenen Fadens in der Pause (Act I) – hier übernimmt er
 
@@ -17,11 +18,7 @@ export default function register(E) {
   const { h, tf, tw, ease, prog, clamp, lerp, show } = E;
   const K = E.kit;
   const SH2 = E.T('reveal').start - 20.0;      // alle Zeiten in dieser Datei sind für den Drop bei 20.0 geschrieben; Szenen laufen um SH2 verschoben
-  const BEAT0 = 24.0, BEATN = E.T('browser').end - E.T('browser').start;   // Geräte-Beat: lokal 24.0 … 28.0, die Oberflächen-Zeit steht dabei still
-  const mapT = (g) => { const l = g - SH2; return l < BEAT0 ? l : l < BEAT0 + BEATN ? BEAT0 : l - BEATN; };
-
-  const ORBIT = [E.T('reveal').start, E.T('reveal').start + 1.6];                              // Kamera-Schwenk am Drop (Perspektivwechsel): sanft, kein Anschnitt, keine Rollbewegung
-  const ORBIT_P = { x: 0, rx: 4, ry: 16, rz: 0, s: 0.07, zt: 110, zw: -85 };      // modern und dynamisch, aber ruhig: Zielgruppe = Unternehmer und junge, moderne Beschäftigte – verständlich für alle, nicht „vereinfacht“
+  if (Math.abs(TR.drop - E.T('reveal').start) > 1e-6) console.warn('[act2] Drop-Zeit der Übergangs-Szene weicht vom Szenenstart ab', TR.drop, E.T('reveal').start);
 
   const mixHex = (a, b, p) => {
     const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
@@ -31,7 +28,7 @@ export default function register(E) {
 
   /* ---------------------------------------------------------------- Hintergrund + Lichtflut */
   E.scene({
-    id: 'a2-bg', start: 20, end: 58 + BEATN, shift: SH2, z: 10,
+    id: 'a2-bg', start: 20, end: 58, shift: SH2, z: 10,
     build(root) {
       const flood = h('div', { class: 'abs', style: { inset: 0, background: 'var(--cream)' } });
       // Drop-Schlag bei 20.0: Lichtblitz, zwei Druckwellen und ein Funkenkranz aus der Bildmitte (rein dekorativ, Marken-Orange/Navy/Creme)
@@ -43,23 +40,21 @@ export default function register(E) {
         const el = h('div', { class: 'abs', style: { left: 960 - sz / 2, top: 540 - sz / 2, width: sz, height: sz, borderRadius: k % 3 === 0 ? '3px' : '50%', background: ['#E67E22', '#E67E22', '#1F2532', '#F7DDBF'][k % 4], zIndex: 5 } });
         root.append(el); return { el, a, d0, d1, sz };
       });
-      const flash = h('div', { class: 'abs', style: { inset: 0, background: '#fff', zIndex: 6, opacity: 0 } });
-      root.append(flood, ring, ring2, flash);
-      return { flood, ring, ring2, dots, flash };
+      root.append(flood, ring, ring2);
+      return { flood, ring, ring2, dots };
     },
     update(t, s) {
-      const p = tw(t, 20.0, 20.6, ease.out4);
-      s.flood.style.clipPath = p >= 1 ? 'none' : `circle(${(1500 * p).toFixed(1)}px at 50% 50%)`;
+      const p = tw(t, 20.0, 20.34, ease.out5);
+      s.flood.style.clipPath = p >= 1 ? 'none' : `circle(${(1700 * p).toFixed(1)}px at 50% 50%)`;
       const a = t - 20.0;
       const ringAt = (el, t0, dur, R1) => { const q = tw(a, t0, t0 + dur, ease.out4), R = 40 + R1 * q; show(el, a >= t0 && a < t0 + dur + 0.02); Object.assign(el.style, { width: 2 * R + 'px', height: 2 * R + 'px', marginLeft: -R + 'px', marginTop: -R + 'px', opacity: (1 - tw(a, t0 + 0.2 * dur, t0 + dur, ease.in2)).toFixed(3) }); };
       ringAt(s.ring, 0.0, 0.9, 1500); ringAt(s.ring2, 0.07, 0.8, 1250);
       s.dots.forEach((d) => { const q = ease.out4(prog(a, 0, 1.0)), dist = lerp(d.d0, d.d1, q); show(d.el, a >= 0 && a < 1.05); tf(d.el, { x: Math.cos(d.a) * dist, y: Math.sin(d.a) * dist, s: 1 - 0.55 * q, o: 1 - tw(a, 0.5, 1.0, ease.in2) }); });
-      show(s.flash, a >= 0 && a < 0.45); s.flash.style.opacity = (0.9 * (1 - tw(a, 0.0, 0.32, ease.out3))).toFixed(3);
     },
   });
 
-  /* ---------------------------------------------------------------- Overlay: Fortschrittsfaden (Zeiten in „Film-Zeit der Oberfläche“ = lokale Zeit inkl. Geräte-Beat) */
-  const OB = BEATN;
+  /* ---------------------------------------------------------------- Overlay: Fortschrittsfaden (lokale Zeit) – vor dem Drop der „Sog“: der Faden wächst über das Bild (29,0–29,92) */
+  const OB = 0;
   const NODE_T = [20.25, 24.0 + OB, 28.0 + OB, 34.0 + OB, 44.0 + OB, 50.0 + OB, 58.0 + OB];   // Szenenstarts 01 … 06 und Ziel
   const NODE_X = (i) => 110 + i * (1700 / 6);       // 110 … 1810 (Index 6 = Ziel: Linkado)
   const BAR_Y = 1044;
@@ -70,7 +65,7 @@ export default function register(E) {
     return NODE_X(6);
   };
   E.scene({
-    id: 'a2-ov', start: 20, end: 58.8 + BEATN, shift: SH2, z: 45,
+    id: 'a2-ov', start: 18.9, end: 58.8, shift: SH2, z: 45,
     build(root) {
       const fade = h('div', { class: 'abs', style: { left: 0, right: 0, bottom: 0, height: 120, background: 'linear-gradient(to top, var(--cream) 55%, rgba(250,246,239,0))' } });
       const track = h('div', { class: 'abs', style: { left: 110, top: BAR_Y - 1.5, width: 1700, height: 3, background: 'rgba(31,37,50,.13)', borderRadius: 2 } });
@@ -78,15 +73,19 @@ export default function register(E) {
       const head = h('span', { class: 'flag abs', style: { width: 28, height: 14 } });
       const nodes = Array.from({ length: 6 }, (_, i) => h('div', { class: 'abs', style: { left: NODE_X(i) - 10, top: BAR_Y - 10, width: 20, height: 20, borderRadius: '50%', border: '3px solid rgba(31,37,50,.30)', background: 'var(--cream)' } }));
       const goal = h('div', { class: 'abs', style: { left: NODE_X(6) - 17, top: BAR_Y - 17, width: 34, height: 34, borderRadius: 9, overflow: 'hidden' }, html: E.iconSVG({}) });
-      root.append(fade, track, ...nodes, fill, head, goal);          // Ziel-Kachel über dem Fadenkopf, damit sie nicht überdeckt wird
-      return { fade, track, fill, head, nodes, goal };
+      const flash = h('div', { class: 'abs', style: { inset: 0, background: '#fff', opacity: 0, display: 'none' } });      // Drop-Blitz: liegt über dem Büro (Spitze 60 %, ein einzelner Blitz)
+      root.append(fade, track, ...nodes, fill, head, goal, flash);          // Ziel-Kachel über dem Fadenkopf, damit sie nicht überdeckt wird
+      return { fade, track, fill, head, nodes, goal, flash };
     },
     update(t, s) {
+      show(s.flash, t >= 20.0 && t < 20.5); s.flash.style.opacity = (0.6 * (1 - tw(t - 20.0, 0.0, 0.42, ease.out2))).toFixed(3);
       const e = ease.uiInOut(prog(t, 20.0, 21.0));
+      const sog = ease.in2(prog(t, 19.0, 19.92));                       // Sog: der Faden wächst von links über das Bild, glüht, dann übernimmt der Drop
       const L = progressX(t);
-      const y = lerp(THREAD_Y, BAR_Y, e), x0 = lerp(0, 110, e), x1 = lerp(1860, L, e);
-      Object.assign(s.fill.style, { left: x0 + 'px', top: (y - 2) + 'px', width: Math.max(0, x1 - x0) + 'px', opacity: ovOut0(t) });
-      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: (t < 57.9 + OB ? 1 : 1 - tw(t, 57.9 + OB, 58.25 + OB)) * (1 - clamp((x1 - (NODE_X(6) - 40)) / 30)) });   // Kopf verschwindet, sobald er die Ziel-Kachel erreicht (kein Zipfel dahinter)
+      const y = lerp(THREAD_Y, BAR_Y, e), x0 = lerp(0, 110, e), x1 = lerp(1860 * sog, L, e);
+      const glow = sog * (1 - e);
+      Object.assign(s.fill.style, { left: x0 + 'px', top: (y - 2) + 'px', width: Math.max(0, x1 - x0) + 'px', opacity: ovOut0(t) * (t < 19.0 ? 0 : 1), boxShadow: glow > 0.01 ? `0 0 ${(10 + 26 * glow).toFixed(1)}px rgba(230,126,34,${(0.9 * glow).toFixed(2)})` : 'none' });
+      Object.assign(s.head.style, { left: (x1 - 2) + 'px', top: (y - 7) + 'px', opacity: (t < 19.0 ? 0 : 1) * (t < 57.9 + OB ? 1 : 1 - tw(t, 57.9 + OB, 58.25 + OB)) * (1 - clamp((x1 - (NODE_X(6) - 40)) / 30)) });   // Kopf verschwindet, sobald er die Ziel-Kachel erreicht (kein Zipfel dahinter)
       const ovOut = 1 - tw(t, 58.0 + OB, 58.7 + OB);
       s.track.style.opacity = e * ovOut; s.fade.style.opacity = e * (1 - tw(t, 56.6 + OB, 57.2 + OB));
       s.nodes.forEach((n, i) => {
@@ -120,14 +119,6 @@ export default function register(E) {
     return { s: A.s * Math.pow(B.s / A.s, p), px: lerp(A.px, B.px, p), py: lerp(A.py, B.py, p) };   // (kein „Drift“ mehr: er ließ den Maßstab an jedem Fahrtbeginn um ~1 % springen)
   }
 
-  /* Geräte-Beat: Kamera zieht aus dem Fenster zurück (Laptop mit EINEM Tab + Handy), hält, und fährt wieder in die Pose von 02 hinein */
-  const DEV_POSE = { s: 0.5, px: 945, py: 302 };
-  function beatCam(u) {
-    const C0 = camAt(BEAT0);
-    const q = ease.uiInOut(prog(u, 0.0, 1.5)) * (1 - ease.uiInOut(prog(u, BEATN - 1.0, BEATN)));
-    return { s: C0.s * Math.pow(DEV_POSE.s / C0.s, q), px: lerp(C0.px, DEV_POSE.px, q), py: lerp(C0.py, DEV_POSE.py, q) };
-  }
-
   // Cursor-Weg im Fensterraum (Sek., x, y). Klicks: siehe CLICKS (stehen auch als hits in timeline.json)
   const CLICKS = [25.0, 30.0, 31.5, 33.2, 34.0, 35.5, 37.85, 40.2, 43.5];
   const B0 = LAY.apps.btn(0), B1 = LAY.apps.btn(1), TG = LAY.apps.toggle(3), SUP = LAY.rail.support, SIN = LAY.support.input;
@@ -148,7 +139,7 @@ export default function register(E) {
   const rowOn = (r, v) => { r.tg.style.background = mixHex('#CBC7BF', '#E67E22', v); r.tg.firstChild.style.left = (3 + 22 * v) + 'px'; r.lbl.textContent = v > 0.5 ? 'Aktiv' : 'Aus'; };
 
   E.scene({
-    id: 'a2-ui', start: 20, end: 45 + BEATN, shift: SH2, map: mapT, z: 20,
+    id: 'a2-ui', start: 12.4, end: 45, shift: SH2, z: 20,
     build(root) {
       const ui = buildUI(E);
       const outer = h('div', { class: 'abs', style: { inset: 0 } });
@@ -183,73 +174,49 @@ export default function register(E) {
       root.append(capRaw, capLk);
 
       const heads = [
-        K.headline(E, root, { num: '01', size: 70, y: 264, lines: ['NEXTCLOUD', 'ALS BASIS.', '<em>LINKADO</em> ALS', 'BENUTZERERLEBNIS.'], muted: [true, true, false, false], delays: [0, 0, 1.3, 1.3], sub: 'Technik verständlich und zugänglich machen.', subDelay: 1.3 }),
+        K.headline(E, root, { num: '01', size: 70, y: 264, lines: ['NEXTCLOUD', 'ALS BASIS.', '<em>LINKADO</em> ALS', 'BENUTZERERLEBNIS.'], muted: [true, true, false, false], delays: [0, 0, 0.85, 0.85], sub: 'Technik verständlich und zugänglich machen.', subDelay: 0.85 }),
         K.headline(E, root, { num: '02', size: 74, y: 334, lines: ['MEHR <em>ÜBERSICHT</em>', 'IM ARBEITSALLTAG.'], sub: 'Anwendungen und wichtige Funktionen leichter finden.' }),
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
-      const beatHead = K.headline(E, root, { num: '', size: 84, y: 300, lines: ['EIN <em>BROWSER.</em>', 'EIN LOGIN.', 'ALLE GERÄTE.'], delays: [0, 0.4, 0.8], subDelay: 0.2, sub: 'Dateien, Kalender, Chat – in einem Tab.' });
-      beatHead.el.querySelector('.a2-num').style.display = 'none';
       const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
-      /* Kamera-Schwenk am Drop: Fenster-Ebene und Text-Ebene liegen in einer 3D-Welt, die der Blick umkreist (Parallaxe: Text vorn, Fenster hinten) und die sich bis ≈ 25,8 s sanft zur frontalen Ansicht flachlegt */
-      const world = h('div', { class: 'abs', style: { inset: 0, transformStyle: 'preserve-3d', transformOrigin: '1000px 540px' } });
-      const winLayer = h('div', { class: 'abs', style: { inset: 0 } }), textLayer = h('div', { class: 'abs', style: { inset: 0 } });
-      winLayer.append(outer, capRaw, capLk); textLayer.append(...heads.map((q) => q.el), beatHead.el, sub2);
-      world.append(winLayer, textLayer); root.append(world);
-      root.style.perspectiveOrigin = '50% 50%'; root.style.overflow = 'visible';      // die Bühne (#stage) beschneidet weiterhin am Bildrand
-      return { root, world, winLayer, textLayer, dev, beatHead, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      const tr = buildTransition(E, { root, cam, dev, raw, win }), transCam = transitionCam(E, POSE.full);
+      return { root, tr, transCam, dev, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s, _E, tGlobal) {
       const { cam, outer, raw, win, dash, shop, sup, talk, menu, dim, gridTile, cur } = s;
-      {   // Orbit: 24.0 → 25.6 (aus mittlerer Schräge/Nähe in die frontale Ansicht; danach exakt „none“, damit 01–06 unverändert scharf bleiben)
-        const q = ease.out3(prog(tGlobal, ORBIT[0], ORBIT[1])), k = 1 - q;
-        if (q >= 1 || tGlobal < ORBIT[0] - 0.2) { s.world.style.transform = 'none'; s.winLayer.style.transform = 'none'; s.textLayer.style.transform = 'none'; s.world.style.transformStyle = 'flat'; s.root.style.perspective = 'none'; }
-        else {
-          s.world.style.transformStyle = 'preserve-3d'; s.root.style.perspective = '1800px';
-          s.world.style.transform = `translateX(${(ORBIT_P.x * k).toFixed(2)}px) rotateX(${(ORBIT_P.rx * k).toFixed(3)}deg) rotateY(${(ORBIT_P.ry * k).toFixed(3)}deg) rotateZ(${(ORBIT_P.rz * k).toFixed(3)}deg) scale(${(1 + ORBIT_P.s * k).toFixed(4)})`;
-          s.textLayer.style.transform = `translateZ(${(ORBIT_P.zt * k).toFixed(2)}px)`; s.winLayer.style.transform = `translateZ(${(ORBIT_P.zw * k).toFixed(2)}px)`;
-        }
+      const pre = tGlobal < TR.drop;                                   // Übergang (Annas Büro) – vor dem Drop
+
+      /* ---- Kamera: Übergangs-Zoom bis zum Drop (landet exakt in „full“), danach die Szenen-Fahrten; Nachfedern ≈ 4,5 % ---- */
+      let c = pre ? s.transCam(tGlobal) : camAt(t);
+      if (!pre) {
+        const u = clamp((tGlobal - TR.drop) / 1.1), k = 1 + 0.045 * 1.6 * Math.sin(Math.PI * u) * (1 - u);
+        if (u < 1) { const cx = c.px + 740 * c.s, cy = c.py + 450 * c.s, s2 = c.s * k; c = { s: s2, px: cx - 740 * s2, py: cy - 450 * s2 }; }
       }
-      const tg = tGlobal - SH2;                                       // „Film-Zeit“ der Oberfläche inkl. Geräte-Beat (lokal 24–28)
-      const beat = tg >= BEAT0 && tg < BEAT0 + BEATN, u = tg - BEAT0;
-
-      /* ---- Kamera + Fenster-Auftritt/Abgang ---- */
-      const c = beat ? beatCam(u) : camAt(t);
       cam.style.transform = `translate(${c.px.toFixed(2)}px,${c.py.toFixed(2)}px) scale(${c.s.toFixed(4)})`;
-      const wi = tw(t, 20.25, 20.95, ease.ui), wo = tw(t, 43.55, 44.05, ease.io2);
-      outer.style.opacity = wi * (1 - wo);
-      const wsc = 0.94 + 0.06 * tw(t, 20.2, 21.0, ease.outBack);          // Fenster „landet“ nach dem Drop-Schlag mit leichtem Nachfedern
-      outer.style.transform = `translateY(${(36 * (1 - wi) - 30 * wo).toFixed(2)}px) scale(${wsc.toFixed(4)})`;
+      const wo = tw(t, 43.55, 44.05, ease.io2);
+      outer.style.opacity = 1 - wo;
+      outer.style.transform = `translateY(${(-30 * wo).toFixed(2)}px)`;
+      s.tr.update(tGlobal, c.s);
 
-      /* ---- 01: Rohfassung → Linkado (Welle 21.0–22.2) ---- */
-      const we = ease.uiInOut(prog(t, 21.0, 22.2));
+      /* ---- Rohfassung → Linkado: die Lichtwelle läuft VOR dem Drop (27,5–28,7): aus der grauen Seite wird die Startseite ---- */
+      const we = ease.uiInOut(prog(tGlobal, TR.wave0, TR.wave1));
       const xf = lerp(-260, 1480 + 260, we), sl = 150;
-      const waving = t >= 21.0 && t < 22.25;
-      show(raw.el, t < 22.3);
-      win.el.style.clipPath = t < 21.0 ? 'polygon(0 0,0 0,0 0)' : waving ? `polygon(-60px -60px, ${(xf + sl).toFixed(1)}px -60px, ${(xf - sl).toFixed(1)}px 960px, -60px 960px)` : 'none';
+      const waving = tGlobal >= TR.wave0 && tGlobal < TR.wave1;
+      show(raw.el, tGlobal < TR.wave1 + 0.05);
+      win.el.style.clipPath = tGlobal < TR.wave0 ? 'polygon(0 0,0 0,0 0)' : waving ? `polygon(-60px -60px, ${(xf + sl).toFixed(1)}px -60px, ${(xf - sl).toFixed(1)}px 960px, -60px 960px)` : 'none';
       show(s.bandWrap, waving);
       s.shine.style.left = (xf - 150).toFixed(1) + 'px'; s.edge.style.left = (xf - 3).toFixed(1) + 'px';
-      tf(s.capRaw, { o: tw(t, 20.5, 20.9, ease.out2) * (1 - tw(t, 21.15, 21.5, ease.out2)) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 20.5, 20.9, ease.ui)) });
-      tf(s.capLk, { o: tw(t, 21.45, 21.85, ease.out2) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 21.45, 21.85, ease.ui)) });
+      show(s.capRaw, false);
+      tf(s.capLk, { o: tw(t, 20.45, 20.85, ease.out2) * (1 - tw(t, 23.0, 23.4)), y: 10 * (1 - tw(t, 20.45, 20.85, ease.ui)) });
 
       /* ---- Überschriften ---- */
-      s.heads[0].update(tg, 20.25, 24.6); s.beatHead.update(tg, 24.4, 27.7); s.heads[1].update(t, 24.0, 28.0); if (beat) s.heads[1].el.style.display = 'none'; s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
+      s.heads[0].update(t, 20.25, 24.0); s.heads[1].update(t, 24.0, 28.0); s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
       s.sub2.style.display = (t >= 37.95 && t < 44.0) ? 'block' : 'none'; tf(s.sub2, { y: 20 * (1 - tw(t, 38.0, 38.6, ease.ui)), o: tw(t, 38.0, 38.5, ease.out2) * (1 - tw(t, 43.6, 44.0, ease.in2)) });
 
-      /* ---- Geräte-Beat „Ein Browser genügt“ ---- */
-      {
-        const D = s.dev, on = beat && u > 0.02, fin = tw(u, 0.15, 0.95, ease.ui) * (1 - tw(u, BEATN - 1.0, BEATN - 0.5, ease.in2));
-        [D.back, D.chrome, D.phone].forEach((el) => show(el, on));
-        D.back.style.opacity = fin.toFixed(3);
-        tf(D.chrome, { y: -14 * (1 - tw(u, 0.15, 0.95, ease.ui)), o: fin });
-        const pp = tw(u, 1.0, 1.4, ease.outBack); tf(D.pill, { s: 0.4 + 0.6 * pp, o: clamp(pp * 2) });
-        const ph = tw(u, 1.3, 2.0, ease.ui) * (1 - tw(u, BEATN - 1.2, BEATN - 0.7, ease.in2));
-        tf(D.phone, { x: 90 * (1 - ph), y: 110 * (1 - ph), r: 5 * (1 - ph), s: 1.25, o: clamp(ph * 1.6) });
-      }
-
       /* ---- 02: Übersicht – Widgets rasten ein, Suche mit Assistent ---- */
-      const loose = beat ? tw(u, BEATN - 1.1, BEATN - 0.4, ease.out3) : (t < 24.0 ? 0 : 1 - ease.snap(prog(t, 24.0, 24.55)));   // gerade im Beat; „locker“ erst in der letzten Sekunde, dann rastet es in 02 ein
+      const loose = t < 24.0 ? tw(t, 23.0, 23.7, ease.out3) : 1 - ease.snap(prog(t, 24.0, 24.55));   // die Karten lockern sich kurz vor 02 und rasten dann ein
       tf(dash.hero, { x: -14 * loose, y: 10 * loose, r: -1.0 * loose }); tf(dash.day, { x: 16 * loose, y: -8 * loose, r: 1.0 * loose });
       tf(dash.nextCard, { x: -12 * loose, y: 14 * loose }); tf(dash.news, { x: 14 * loose, y: 10 * loose });
       dash.fcards.forEach((f, i) => tf(f, { y: (10 + 4 * i) * loose }));
@@ -370,7 +337,13 @@ export default function register(E) {
       tf(talk.selfv, { o: tw(t, 40.4, 40.8, ease.out2), y: 12 * (1 - tw(t, 40.4, 40.8, ease.ui)) });
       talk.leave.style.boxShadow = (t >= 43.2 && t < 43.7) ? '0 0 0 4px rgba(214,50,46,.5)' : '';
 
-      /* ---- Cursor ---- */
+      /* ---- Cursor: im Übergang führt ihn transition.js (Klick aufs Start-Symbol, 25,0), danach der Weg der Szenen ---- */
+      const trc = s.tr.cursor(tGlobal, c.s);
+      if (trc) {
+        show(cur.el, trc.o > 0.01); tf(cur.el, { x: trc.x, y: trc.y, s: trc.s, o: trc.o });
+        show(cur.rip, trc.rip >= 0); if (trc.rip >= 0) tf(cur.rip, { x: trc.x + 6 * trc.ripS, y: trc.y + 4 * trc.ripS, s: (0.3 + 1.1 * ease.out3(trc.rip)) * trc.ripS, o: 0.8 * (1 - trc.rip) });
+        return;
+      }
       let cx = CUR[0][1], cy = CUR[0][2];
       if (t >= CUR[CUR.length - 1][0]) { cx = CUR[CUR.length - 1][1]; cy = CUR[CUR.length - 1][2]; }
       else for (let i = 0; i < CUR.length - 1; i++) if (t >= CUR[i][0] && t < CUR[i + 1][0]) { const p = ease.uiInOut(prog(t, CUR[i][0], CUR[i + 1][0])); cx = lerp(CUR[i][1], CUR[i + 1][1], p); cy = lerp(CUR[i][2], CUR[i + 1][2], p); }
