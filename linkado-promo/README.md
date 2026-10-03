@@ -23,7 +23,7 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 >   **alle Inhalte (Termine, Dateien, Anfragen, Namen, Assistent-Antworten) sind erfundene Demo-Daten**. Die „SNEAK PEEK“-Marke ist entfernt – bitte vor Veröffentlichung die gezeigten Funktionen freigeben.
 >   Die Original-Screenshots liegen lokal in `refs/` (nicht im Repository: enthalten Instanz-Daten).
 > * Im Chaos-Teil werden **keine Produkt- oder Firmennamen** genannt: drei allgemeine Ansätze (Allrounder, fertiges Portal, offene Basis), jeweils „erst Stärke, dann *Aber:*“. Bitte inhaltlich freigeben.
->   Nextcloud kommt nur als eure eigene Basis vor (Szene 01, Schlusszeile).
+>   Nextcloud kommt nur als eure eigene Basis vor (Szene 01); das Endbild zeigt die Marke allein (kein Produktname).
 > * Im Logo-Lockup steht „Der europäische digitale Arbeitsplatz“; im Briefing war von „offenem Arbeitsplatz“ die Rede.
 >   Umstellen: Konstante `TAGLINE` in `src/scenes/finale.js`.
 

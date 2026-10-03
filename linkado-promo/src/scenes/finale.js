@@ -6,7 +6,7 @@
 //  53.0–53.9  das Netz zieht sich zur Logo-Silhouette zusammen, kurz vor 54.0 wird es still
 //  54.0       Kristall: Lichtblitz + Lichtkante, Facetten glitzern, die Buchstaben bauen sich scharf auf
 //  54.5       die Spitze des Fadens rastet als Flaggen-Steg ins „A“ – das fehlende „Link“
-//  54.75/56.0 „Die Möglichkeiten von Nextcloud.“ / „Einfach für deinen Alltag.“
+//  68.75/70.0 „Einfach für deinen Alltag.“ (die Marke steht allein – kein Produktname im Endbild); 70.0 zieht sich der Strich unter „Alltag.“
 //  57.0       Lockup-Tagline + genau ein CTA, danach ≥ 3 s ruhiges Endbild
 // ============================================================
 import { handoffDots } from './act2b.js';
@@ -37,6 +37,7 @@ export default function register(E) {
   .fn-line { position:absolute; left:0; right:0; text-align:center; font:600 56px/1.14 var(--font-display); text-transform:uppercase; letter-spacing:-.005em; color:var(--navy); white-space:nowrap; }
   .fn-line .m { display:inline-block; overflow:hidden; vertical-align:top; padding:6px 10px 12px; margin:-6px -10px -12px; }
   .fn-line .m > span { display:block; }
+  .fn-big { font-size:66px; }
   .fn-line em { font-style:normal; color:var(--orange-deep); }
   .fn-call { text-shadow:0 0 26px var(--cream), 0 0 10px var(--cream); font-size:76px; }
   .fn-tag { position:absolute; left:0; right:0; text-align:center; font:600 37px/1 var(--font-tag); text-transform:uppercase; color:#5D6470; white-space:nowrap; }
@@ -129,15 +130,14 @@ export default function register(E) {
       /* ---------- Texte ---------- */
       const mkLine = (top, inner) => h('div', { class: 'fn-line', style: { top } }, inner);
       const mask = (html) => h('span', { class: 'm' }, h('span', { html }));
-      const line1 = mkLine(560, mask('Die Möglichkeiten von Nextcloud.'));
-      const line2 = mkLine(636, mask('Einfach für deinen <em>Alltag.</em>'));
-      const uline = h('div', { class: 'uline abs', style: { height: 5, width: 0, top: 706, left: 0 } });
+      const line1 = mkLine(576, mask('Einfach für deinen <em>Alltag.</em>')); line1.classList.add('fn-big');
+      const uline = h('div', { class: 'uline abs', style: { height: 5, width: 0, top: 658, left: 0 } });
       const tagEl = h('div', { class: 'fn-tag', style: { top: LOGO_TOP_FINAL + LH + 30 }, text: TAGLINE });
       const cta = h('div', { class: 'fn-cta' }, h('div', { class: 'btn', style: { padding: '28px 58px 28px 42px', fontSize: 34, letterSpacing: '.06em' } }, h('span', { text: CTA_LABEL }), h('span', { html: icon('arrow-up-right', 30, '#fff', 2.6) })), h('div', { class: 'u', text: CTA_URL }));
       // Callback auf den Hook: die offene Frage vom Anfang wird kurz vor dem Kristall beantwortet
       const callb = mkLine(235, mask('Alles funktioniert. <em>Auch</em> dazwischen.')); callb.classList.add('fn-call');
-      root.append(line1, line2, uline, tagEl, cta, callb);
-      return { root, callb, glint, thread, partPaths, cv, g, dpr, spot, logoWrap, logoSvg, flagPart, facetCv, fg, edgeWrap, shine, edge, wedge, flash, base, N, T, targets, tEdges, edges, facets, line1, line2, uline, tagEl, cta };
+      root.append(line1, uline, tagEl, cta, callb);
+      return { root, callb, glint, thread, partPaths, cv, g, dpr, spot, logoWrap, logoSvg, flagPart, facetCv, fg, edgeWrap, shine, edge, wedge, flash, base, N, T, targets, tEdges, edges, facets, line1, uline, tagEl, cta };
     },
 
     update(t, s) {
@@ -252,11 +252,11 @@ export default function register(E) {
 
       /* ---- Schlusszeilen, Tagline, CTA ---- */
       const rev = (el, t0) => { el.firstChild.firstChild.style.transform = `translateY(${(150 * (1 - tw(t, t0, t0 + 0.7, ease.ui))).toFixed(2)}%)`; };
-      rev(s.line1, T_LINES[0]); rev(s.line2, T_LINES[1]);
+      rev(s.line1, T_LINES[0]);
       const cbOn = t >= T_CRYSTAL - 2.5 && t < T_CRYSTAL + 0.02; show(s.callb, cbOn);          // Callback steht 2,4 s (65,6–68,0), solange Szene 06 weg ist; endet im Kristall-Blitz
       if (cbOn) { rev(s.callb, T_CRYSTAL - 2.4); s.callb.style.opacity = (1 - tw(t, T_CRYSTAL - 0.2, T_CRYSTAL, ease.in2)).toFixed(3); }
-      if (!s.em && t >= T_LINES[0]) { const er = s.line2.querySelector('em').getBoundingClientRect(), sr = E.stage.getBoundingClientRect(); s.em = { x: er.left - sr.left, w: er.width }; }
-      const ulW = tw(t, T_LINES[1] + 0.55, T_LINES[1] + 1.2, ease.ui);
+      if (!s.em && t >= T_LINES[0]) { const er = s.line1.querySelector('em').getBoundingClientRect(), rr = s.root.getBoundingClientRect(), sc = rr.width / 1920; s.em = { x: (er.left - rr.left) / sc, w: er.width / sc }; }   // unabhängig vom Push-in der Szene
+      const ulW = tw(t, T_LINES[1], T_LINES[1] + 0.65, ease.ui);                        // der Strich zieht sich auf dem zweiten Glockenton (70.0)
       if (s.em) Object.assign(s.uline.style, { left: s.em.x + 'px', width: (s.em.w * ulW) + 'px', display: ulW > 0 ? 'block' : 'none' }); else s.uline.style.display = 'none';
       const tg = tw(t, T_LINES[2], T_LINES[2] + 0.8, ease.ui);
       tf(s.tagEl, { y: 16 * (1 - tg), o: tg }); s.tagEl.style.letterSpacing = (0.3 - 0.1 * tg) + 'em';

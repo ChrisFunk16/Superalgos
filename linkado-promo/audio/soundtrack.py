@@ -254,6 +254,19 @@ def ui_blip(freq, dur=0.09, vel=1.0):
 def ui_swipe(dur=0.42, vel=1.0):
     n = int(dur * SR); x = sweep(noise(n), 'bp', 600, 3800, q=0.9, block=128, order=2, mode='lin') * np.hanning(n) ** 1.4 * 0.55 * vel
     p = np.linspace(-0.5, 0.5, n); return fade_edges(np.stack([x * (1 - (p + 0.5)) ** 0.5, x * (p + 0.5) ** 0.5], axis=1), 0.005, 0.02)
+def swoop(dur=1.2, vel=1.0):
+    """Kamera-Schwenk: gefiltertes Rauschen, dessen Mitte schnell nach unten fällt (die Kamera „landet“), wandert von links nach rechts; darunter ein kurzer Luftstoß"""
+    n = int(dur * SR); t = np.arange(n) / SR; u = t / dur
+    x = noise(n); y = np.zeros(n); fc = 5200.0 * np.exp(-3.1 * u ** 0.7) + 500.0
+    zi = [np.zeros(2), np.zeros(2)]
+    for i in range(0, n, 128):
+        b, a = biquad('bp', float(fc[i]), 1.1); seg = x[i:i + 128]
+        for k in range(2): seg, zi[k] = signal.lfilter(b, a, seg, zi=zi[k])
+        y[i:i + 128] = seg
+    env = np.minimum(1, t / 0.05) * np.exp(-3.2 * u) * 1.9
+    y = y * env; y += np.sin(2 * np.pi * np.cumsum(240 * np.exp(-2.2 * u) + 70) / SR) * np.exp(-6 * u) * 0.22
+    p = 0.85 * (2 * u - 1) * (1 - 0.5 * u)
+    return fade_edges(np.stack([y * np.sqrt((1 - p) / 2), y * np.sqrt((1 + p) / 2)], axis=1) * vel, 0.004, 0.06)
 def ui_fly(dur=0.78, vel=1.0):
     n = int(dur * SR); t = np.arange(n) / SR; u = t / dur
     x = sweep(noise(n), 'bp', 500, 2600, q=1.0, block=128, order=2, mode='lin') * u ** 1.4 * 0.30
@@ -545,6 +558,7 @@ def render():
             if var == 'add':    B['ui'].add(marimba(midi(76), 0.8, 0.30), tt + 0.03, 0.5); B['ui'].add(marimba(midi(81), 1.0, 0.40), tt + 0.10, 0.6)
             if var == 'toggle': B['ui'].add(ui_blip(midi(81), 0.08), tt + 0.04, 0.35); B['ui'].add(ui_blip(midi(88), 0.10), tt + 0.11, 0.35)
         elif kd == 'swipe':  B['ui'].add(ui_swipe(0.42), tt - 0.05, 0.85)
+        elif kd == 'orbit':  B['fx'].add(swoop(h['end'] - tt), tt, 0.62); ACC.append((tt + 0.05, 0.25))
         elif kd == 'msg':    B['ui'].add(ui_tap(0.5), tt, 0.3); B['ui'].add(ui_blip(midi(81), 0.07), tt, 0.32); B['ui'].add(ui_blip(midi(88), 0.09), tt + 0.06, 0.32)
         elif kd == 'ring':
             for k_ in range(2): B['ui'].add(bell(midi(81 if k_ == 0 else 76), 0.9, 0.7, tail=0.3), tt + 0.5 * k_, 0.38)

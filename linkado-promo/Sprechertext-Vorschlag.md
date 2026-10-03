@@ -23,7 +23,7 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | 42–52 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen. Und wenn es persönlich sein soll: per Chat oder Anruf.“ |
 | 52–58 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
 | 58–66 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
-| 68–76 | Logo | „Linkado. Die Möglichkeiten von Nextcloud. Einfach für deinen Alltag.“ |
+| 68–76 | Logo | „Linkado. Einfach für deinen Alltag.“ |
 
 Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 17,5–22 s, 23 s, 24–28 s, 28–32 s und 68–76 s sprechen
 und die übrigen Szenen allein über Bild und Musik tragen lassen.

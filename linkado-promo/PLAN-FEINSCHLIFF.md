@@ -107,3 +107,8 @@ Anlass: „noch Renderfehler fixen, Kleinigkeiten überarbeiten, Sound besser“
 | Ton: Soft-Clipping | Look-ahead-Limiter, −1,5 dBFS, max. Absenkung 2,4 dB (Drop) |
 
 Bewusst offen geblieben (Entscheidung nötig): Du/Sie · Fenster ab 02 steht rechts über den Bildrand (Absicht: Zoom) · Wortmarke erst bei 68,5 s · juristische Prüfung „Das fertige Portal“.
+
+## 8. Nachtrag (nach Welle 3): Marke allein + Kamera-Schwenk
+
+* **Endbild ohne „Nextcloud“:** die Zeile „Die Möglichkeiten von Nextcloud.“ entfällt; einzige Schlusszeile ist „Einfach für deinen Alltag.“ (66 px, Strich unter „Alltag.“ auf dem zweiten Glockenton 70,0 s; Timeline-Hits unverändert, damit Ton und Sonic Logo bei 71,0 s bleiben). Im Film kommt „Nextcloud“ jetzt nur noch in Szene 01 vor („Nextcloud als Basis“, Beschriftung „NEXTCLOUD · BASIS“).
+* **Kamera-Schwenk am Drop (Perspektivwechsel):** Text- und Fenster-Ebene liegen in einer 3D-Welt (`world` in `a2-ui`), 24,15 → 25,5 s: Drehung ≈ 34° (Y), 8° (X), −2° Rollen, Zoom +14 %, Tiefenstaffelung Text +175 px / Fenster −150 px (Parallaxe), Ease-out; ab 25,5 s `transform: none` (Szenen 01–06 pixelgleich zur Vorfassung). Ton: neuer Hit `orbit` (24,2–25,4 s) mit Schwenk-Whoosh (Rauschen, Mitte fällt 5,2 kHz → 0,5 kHz, links → rechts).

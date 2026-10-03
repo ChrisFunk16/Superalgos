@@ -72,6 +72,7 @@
 
     { "t": 24.0,  "kind": "drop",    "note": "Drop: Lichtblitz, Druckwellen, Crash, Sonic Logo (Moll), Groove startet sofort voll (Kick, Bass, Hats, Clap)" },
     { "t": 24.25,"kind": "text",    "note": "Nextcloud als Basis." },
+    { "t": 24.2,  "kind": "orbit",   "end": 25.4, "note": "Kamera-Schwenk: Text und Fenster schwingen aus Schräge und Nähe in die frontale Ansicht (Perspektivwechsel)" },
     { "t": 25.0,  "kind": "whoosh",  "end": 26.2, "note": "Kristall-Front verwandelt das graue Fenster in das Linkado-Erlebnis" },
     { "t": 25.5,  "kind": "text",    "note": "Linkado als Benutzererlebnis." },
 
@@ -135,8 +136,8 @@
     { "t": 67.5,  "kind": "cut",     "end": 68.0, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
     { "t": 68.0,  "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Harmonie hellt auf (Moll -> Dur)" },
     { "t": 68.5,  "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
-    { "t": 68.75, "kind": "tagline", "note": "Die Möglichkeiten von Nextcloud." },
-    { "t": 70.0,  "kind": "tagline", "note": "Einfach für deinen Alltag." },
+    { "t": 68.75, "kind": "tagline", "note": "Einfach für deinen Alltag. (einzige Schlusszeile, die Marke steht allein)" },
+    { "t": 70.0,  "kind": "tagline", "note": "Strich unter „Alltag.“ (zweiter Glockenton)" },
     { "t": 71.0,  "kind": "tagline", "note": "Logo-Tagline + genau ein CTA; ab hier 5 s volles Endbild" },
     { "t": 76.0,  "kind": "end" }
   ]
