@@ -9,7 +9,7 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 | `out/linkado-werbefilm-4k.mp4` | Master, 3840×2160, 30 fps, H.264, AAC 256 kbit/s |
 | `out/linkado-werbefilm-1080p.mp4` | Web-Fassung, 1920×1080, 30 fps |
 | `out/poster.png` | Standbild (Endkarte) |
-| `audio/soundtrack.mp3` | Musik als eigene Tonspur (48 kHz, −14 LUFS, Spitzen ≤ −1 dBFS); die verlustfreie `soundtrack.wav` erzeugt `python3 audio/soundtrack.py` |
+| `audio/soundtrack.mp3` | Musik als eigene Tonspur (48 kHz, −14 LUFS, Spitzen ≤ −1,5 dBFS); die verlustfreie `soundtrack.wav` erzeugt `python3 audio/soundtrack.py` |
 | `audio/soundtrack-leise.mp3` | dieselbe Musik, −20 LUFS (Messe / Empfang / Hintergrund) |
 | `audio/stems/*.wav` | Stems für den Schnitt: drums · bass · pad · music · bells (inkl. UI) · fx (24 Bit, ohne Sättigung/Limiter; Summe ≈ Master) – entstehen beim Ton-Rendern |
 | `KONZEPT.md` · `KONZEPTE-WEITERDENKEN.md` · `PLAN.md` | Dramaturgie, weitergedachte Konzepte (Fassungen, Faden, KI, Ton), priorisierter Plan |
@@ -72,9 +72,10 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 ## Qualitätssicherung
 
 * Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
-* Ton: exakt 3 648 000 Samples (76 s), −14 LUFS, Spitzen ≤ −1 dBFS, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
+* Ton: exakt 3 648 000 Samples (76 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
   Struktur im Spektrogramm (`audio/spektrogramm.png`).
-* Lesbarkeit: Titel 74–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
+* Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 76 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften und die Absicht-Chaos-Szene 18–22 s erscheinen als Treffer, sind aber gewollt).
+* Lesbarkeit: Titel 70–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
 
 ## Offene Wünsche (leicht nachzuziehen)
 

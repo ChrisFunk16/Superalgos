@@ -180,8 +180,8 @@ export default function register(E) {
       root.append(capRaw, capLk);
 
       const heads = [
-        K.headline(E, root, { num: '01', size: 74, y: 258, lines: ['NEXTCLOUD', 'ALS BASIS.', '<em>LINKADO</em> ALS', 'BENUTZERERLEBNIS.'], muted: [true, true, false, false], delays: [0, 0, 1.3, 1.3], sub: 'Technik verständlich und zugänglich machen.', subDelay: 1.3 }),
-        K.headline(E, root, { num: '02', size: 80, y: 330, lines: ['MEHR <em>ÜBERSICHT</em>', 'IM ARBEITSALLTAG.'], sub: 'Anwendungen und wichtige Funktionen leichter finden.' }),
+        K.headline(E, root, { num: '01', size: 70, y: 264, lines: ['NEXTCLOUD', 'ALS BASIS.', '<em>LINKADO</em> ALS', 'BENUTZERERLEBNIS.'], muted: [true, true, false, false], delays: [0, 0, 1.3, 1.3], sub: 'Technik verständlich und zugänglich machen.', subDelay: 1.3 }),
+        K.headline(E, root, { num: '02', size: 74, y: 334, lines: ['MEHR <em>ÜBERSICHT</em>', 'IM ARBEITSALLTAG.'], sub: 'Anwendungen und wichtige Funktionen leichter finden.' }),
         K.headline(E, root, { num: '03', size: 80, y: 290, lines: ['PASSENDE', '<em>WERKZEUGE</em>', 'AN EINEM ORT.'], sub: 'Apps über den Linkado-Appshop auswählen und verwalten.' }),
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
@@ -237,7 +237,7 @@ export default function register(E) {
       dash.fcards.forEach((f, i) => tf(f, { y: (10 + 4 * i) * loose }));
       /* Das große Menü öffnet sich über dem Raster-Symbol (25.0), die Suche „Was möchten Sie tun?“ findet alles an einem Ort (Treffer 26.4), das Menü schließt (27.55–28.0) */
       const mo = tw(t, 25.02, 25.55, ease.ui), mc = tw(t, 27.55, 28.0, ease.in2), mv = mo * (1 - mc);
-      show(menu.el, t >= 25.0 && t < 28.05); tf(menu.el, { x: -352 * (1 - mv) });
+      show(menu.el, t >= 25.0 && t < 28.05); menu.el.style.clipPath = mv < 0.999 ? `inset(0 ${((1 - mv) * 100).toFixed(2)}% 0 0)` : 'none'; tf(menu.el, { x: -48 * (1 - mv), o: clamp(mv * 2.4) });      // das Menü wird von der Leiste aus aufgedeckt (Text bleibt lesbar, wird nicht angeschnitten durchgeschoben)
       show(dim, t >= 25.0 && t < 28.05); dim.style.opacity = (mv).toFixed(3);
       gridTile.classList.toggle('on', t >= 25.0 && t < 27.9);
       const typed = Math.floor(clamp((t - 25.7) / 0.7) * 7 + 0.001);
@@ -252,9 +252,9 @@ export default function register(E) {
       /* ---- Ansichtswechsel Startseite → Apps und Pakete → Support ---- */
       const act = t < 28.0 ? 'Startseite' : t < 34.0 ? '' : t < 38.0 ? 'Support' : 'Talk';
       if (act !== s.activeRail) { win.setActive(act); s.activeRail = act; }
-      show(dash.el, t < 28.5); tf(dash.el, { o: 1 - tw(t, 28.0, 28.45, ease.out2), s: 1 - 0.015 * tw(t, 28.0, 28.45) });
+      show(dash.el, t < 28.5); tf(dash.el, { o: 1 - tw(t, 28.0, 28.28, ease.out2), s: 1 - 0.015 * tw(t, 28.0, 28.45) });
       show(shop.el, t >= 27.98 && t < 34.6);
-      shop.el.style.opacity = tw(t, 28.0, 28.3, ease.out2) * (1 - tw(t, 34.0, 34.5, ease.out2));
+      shop.el.style.opacity = tw(t, 28.12, 28.42, ease.out2) * (1 - tw(t, 34.0, 34.5, ease.out2));
       const hp = (a, d = 0.6) => tw(t, 28.1 + a, 28.1 + a + d, ease.ui);
       tf(shop.menu, { x: -18 * (1 - hp(0)), o: hp(0) });
       tf(shop.head, { y: 22 * (1 - hp(0.05)), o: hp(0.05) }); tf(shop.stat, { y: 16 * (1 - hp(0.15)), o: hp(0.15) });

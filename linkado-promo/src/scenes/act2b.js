@@ -47,7 +47,7 @@ export default function register(E) {
       const NAVY = '#1F2532', OR = '#E67E22';
       const defs = h('defs', {},
         h('linearGradient', { id: 'pk-g', x1: 0, y1: 0, x2: 1, y2: 1 }, h('stop', { offset: 0, 'stop-color': NAVY }), h('stop', { offset: 0.55, 'stop-color': NAVY }), h('stop', { offset: 1, 'stop-color': OR })),
-        h('linearGradient', { id: 'pk-shine', gradientUnits: 'userSpaceOnUse', x1: 0, y1: 0, x2: 160, y2: 0 }, h('stop', { offset: 0, 'stop-color': '#fff', 'stop-opacity': 0 }), h('stop', { offset: 0.5, 'stop-color': '#fff', 'stop-opacity': 0.85 }), h('stop', { offset: 1, 'stop-color': '#fff', 'stop-opacity': 0 })),
+        h('linearGradient', { id: 'pk-shine', x1: 0, y1: 0, x2: 1, y2: 0 }, h('stop', { offset: 0, 'stop-color': '#fff', 'stop-opacity': 0 }), h('stop', { offset: 0.5, 'stop-color': '#fff', 'stop-opacity': 0.85 }), h('stop', { offset: 1, 'stop-color': '#fff', 'stop-opacity': 0 })),
         h('clipPath', { id: 'pk-c0' }, h('rect', { x: CX[1] - W / 2 - 40, y: CY - H / 2 - 30, width: W / 2 + 120, height: H / 2 + 30 })),
         h('clipPath', { id: 'pk-c1' }, h('rect', { x: CX[2] - W / 2 - 40, y: CY - H / 2 - 30, width: W / 2 + 120, height: H / 2 + 30 })));
       const rectFor = (cx, extra) => h('rect', { x: cx - W / 2 + TH / 2, y: CY - H / 2 + TH / 2, width: W - TH, height: H - TH, rx: R, fill: 'none', ...extra });
@@ -95,7 +95,6 @@ export default function register(E) {
       // Lock: Lichtband + Glow
       const sh = prog(t, LOCK + 0.02, LOCK + 0.8);
       show(s.shineRect, sh > 0 && sh < 1); s.shineRect.setAttribute('x', (850 + 1000 * ease.io2(sh)).toFixed(1));
-      s.shineRect.parentNode.querySelector('#pk-shine').setAttribute('x1', 0);
       const gl = tw(t, LOCK - 0.05, LOCK + 0.3, ease.out3) * (0.75 + 0.25 * Math.cos(Math.max(0, t - LOCK - 0.3) * 2)); s.glow.style.opacity = t < LOCK - 0.05 ? 0 : gl * 0.9;
       // Ausblenden
       const ex = tw(t, 49.45, 50.0, ease.in2);
@@ -150,7 +149,10 @@ export default function register(E) {
       s.head.update(t, 46.2, 53.4);
       const cin = tw(t, 46.0, 46.8, ease.ui), cout = tw(t, 52.9, 53.4, ease.in2);
       show(s.card, t < 53.75);
-      tf(s.card, { x: 80 * (1 - cin), y: 20 * (1 - cin), o: cin * (1 - cout), s: 1 - 0.02 * cout });
+      // Die Karte ist zuerst nur so hoch wie die Zeitleiste (kein leerer weißer Block) und wächst, wenn das gemeinsame Dokument kommt (49.9–50.8)
+      const grow = ease.uiInOut(prog(t, 49.9, 50.8));
+      s.card.style.height = (340 + 360 * grow).toFixed(1) + 'px';
+      tf(s.card, { x: 80 * (1 - cin), y: 20 * (1 - cin) + 150 * (1 - grow), o: cin * (1 - cout), s: 1 - 0.02 * cout });
       // Zeitleiste: Blöcke erscheinen, dann schrumpfen die grauen
       let x = 60;
       s.blocks.forEach((b, i) => {
@@ -163,7 +165,7 @@ export default function register(E) {
         x += w;
       });
       // Dokument + Cursor
-      const din = tw(t, 50.2, 50.9, ease.ui);
+      const din = tw(t, 50.45, 51.1, ease.ui);
       tf(s.doc, { y: 40 * (1 - din), o: din });
       s.lineEls.forEach((L, i) => {
         const tt = 50.8 + i * 0.4, p = ease.out2(prog(t, tt, tt + 1.1));

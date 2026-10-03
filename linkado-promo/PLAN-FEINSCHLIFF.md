@@ -83,3 +83,27 @@ Der Ton wurde **nur gemessen, nicht gehört**. Alle Zeiten sind globale Filmzeit
 1. **Welle 1 + 2 in einem Durchgang** (M1–M7, S1–S15; ca. 2–3 h Arbeit), danach Ton neu rendern (M1/M3/M4/M5 betreffen ihn) und **ein** voller Render + Kodierung (≈ 25 min).
 2. Danach 1080p zum Ansehen; **Welle 3** nach eurem Gehör-/Seheindruck und den Entscheidungen D1–D5.
 3. **Abnahme-Check nach dem Render:** Kette 52–58 s baut sich auf (Glied 1/2/3 bei 53/54/55, Boom 56) · Talk-Fenster vor 52,4 weg · 22,5–24,0 s Satz lesbar und auf dem Herzschlag · 27–32 s Kamera in einer Linie, nichts beschnitten · 58–61 s Beschriftungen vollständig · Hook (0–4 s) hörbar.
+
+## 7. Welle 3 – Gesamtdurchgang (umgesetzt)
+
+Anlass: „noch Renderfehler fixen, Kleinigkeiten überarbeiten, Sound besser“. Vorgehen: (1) Einzelbilder aus dem Master, Übergänge im 0,1-s-Raster; (2) `tools/domcheck.mjs` (Texte im Bild vermessen); (3) Ton **gemessen** (Bänder je Szene, Stems, Akzent-Abstand, Mono-Summe) statt nur nach Gefühl.
+
+| Befund | Maßnahme |
+| --- | --- |
+| Menü (02) schiebt sich angeschnitten über Rail und Überschrift (33,0–33,2 s, Text halb abgeschnitten) | wird von der Leiste aus aufgedeckt (`clip-path`), 0,53 s |
+| Szene 06: untere Kartenhälfte 3,8 s leer | Karte wächst mit dem Dokument (340 → 700 px) und fährt nach oben |
+| Überschriften 01/02 berühren fast das Fenster (28–36 px) | Schrift 74 → 70 / 80 → 74 (jetzt 75–85 px Luft) |
+| Laptop „flackert“ bei 14,4 s (Deckkraft-Strobe) | ein einziger weicher Einbruch |
+| Hintergrundfenster („video“, „cal“) liegen hinter den Titeln | aus der Titelzone verschoben |
+| Überblendung 02 → 03 zeigt zwei Oberflächen übereinander | Ausblenden 0,28 s, Einblenden beginnt 0,12 s später |
+| Lichtband beim Einrasten der Kette unsichtbar | Verlauf folgt jetzt dem Rechteck |
+| „Support-Zeiten: Mo–Fr 9–17 Uhr“ in der Oberfläche | entfernt (unbelegtes Versprechen) |
+| Schlussbild 5 s starr | Push-in 1,2 % |
+| Ton: Akt I −32 … −19 LUFS (Hook praktisch unhörbar auf Laptop/Talk), Akt II ≈ −13 | Pegelkurve `ACT1_GAIN`: Hook −24, Alltagsmomente −22 … −18, Überforderung −16 |
+| Ton: Melodie 12 dB unter den Drums, Sub +16 dB über den Mitten | Pult: Kick/Bass −3 dB, Melodie/Glocken +3…4 dB, Hats +3 dB, UI +4 dB; Sub-Band jetzt ≈ +10 dB über den Mitten |
+| Ton: Kick 4–8 s nur im Tiefbass | Mitten-Anschlag (`knock`), Filter ab 240 Hz |
+| Ton: Bild-Akzente gehen im Groove unter | Akzent-Ducking (Arpeggio/Hats/Pad), Kettenklack, Clap auf 2/4 |
+| Ton: Callback ohne Akzent | Aufschwung + C6/E6 bei 65,625 s |
+| Ton: Soft-Clipping | Look-ahead-Limiter, −1,5 dBFS, max. Absenkung 2,4 dB (Drop) |
+
+Bewusst offen geblieben (Entscheidung nötig): Du/Sie · Fenster ab 02 steht rechts über den Bildrand (Absicht: Zoom) · Wortmarke erst bei 68,5 s · juristische Prüfung „Das fertige Portal“.

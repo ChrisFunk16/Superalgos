@@ -98,7 +98,7 @@ export default function register(E) {
       });
 
       /* ---- Hintergrund-Oberflächen: unterschiedliche Fenster füllen nach und nach den Bildschirm (dim im Hook/den Alltagsmomenten, hell in der Überforderung) ---- */
-      const BGW = [['mail', 40, 650, 300, 200, -4, 0.4], ['chat', 1500, 60, 320, 210, 3, 0.9], ['cal', 700, 30, 300, 200, -2, 1.3], ['sheet', 1580, 700, 300, 200, 4, 2.4], ['video', 60, 80, 280, 190, 3, 3.0],
+      const BGW = [['mail', 40, 650, 300, 200, -4, 0.4], ['chat', 1500, 60, 320, 210, 3, 0.9], ['cal', 880, 24, 300, 200, -2, 1.3], ['sheet', 1580, 700, 300, 200, 4, 2.4], ['video', 250, 905, 280, 190, 3, 3.0],
         ['ticket', 840, 770, 320, 210, -3, 3.6], ['ai', 1300, 20, 280, 190, -3, 4.4], ['files', 20, 340, 260, 180, -2, 5.2], ['kanban', 1250, 790, 300, 200, 2, 6.0], ['form', 560, 870, 300, 190, -4, 7.0]];
       const bgw = BGW.map(([k, x, y, w, hh, rot, tIn]) => { const el = h('div', { class: 'abs', style: { left: 0, top: 0, zIndex: 2 } }, mini(E, k, w, hh)); root.append(el); return { el, x, y, w, hh, rot, tIn }; });
 
@@ -203,7 +203,7 @@ export default function register(E) {
         return {
           update(t, t0, P) {
             const a = t - t0, sc = 1;
-            tf(lap.el, { x: 90 * (1 - tw(a, 0.0, 0.7, ease.ui)), y: 24 * (1 - tw(a, 0, 0.7, ease.ui)), o: tw(a, 0.0, 0.5) * (1 - 0.18 * Math.max(0, Math.sin((t - P[1]) * 22)) * (t > P[1] && t < P[1] + 0.35 ? 1 : 0)), r: 1.2 });
+            tf(lap.el, { x: 90 * (1 - tw(a, 0.0, 0.7, ease.ui)), y: 24 * (1 - tw(a, 0, 0.7, ease.ui)), o: tw(a, 0.0, 0.5) * (1 - 0.12 * Math.sin(Math.PI * clamp((t - P[1]) / 0.32))), r: 1.2 });
             tf(bar, { y: 40 * (1 - tw(t, P[0] - 0.1, P[0] + 0.4, ease.ui)), o: tw(t, P[0] - 0.1, P[0] + 0.3) });
             bar.querySelector('.fillbar').style.width = (28 * ease.out3(prog(t, P[0] + 0.1, P[0] + 1.0))) + '%';
             tools.forEach((el, k) => { const tt = P[1] + k * 0.1, p = tw(t, tt, tt + 0.45, ease.snap); show(el, t >= tt); tf(el, { y: -50 * (1 - p) + 6 * Math.sin(t * 3 + k), s: 0.5 + 0.5 * p, o: clamp(p * 2), r: (k - 1) * 8 }); });

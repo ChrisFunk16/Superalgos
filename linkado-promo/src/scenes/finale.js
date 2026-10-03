@@ -22,6 +22,7 @@ export default function register(E) {
   const T_CRYSTAL = hit('crystal')[0];                       // 56.0
   const SH = T_CRYSTAL - 54.0;                               // Verschiebung gegenüber der 60-s-Fassung (Szene 06 hat 2 s mehr Luft): 2.0
   const T_WEDGE = hit('snap').filter((x) => x > T_CRYSTAL - 0.5)[0];      // 56.5
+  const DUR_END = E.tl.meta.duration;
   const T_LINES = hit('tagline');                            // 56.75, 58.0, 59.0
   const NAVY = '#1F2532', OR = '#E67E22';
   const K = 1000 / LOGO.viewBox[2];                          // Logo-Maßstab (Breite 1000 px)
@@ -136,7 +137,7 @@ export default function register(E) {
       // Callback auf den Hook: die offene Frage vom Anfang wird kurz vor dem Kristall beantwortet
       const callb = mkLine(235, mask('Alles funktioniert. <em>Auch</em> dazwischen.')); callb.classList.add('fn-call');
       root.append(line1, line2, uline, tagEl, cta, callb);
-      return { callb, glint, thread, partPaths, cv, g, dpr, spot, logoWrap, logoSvg, flagPart, facetCv, fg, edgeWrap, shine, edge, wedge, flash, base, N, T, targets, tEdges, edges, facets, line1, line2, uline, tagEl, cta };
+      return { root, callb, glint, thread, partPaths, cv, g, dpr, spot, logoWrap, logoSvg, flagPart, facetCv, fg, edgeWrap, shine, edge, wedge, flash, base, N, T, targets, tEdges, edges, facets, line1, line2, uline, tagEl, cta };
     },
 
     update(t, s) {
@@ -263,6 +264,8 @@ export default function register(E) {
       tf(s.cta, { y: 20 * (1 - cg), o: cg });
       // Hintergrund erst sanft einblenden (Szene 06 liegt bis 52.0 darunter)
       s.logoWrap.parentNode.style.opacity = tw(t, 51.5 + SH, 51.62 + SH);
+      // Schlussbild lebt: sehr langsamer Push-in (1,2 %) über die letzten 5 s – kein „eingefrorenes“ Standbild
+      const push = ease.io2(prog(t, T_LINES[2], DUR_END)); s.root.style.transformOrigin = '50% 46%'; s.root.style.transform = push > 0 ? `scale(${(1 + 0.012 * push).toFixed(5)})` : 'none';
     },
   });
 
