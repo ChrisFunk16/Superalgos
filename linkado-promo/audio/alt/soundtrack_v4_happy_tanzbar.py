@@ -12,9 +12,9 @@ Dramaturgie (siehe timeline.json, 120 BPM, 1 Takt = 2 s, Zeiten werden aus der T
   Takt 34–35  (66–68 s) Aufbau, Halbtakt-Drop-out, Aufhellung nach A-Dur beim Kristall (68.0)
   Takte 35–38 (68–76 s) Finale: Sonic Logo A–C♯–E–A (Dur), Groove bis 72.0, danach nur Glocken und Pad, Ausklang
 
-„Happy-Beat“-Fassung (v5 „wohlig“): Akt II steht ab dem Drop in A-DUR (I – vi – IV – V = A – F#m – D – E, ein Akkord je ZWEI Takte), Halbtakt-Gefühl (Kick auf 1 und 3,
-Backbeat nur auf 3 – das Tempo bleibt 120 BPM wegen des Takt-Rasters, fühlt sich aber wie ≈ 60 an), runder Bass, Rhodes-Akkorde, weiche Zupf-Arpeggien in Achteln mit „Laid-back“-Swing,
-Tamburin auf 2 und 4, ein Vibraphon-Hook in mittlerer Lage (pausiert in 04 und in der Kette, damit Klicks und Einrast-Klänge frei stehen). Akt I bleibt in A-Moll; der Cliffhanger („Keine Lust mehr, sich damit herumzuärgern? Linkado …“) endet auf der Dominante E-sus (unaufgelöst,
+„Happy-Beat“-Fassung: Akt II steht ab dem Drop in A-DUR (I – V – vi – IV = A – E – F#m – D, ein Akkord je Takt), federnder Bass (Oktav-Offbeats),
+Klavier-Stabs, Swing auf den Off-16teln, Clap + Tamburin auf 2 und 4, ein Pfeif-/Zupf-Hook in der A-Dur-Pentatonik (er pausiert in Szene 04 und 05, damit Klicks und Kettenglieder
+frei stehen). Akt I bleibt in A-Moll; der Cliffhanger („Keine Lust mehr, sich damit herumzuärgern? Linkado …“) endet auf der Dominante E-sus (unaufgelöst,
 Frage-Glissando, drei Punkte), der Drop löst nach A-Dur auf. Aufhellung beim Kristall = Auflösung der Dominante (V → I) und Volltreffer, keine Moll→Dur-Wende mehr.
 
 Welle 3: Akt I per Pegelkurve angehoben (ACT1_GAIN), Mischung von Sub/Bass zu Mitten, Kick mit Mitten-Anschlag, Clap, Kettenklack, Akzent-Ducking,
@@ -202,23 +202,16 @@ def tambourine(vel=1.0):
     x = filt(noise(n), 'bp', 7800, 1.6) * np.exp(-t / 0.05) + filt(noise(n), 'bp', 5200, 2.0) * np.exp(-t / 0.035) * 0.6
     x = x * (1 + 0.5 * np.sin(2 * np.pi * 55 * t))                                      # Rasseln
     return fade_edges(x * vel * 0.9, 0.0008, 0.02)
-def keys(notes, vel=1.0, dur=0.7):
-    """Rhodes-artiger E-Piano-Akkord: weicher Anschlag, lang ausklingende Grundtöne, leichte Schwebung und Tremolo"""
+def keys(notes, vel=1.0, dur=0.42):
+    """Klavier-Stab (Piano-House): additive Teiltöne mit kurzem Abklingen, leichte Schwebung, Hammer-Klick"""
     n = int(dur * SR); t = np.arange(n) / SR; out = np.zeros(n)
     for m in notes:
         f = midi(m)
-        for hn, a_, d in ((1, 1.0, 0.55), (2, 0.40, 0.28), (3, 0.16, 0.14), (4, 0.10, 0.08)):
-            out += osc_sine(f * hn * (1 + 0.0003 * hn * hn), n, rng.random()) * a_ * np.exp(-t / d)
-        out += osc_sine(f * 1.0035, n, rng.random()) * 0.30 * np.exp(-t / 0.5)
-        out += osc_sine(f * 5.0, n, rng.random()) * 0.05 * np.exp(-t / 0.035)          # „Tine“-Klick
-    out = out / max(1, len(notes)) * 0.62 * (1 + 0.10 * np.sin(2 * np.pi * 4.6 * t))
-    return fade_edges(out * vel, 0.004, 0.06)
-def vibes(freq, dur=0.9, vel=1.0):
-    """Vibraphon-/Marimba-Hook-Ton: warm, lang ausklingend, leichtes Tremolo"""
-    n = int(dur * SR); t = np.arange(n) / SR
-    y = osc_sine(freq, n) * np.exp(-t / 0.75) + 0.22 * osc_sine(freq * 4.0, n) * np.exp(-t / 0.20) + 0.06 * osc_sine(freq * 10.0, n) * np.exp(-t / 0.05)
-    y = y * (1 + 0.16 * np.sin(2 * np.pi * 5.0 * t)) * np.minimum(1, t / 0.004)
-    return fade_edges(y * vel * 0.75, 0.003, 0.08)
+        for hn, a, d in ((1, 1.0, 0.30), (2, 0.55, 0.20), (3, 0.30, 0.12), (4, 0.18, 0.08), (5, 0.10, 0.05)):
+            out += osc_sine(f * hn * (1 + 0.0004 * hn * hn), n, rng.random()) * a * np.exp(-t / d)
+        out += osc_sine(f * 1.003, n, rng.random()) * 0.35 * np.exp(-t / 0.34)
+    out = out / max(1, len(notes)) * 0.62 + filt(noise(n) * np.exp(-t / 0.004), 'bp', 2800, 1.0) * 0.12
+    return fade_edges(out * vel, 0.002, 0.03)
 def whistle(freq, dur=0.24, vel=1.0):
     """Pfeif-/Flöten-Zupfton für den Hook: weicher Einsatz, leichtes Vibrato, kurzer Hauch"""
     n = int(dur * SR); t = np.arange(n) / SR
@@ -322,13 +315,13 @@ CH = {
     'D':     dict(pad=[45, 50, 54, 57, 62], bass=38, arp=[57, 62, 66, 69, 74, 78, 81, 86], stab=[57, 62, 66, 69]),
     'Esus':  dict(pad=[40, 47, 52, 57, 59, 64], bass=40, arp=[52, 57, 59, 64, 69, 71, 76, 81], stab=[52, 57, 59, 64]),     # Dominante mit Quarte: unaufgelöst (Cliffhanger)
 }
-HAPPY = ['A', 'F#m', 'D', 'E']                      # I – vi – IV – V (vertraut, „Oldies“-Wendung); die V führt zurück zur I
+HAPPY = ['A', 'E', 'F#m', 'D']
 def chord_at(t):
     bar = int(t // BAR) + 1                                  # 1-basiert
     if bar >= CB: return 'Amaj9'                             # ab dem Kristall
     if bar == CB - 1: return 'E'                             # Auftakt: Dominante, löst sich im Kristall nach A auf (V → I)
     if bar < B0: return 'Am9'
-    return HAPPY[((bar - B0) // 2) % 4]                      # ein Akkord je zwei Takte (4 s): A – F#m – D – E
+    return HAPPY[(bar - B0) % 4]                             # ein Akkord je Takt (2 s): A – E – F#m – D
 
 def prog(t, a, b): return float(np.clip((t - a) / (b - a), 0, 1))
 def bar_t(bar, beat=1): return (bar - 1) * BAR + (beat - 1) * BEAT
@@ -482,10 +475,9 @@ def render():
     nbeats = int(DUR / BEAT)
     for k in range(nbeats):
         tk = k * BEAT
-        if k % 4 not in (0, 2): continue                                                                        # Halbtakt-Gefühl: Kick auf 1 und 3
         if tk >= DROP and kick_on(tk) and not any(abs(tk - h_['t']) < 1e-6 for h_ in hits('lock')):      # beim Einrasten der Kette steht der Boom frei
-            lv = 0.86 + 0.14 * prog(tk, DROP, DROP + 16)
-            B['kick'].add(kick(1.0 * lv, 0.40), tk, 1.0); kicks.append((tk, lv))
+            lv = 0.82 + 0.18 * prog(tk, DROP, DROP + 16)
+            B['kick'].add(kick(1.0 * lv, 0.0), tk, 1.0); kicks.append((tk, lv))
     # Bass: Pedal auf Akkordgrund, 8tel auf den Offbeats; Sub-Teppich am Anfang
     def bass_active(tt):
         if tt < DROP or tt >= END_GROOVE: return False
@@ -494,88 +486,88 @@ def render():
         return True
     # liegender Sub in den ersten zwei Takten des Groove
     B['bass'].add(sub_boom(55.0, 2.6, 0.9), DROP, 0.38)
-    BASSP = {0: (0, 0.55, 1.0), 3: (12, 0.20, 0.8), 4: (0, 0.42, 0.9), 7: (7, 0.20, 0.8)}                      # Zählzeit 1 lang, „und“ der 2 Oktave, Zählzeit 3, „und“ der 4 Quinte
-    SW8 = 0.27 * S16                                                                                         # „Laid-back“: die Off-Achtel kommen etwas später
     for bar in range(11 + NB2, CB + 2):
         for e8 in range(8):
-            if e8 not in BASSP: continue
-            tt = bar_t(bar) + e8 * (BEAT / 2) + (SW8 if e8 % 2 else 0.0)
-            if bar < 11 + NB2 or tt >= END_GROOVE or not bass_active(tt): continue
-            ch = chord_at(tt); root = CH[ch]['bass']; semi, dd, vv = BASSP[e8]
-            if bar % 2 == 0 and e8 == 7: semi = 12
-            B['bass'].add(bass_note(midi(root + semi), dd, vv, 0.10 + 0.25 * prog(tt, DROP + 4, DROP + 26)), tt, 0.9 * (0.75 + 0.25 * prog(tt, DROP + 4, DROP + 10)))
+            tt = bar_t(bar) + e8 * (BEAT / 2)
+            if bar < 11 + NB2 or tt >= END_GROOVE or not bass_active(tt) or e8 % 2 == 0: continue
+            ch = chord_at(tt); root = CH[ch]['bass']; pat = [0, 0, 0, 12, 0, 0, 0, 7]; semi = pat[e8]                # Offbeats: Grundton – Oktave – Grundton – Quinte („federnd“)
+            if bar % 2 == 0 and e8 == 7: semi = 12                                                              # Variation, immer akkordeigen
+            B['bass'].add(bass_note(midi(root + semi), BEAT * 0.32, 0.9 + 0.1 * (e8 == 3), 0.25 + 0.5 * prog(tt, DROP + 4, DROP + 26)), tt, 0.9 * (0.75 + 0.25 * prog(tt, DROP + 4, DROP + 10)))
     SWING = 0.11 * S16
-    # Hi-Hats: offene Hats auf den Off-Achteln (mit Laid-back-Verzögerung), ab Szene 03 dazu leise geschlossene Viertel – keine 16tel mehr
+    # Hi-Hats
     for bar in range(11 + NB2, CB + 1):
-        for s in range(0, 16, 2):
-            tt = bar_t(bar) + s * S16 + (SW8 if s % 4 == 2 else 0.0)
+        for s in range(16):
+            tt = bar_t(bar) + s * S16 + (SWING if s % 2 else 0.0)                                             # leichter Swing auf den Off-16teln
             if cut_a <= tt < cut_b or tt >= END_GROOVE: continue
-            if s % 4 == 2:
-                B['hats'].add(hat(True, 0.65), tt + hum(0.002), 0.9, pan=0.25)
-            elif bar >= 15 + NBS and s % 4 == 0:
+            if tt >= CRY and tt < 54.0: continue
+            open_ = (s % 4 == 2)
+            if open_:
+                B['hats'].add(hat(True, 0.9), tt + hum(0.002), 0.9, pan=0.25)
+            elif bar >= 15 + NBS and s % 2 == 1 or (bar >= 15 + NBS and s % 4 == 0 and s % 8 != 0):
                 thin = (cut_a - 3.5) <= tt < (cut_a - 1.5) or bar >= CB
-                B['hats'].add(hat(False, 0.42 * (0.6 if thin else 1)), tt + hum(0.002), 0.7, pan=-0.2 if s % 8 == 0 else 0.3)
-    # Backbeat nur auf der 3 (Halbtakt): Rim + Clap; Tamburin weich auf 2 und 4
-    for bar in range(11 + NB2, CB + 2):
-        for beat in (2, 3, 4):
+                B['hats'].add(hat(False, (0.55 + 0.35 * ((s * 5) % 3 == 0)) * (0.5 if thin else 1)), tt + hum(0.002), 0.7, pan=-0.2 if s % 4 == 1 else 0.3)
+    # Rim / Clap auf 2 und 4
+    for bar in range(11 + NB2, CB):
+        for beat in (2, 4):
             tt = bar_t(bar, beat)
-            if cut_a <= tt < cut_b or tt >= END_GROOVE: continue
-            if beat == 3:
-                B['rim'].add(rim(0.55), tt, 0.7, pan=0.15); B['rim'].add(clap(0.7), tt + 0.003, 0.5, pan=-0.1)
-            else:
-                B['rim'].add(tambourine(0.55), tt + 0.004, 0.30, pan=0.3)
-    # Pad: Akkordteppich (warm: Filter öffnet sich nur bis ≈ 2 kHz), ein Akkord je zwei Takte
-    segs = [(CUT + 0.5, DROP, 'Am9')]; a_ = DROP                                                      # Pause: A-Moll-Pad (Spannung) – ab dem Drop A-Dur
+            if cut_a <= tt < cut_b: continue
+            B['rim'].add(rim(0.7 if beat == 2 else 0.9), tt, 0.9, pan=0.15); B['rim'].add(clap(0.8 if beat == 2 else 1.0), tt + 0.003, 0.55, pan=-0.1); B['rim'].add(tambourine(0.8), tt + 0.004, 0.34, pan=0.3)
+    for bar in range(CB, CB + 2):
+        for beat in (2, 4): B['rim'].add(rim(0.6), bar_t(bar, beat), 0.8, pan=0.1); B['rim'].add(clap(0.7), bar_t(bar, beat) + 0.003, 0.45, pan=-0.1)
+    # Pad: Akkordteppich, Filter öffnet sich über die Zeit
+    segs = [(CUT + 0.5, DROP, 'Am9')]; a_ = DROP                                                      # Pause: A-Moll-Pad (Spannung) – ab dem Drop A-Dur, ein Akkord je Takt
     while a_ < CRY - 1e-6:
-        b_ = a_ + (4.0 if a_ + 4.0 <= CRY - 2.0 + 1e-6 else 2.0); segs.append((a_, min(b_, CRY), chord_at(a_))); a_ = b_
+        b_ = a_ + 2.0; segs.append((a_, min(b_, CRY), chord_at(a_))); a_ = b_
     for a, b, ch in segs:
-        cut_f = 650 + 1500 * prog(a, DROP, DROP + 28); first = a == CUT + 0.5
-        pc = pad_chord(CH[ch]['pad'], b - a + (0.6 if not first else 0.0), attack=1.4 if first else 0.9, release=1.6, cutoff=cut_f)
+        cut_f = 800 + 2600 * prog(a, DROP, DROP + 28); first = a == CUT + 0.5
+        pc = pad_chord(CH[ch]['pad'], b - a + (0.6 if not first else 0.0), attack=1.4 if first else 0.55, release=1.3, cutoff=cut_f)
         B['pad'].add(pc, a, 0.8 if first else 1.0)
     # Finale-Pad (A-Dur, hell) – setzt beim Kristall ein und klingt bis zum Ende aus
     pc = pad_chord(CH['Amaj9']['pad'] + [69], 8.0, attack=0.25, release=2.6, cutoff=4200.0, spread=0.7); B['pad'].add(pc, CRY, 0.95)
-    # Rhodes-Akkorde (Comping): „und“ der 2, in geraden Takten zusätzlich „und“ der 3 – Takte 15–17 und 19–25 sowie im Finale
+    # Stabs (Dub-Akkord auf dem Offbeat der Zählzeit 2) – Takte 15–17 und 19–23 sowie 28–29
     def stab_bar(bar): return (15 + NBS <= bar <= 17 + NBS) or (19 + NBS <= bar <= 25 + NBS) or bar in (CB, CB + 1)
     for bar in range(11 + NB2, CB + 2):
         if not stab_bar(bar): continue
         if bar_t(bar) >= END_GROOVE: continue
-        for st_, g_ in ((6, 0.85),) + (((10, 0.6),) if bar % 2 == 0 else ()):
-            tt = bar_t(bar) + st_ * S16 + SW8 + hum(0.002); ch = chord_at(tt)
+        for st_, g_ in ((6, 0.9), (10, 0.7)) + (((3, 0.55),) if bar % 2 == 1 else ()):            # Piano-House: „und“ der 2 und der 3, in jedem zweiten Takt zusätzlich das „a“ der 1
+            tt = bar_t(bar) + st_ * S16 + (SWING if st_ % 2 else 0.0) + hum(0.002); ch = chord_at(tt)
             if tt >= END_GROOVE or cut_a <= tt < cut_b: continue
-            B['stab'].add(keys(CH[ch]['stab'], 0.9, 0.8), tt, g_, pan=-0.25 if st_ != 10 else 0.25)
-    # Arpeggio (Hauptstimme) – weich gezupfte Achtel (in 01 und im Geräte-Beat nur Viertel), Laid-back-Swing; dunkler in Takt 18, etwas heller bis zum Finale
+            B['stab'].add(keys(CH[ch]['stab'], 0.9, 0.42), tt, g_, pan=-0.25 if st_ != 10 else 0.25)
+    # Arpeggio (Hauptstimme) – 16tel; dünn in Takt 13/14, voll ab 15, dunkel in Takt 18, heller bis Takt 26
     P1 = [0, 2, 4, 2, 5, 4, 2, 1, 0, 2, 4, 6, 7, 6, 4, 2]
     P2 = [4, 5, 7, 5, 6, 4, 5, 2, 4, 5, 7, 5, 6, 7, 5, 4]
     V = [1.0, 0.45, 0.7, 0.5, 0.9, 0.45, 0.7, 0.5, 1.0, 0.45, 0.7, 0.55, 0.85, 0.5, 0.7, 0.5]
     for bar in range(12 + NB2, CB + 2):
-        for s in range(0, 16, 2):
-            tt = bar_t(bar) + s * S16 + (SW8 if s % 4 == 2 else 0.0)
+        for s in range(16):
+            tt = bar_t(bar) + s * S16
             if tt >= END_GROOVE or (cut_a <= tt < cut_b): continue
-            if bar < B02 and s % 4 != 0: continue                          # bis Szene 02 (inkl. Geräte-Beat): luftig, nur Viertel
+            if bar < B02 and s % 4 not in (0, 2): continue                  # bis Szene 02 (inkl. Geräte-Beat): luftig, nur Achtel
+            if bar < 15 + NBS and s % 2 == 1: continue
+            if bar >= CB - 1 and tt < CRY and tt >= cut_a - 1.5 and s % 2 == 1: continue
             ch = chord_at(tt); notes = CH[ch]['arp']
             if bar >= CB:
                 notes = CH['Amaj9']['arp']
-            note = notes[P1[s] % len(notes)] + (12 if (bar >= CB and s % 8 == 6) else 0)
+            note = notes[P1[s] % len(notes)] + (12 if (bar >= CB and s % 4 == 3) else 0)
             vel = V[s] * (0.7 + 0.3 * prog(tt, DROP + 8, DROP + 28)) * (0.85 if bar == 18 + NBS else 1.0)
-            bright = (0.18 if bar == 18 + NBS else 0.22 + 0.30 * prog(tt, DROP + 8, DROP + 32)) + (0.15 if bar >= CB else 0)
-            B['arp'].add(pluck(midi(note), 0.34, vel, bright, tau=0.13), tt + hum(0.0025), 0.9, pan=(-1) ** (s // 2) * (0.3 + 0.2 * (s % 4 == 0)))
-    # Zweite Stimme: eine Oktave höher, nur auf den Off-Achteln von 2 und 4, ab Takt 21
+            bright = (0.3 if bar == 18 + NBS else 0.55 + 0.45 * prog(tt, DROP + 8, DROP + 32)) + (0.25 if bar >= CB else 0)
+            B['arp'].add(pluck(midi(note), 0.30, vel, bright), tt + hum(0.0025) + (SWING if s % 2 else 0.0), 0.9, pan=(-1) ** s * (0.3 + 0.2 * (s % 4 == 0)))
+    # Zweite Stimme: eine Oktave höher, auf den Off-16teln, ab Takt 21
     for bar in range(21 + NBS, CB + 2):
-        for s in (6, 14):
-            tt = bar_t(bar) + s * S16 + SW8
-            if tt >= END_GROOVE or (cut_a <= tt < cut_b): continue
+        for s in range(16):
+            tt = bar_t(bar) + s * S16
+            if tt >= END_GROOVE or (cut_a <= tt < cut_b) or s % 4 != 3 and s % 8 != 6: continue
+            if CRY - 9.0 <= tt < CRY - 6.0 and s % 8 != 6: continue
             ch = chord_at(tt); notes = CH[ch]['arp'] if bar < CB else CH['Amaj9']['arp']
-            B['arp2'].add(pluck(midi(notes[P2[s] % len(notes)] + 12), 0.40, 0.75, 0.60, tau=0.12), tt + hum(0.002), 0.9, pan=(-1) ** (s // 4) * 0.6)
-    # Hook (Vibraphon, mittlere Lage, lange Töne): je Akkordblock (2 Takte) drei Töne – absteigend, die V führt mit dem Leitton G♯ zurück nach A.
-    #   an: Szene 02/03 bis Anfang 04 (D · E · A), Ruhe in 04/05 (Chat, Anruf, Kette), wieder ab dem Einrasten (A · F♯m · D)
-    HOOK = {'A': [(0, 76, 1.0), (3, 73, 0.5), (4, 69, 1.3)], 'F#m': [(0, 73, 1.0), (3, 78, 0.5), (4, 76, 1.3)], 'D': [(0, 78, 1.0), (3, 76, 0.5), (4, 74, 1.3)], 'E': [(0, 71, 1.0), (3, 76, 0.5), (4, 80, 1.3)]}
-    HOOK_ON = [(DROP + 8.0, DROP + 20.0), (SC0['package'] + 4.0, CRY - 2.0)]
+            B['arp2'].add(pluck(midi(notes[P2[s] % len(notes)] + 12), 0.34, 0.8, 0.95, tau=0.09), tt + hum(0.002) + (SWING if s % 2 else 0.0), 0.9, pan=(-1) ** (s // 4) * 0.6)
+    # Hook: zwei Takte Frage (A, E) – zwei Takte Antwort (F#m, D), Pentatonik A-Dur; an: Szene 02/03, Ende 04 bis Kettenbeginn, Kettenschluss ab Einrasten
+    HOOK = {'A': [(0, 88), (2, 85), (3, 88), (5, 90)], 'E': [(0, 88), (2, 83), (3, 85), (5, 88)], 'F#m': [(0, 85), (2, 90), (3, 88), (5, 85)], 'D': [(0, 90), (2, 88), (3, 86), (5, 81)]}
+    HOOK_ON = [(DROP + 8.0, DROP + 16.0), (DROP + 24.0, DROP + 28.0), (SC0['package'] + 4.0, CRY - 2.0)]
     for bar in range(B0, CB - 1):
         t0_ = bar_t(bar)
-        if (bar - B0) % 2 or not any(a_ - 1e-6 <= t0_ < b_ - 1e-6 for a_, b_ in HOOK_ON): continue
-        for e8_, nn_, dd_ in HOOK[chord_at(t0_)]:
-            tt = t0_ + e8_ * BEAT / 2 + (SW8 if e8_ % 2 else 0.0) + hum(0.002)
-            B['lead'].add(vibes(midi(nn_), dd_ + 0.35, 1.0 if e8_ == 0 else 0.8), tt, 0.85 if e8_ == 0 else 0.7, pan=0.12 * (-1) ** e8_)
+        if not any(a_ - 1e-6 <= t0_ < b_ - 1e-6 for a_, b_ in HOOK_ON): continue
+        for e8_, nn_ in HOOK[chord_at(t0_)]:
+            tt = t0_ + e8_ * BEAT / 2 + hum(0.002)
+            B['lead'].add(whistle(midi(nn_), 0.26, 1.0 if e8_ == 0 else 0.8), tt, 0.85 if e8_ == 0 else 0.7, pan=0.12 * (-1) ** e8_)
     # Luftiges Schimmern (Rauschen, gefiltert) ab Takt 21 – Höhepunkt 24–26
     for a, b, lv in ((PK, PK + 6.0, 0.05), (PK + 6.0, CRY - 2.0, 0.09)):
         n = idx(b - a); x = noise(n); x = filt(x, 'bp', 9000, 0.8) * (np.linspace(0.3, 1, n)) * lv
