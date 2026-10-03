@@ -33,7 +33,7 @@ export const PEOPLE = {
   mira:  { name: 'Mira Koch',  skin: '#DDA37A', hair: '#1D1511', style: 'bun',   clothes: '#E67E22', glasses: false, beard: false, bg: 'office' },
   jonas: { name: 'Jonas Beck', skin: '#F3CDB0', hair: '#B5651D', style: 'short', clothes: '#1F2532', glasses: true,  beard: true,  bg: 'warm' },
   lena:  { name: 'Lena Vogt',  skin: '#8D5A3B', hair: '#15110E', style: 'curly', clothes: '#2F7D6B', glasses: false, beard: false, bg: 'books' },
-  tom:   { name: 'Tom Arnold', skin: '#F6D5BD', hair: '#8A8A90', style: 'bald',  clothes: '#3B6FD4', glasses: true,  beard: true,  bg: 'cool' },
+  tom:   { name: 'Tom Berger', skin: '#F6D5BD', hair: '#8A8A90', style: 'bald',  clothes: '#3B6FD4', glasses: true,  beard: true,  bg: 'cool' },
   aylin: { name: 'Aylin Demir', skin: '#E6B08A', hair: '#2A1A12', style: 'long', clothes: '#D1497A', glasses: false, beard: false, bg: 'warm' },
   ben:   { name: 'Ben Roth',   skin: '#D9A07A', hair: '#2B1D14', style: 'buzz',  clothes: '#4A5470', glasses: false, beard: false, bg: 'cool' },
 };
@@ -685,7 +685,7 @@ export function buildUI(E) {
       el.append(lab, ring);
       return { el, ring, mc: el.querySelector('.mc'), mo: el.querySelector('.mo') };
     };
-    const mira = tile('mira', 'Mira K. · Support'), jonas = tile('jonas', 'Jonas Beck'), lena = tile('lena', 'Lena Vogt'), tom = tile('tom', 'Tom Arnold', true);
+    const mira = tile('mira', 'Mira K. · Support'), jonas = tile('jonas', 'Jonas Beck'), lena = tile('lena', 'Lena Vogt'), tom = tile('tom', 'Tom Berger', true);
     const selfv = h('div', { class: 'abs', style: { left: 1146 - 18 - 196, top: 844 - 62 - 148, width: 196, height: 148, borderRadius: 12, overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,.5)', outline: '2px solid rgba(255,255,255,.12)' } });
     selfv.innerHTML = portraitSVG('anna', 'scene').replace('width="100%" height="100%" style="display:block"', 'width="100%" height="100%" style="position:absolute;left:0;top:0;display:block"');
     const ctl = (left, w2, inner) => h('div', { class: 'ui-tbtn' + (w2 ? ' w2' : ''), style: { left, top: 844 - 54 }, html: inner });
