@@ -1,5 +1,7 @@
 # Linkado – Werbefilm (76 s)
 
+**Zielgruppe:** Unternehmer und Entscheider sowie junge, moderne Beschäftigte – der Film soll modern, klar und dynamisch wirken (nicht „vereinfacht für Ältere“), aber nie überfordern: Texte stehen ≥ 1,3 s, keine Rollbewegungen, nichts Wichtiges wird angeschnitten.
+
 Ein Werbefilm für **Linkado**, den europäischen digitalen Arbeitsplatz auf Nextcloud-Basis:
 **Chaos der Insellösungen → Klarheit → das Linkado-Logo kristallisiert heraus.** Mit ruhigem, schrittweise
 wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).

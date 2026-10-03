@@ -20,8 +20,8 @@ export default function register(E) {
   const BEAT0 = 24.0, BEATN = E.T('browser').end - E.T('browser').start;   // Geräte-Beat: lokal 24.0 … 28.0, die Oberflächen-Zeit steht dabei still
   const mapT = (g) => { const l = g - SH2; return l < BEAT0 ? l : l < BEAT0 + BEATN ? BEAT0 : l - BEATN; };
 
-  const ORBIT = [E.T('reveal').start, E.T('reveal').start + 1.8];                              // Kamera-Schwenk am Drop (Perspektivwechsel): sanft, kein Anschnitt, keine Rollbewegung
-  const ORBIT_P = { x: 0, rx: 2.5, ry: 9, rz: 0, s: 0.045, zt: 70, zw: -55 };      // modern und ruhig: wenige Grad, leichter Zoom, geringe Tiefenstaffelung
+  const ORBIT = [E.T('reveal').start, E.T('reveal').start + 1.6];                              // Kamera-Schwenk am Drop (Perspektivwechsel): sanft, kein Anschnitt, keine Rollbewegung
+  const ORBIT_P = { x: 0, rx: 4, ry: 16, rz: 0, s: 0.07, zt: 110, zw: -85 };      // modern und dynamisch, aber ruhig: Zielgruppe = Unternehmer und junge, moderne Beschäftigte – verständlich für alle, nicht „vereinfacht“
 
   const mixHex = (a, b, p) => {
     const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
@@ -202,7 +202,7 @@ export default function register(E) {
 
     update(t, s, _E, tGlobal) {
       const { cam, outer, raw, win, dash, shop, sup, talk, menu, dim, gridTile, cur } = s;
-      {   // Orbit: 24.0 → 25.8 (aus leichter Schräge/Nähe in die frontale Ansicht; danach exakt „none“, damit 01–06 unverändert scharf bleiben)
+      {   // Orbit: 24.0 → 25.6 (aus mittlerer Schräge/Nähe in die frontale Ansicht; danach exakt „none“, damit 01–06 unverändert scharf bleiben)
         const q = ease.out3(prog(tGlobal, ORBIT[0], ORBIT[1])), k = 1 - q;
         if (q >= 1 || tGlobal < ORBIT[0] - 0.2) { s.world.style.transform = 'none'; s.winLayer.style.transform = 'none'; s.textLayer.style.transform = 'none'; s.world.style.transformStyle = 'flat'; s.root.style.perspective = 'none'; }
         else {
