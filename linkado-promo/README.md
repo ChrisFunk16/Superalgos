@@ -16,6 +16,7 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 | `audio/stems/*.wav` | Stems für den Schnitt: drums · bass · pad · music · bells (inkl. UI) · fx (24 Bit, ohne Sättigung/Limiter; Summe ≈ Master) – entstehen beim Ton-Rendern |
 | `KONZEPT.md` · `KONZEPTE-WEITERDENKEN.md` · `PLAN.md` | Dramaturgie, weitergedachte Konzepte (Fassungen, Faden, KI, Ton), priorisierter Plan |
 | `Sprechertext-Vorschlag.md` | optionaler Sprechertext mit Zeitmarken |
+| `VORTEILE.md` | Linkados Vorteile gegenüber den drei Ansätzen aus Akt I, belegte Alltagsärgernisse mit Quellen, offene Bestätigungen, Rechtshinweise |
 
 > **Platzhalter / bitte prüfen**
 > * Das **Logo** ist aus den gelieferten Abbildungen als Vektor nachgezeichnet (`src/logo.js`). Liegt das Original-SVG vor,

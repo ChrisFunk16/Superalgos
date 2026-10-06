@@ -25,6 +25,10 @@ function css(E) {
   E.style(`
   .of-bub { position:absolute; left:110px; max-width:640px; padding:22px 34px 24px; border-radius:34px; background:${CREAM}; color:#1F2532; font:600 46px/1.16 var(--font-body); box-shadow:0 18px 40px rgba(0,0,0,.45); text-wrap:balance; transform-origin:100% 70%; }
   .of-bub::after { content:""; position:absolute; right:-14px; top:58%; width:30px; height:30px; background:${CREAM}; transform:rotate(45deg); border-radius:0 0 8px 0; }
+  .of-call { position:absolute; left:114px; display:flex; align-items:center; gap:14px; height:64px; padding:0 26px 0 8px; border-radius:32px; background:#1B3B31; color:#fff; font:700 28px/1 var(--font-body); box-shadow:0 10px 24px rgba(0,0,0,.4); white-space:nowrap; transform-origin:0 50%; }
+  .of-call .ic { width:48px; height:48px; border-radius:50%; background:#3FBF8A; display:flex; align-items:center; justify-content:center; flex:none; }
+  .of-call small { font:600 24px/1 var(--font-body); color:#B9E7D3; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  .of-call .eq { display:flex; align-items:center; gap:4px; height:30px; margin-left:4px; } .of-call .eq i { display:block; width:5px; height:8px; border-radius:3px; background:#7BE0B4; }
   .of-who { position:absolute; left:114px; font:700 24px/1 var(--font-body); letter-spacing:.14em; color:#9AA3B8; text-transform:uppercase; }
   .of-ok { position:absolute; left:110px; display:flex; align-items:center; gap:16px; font:600 40px/1 var(--font-body); letter-spacing:.04em; color:#C9D0E0; text-transform:uppercase; white-space:nowrap; text-shadow:0 2px 14px rgba(10,14,22,.8); }
   .of-ok .ck { width:46px; height:46px; border-radius:50%; background:rgba(63,191,138,.2); color:#3FBF8A; display:flex; align-items:center; justify-content:center; flex:none; }
@@ -141,7 +145,7 @@ export default function register(E) {
       /* ---- Schwebende Fenster/Schilder (DOM-Flächen im Raum) ---- */
       const planes = [];
       const mkPlane = (el, wpx, hpx, wm) => { el.classList.add('o3-pl'); el.style.display = 'none'; planeLayer.append(el); const p = { el, wpx, hpx, wm, c: V(), roll: 0, scale: 1 }; planes.push(p); return p; };
-      const tomTags = ['+ LIZENZ', '+ ADD-ON', '+ KI-ZUSATZ'].map((txt) => { const el = h('div', { class: 'of-tag' }, h('span', { html: icon('euro', 26, '#E5565B', 2.6) }), txt); return mkPlane(el, 200, 52, 0.30); });
+      const tomTags = [['+ KI-OPTION', 232], ['+ TELEFONIE', 240], ['+ SPEICHER', 226]].map(([txt, w]) => { const el = h('div', { class: 'of-tag', style: { width: w + 'px', height: '52px', boxSizing: 'border-box' } }, h('span', { html: icon('euro', 26, '#E5565B', 2.6) }), txt); return mkPlane(el, w, 52, 0.30 * w / 200); });
       const lenaMinis = [['files', 268, 176], ['ticket', 276, 180], ['chat', 232, 160]].map(([k, w, hh]) => mkPlane(mini(E, k, w, hh), w, hh, 0.34));
 
       /* ---- Texte ---- */
@@ -150,12 +154,18 @@ export default function register(E) {
         const ok = h('div', { class: 'of-ok', style: { '--acc': cfg.acc, top: '350px' } }, h('span', { class: 'ck', html: icon('check', 26, '#3FBF8A', 3) }), h('span', { text: cfg.ok }), h('b', { text: 'ABER:' }));
         const who = h('div', { class: 'of-who', text: cfg.who, style: { top: '444px' } });
         const bub = h('div', { class: 'of-bub', text: cfg.say, style: { top: '488px' } });
-        textLayer.append(name, ok, who, bub); return { name, ok, who, bub };
+        const out = { name, ok, who, bub };
+        if (cfg.call) {                                                   // Telefonat: wer am anderen Ende ist, ohne Lesezeit (kleine Pille unter der Blase)
+          const bars = Array.from({ length: 4 }, () => h('i')), time = h('small', { text: '02:14' });
+          out.call = h('div', { class: 'of-call', style: { top: '672px' } }, h('span', { class: 'ic', html: icon('phone', 24, '#fff', 2.6) }), h('span', { text: cfg.call }), time, h('span', { class: 'eq' }, ...bars));
+          Object.defineProperty(out, 'fx', { value: { bars, time }, enumerable: false });      // nicht aufzählbar: show() läuft nur über die Elemente
+        }
+        textLayer.append(name, ok, who, bub); if (out.call) textLayer.append(out.call); return out;
       };
       const TXT = {
-        tom: mkText({ name: 'DER ALLROUNDER', size: 84, acc: '#E5565B', ok: 'ALLES AUS EINER HAND.', who: 'Tom · Einkauf', say: 'Jede Erweiterung kostet extra.' }),
-        lena: mkText({ name: 'DAS FERTIGE PORTAL', size: 68, acc: '#7B6CF6', ok: 'OFFEN UND LOKAL GEDACHT.', who: 'Lena · Büro', say: 'Ein Login – und dahinter alles anders.' }),
-        anna: mkText({ name: 'DIE OFFENE BASIS', size: 76, acc: '#36A9E8', ok: 'MÄCHTIG UND FREI.', who: 'Anna · Vertrieb', say: 'Welcher Tab war das noch?' }),
+        tom: mkText({ name: 'DER ALLROUNDER', size: 84, acc: '#E5565B', ok: 'ALLES AUS EINER HAND.', who: 'Tom · Einkauf', say: 'Die KI kostet extra? Pro Nutzer?!', call: 'IT-Service' }),
+        lena: mkText({ name: 'DAS FERTIGE PORTAL', size: 68, acc: '#7B6CF6', ok: 'OFFEN UND LOKAL GEDACHT.', who: 'Lena · Büro', say: 'Ein Login – aber überall andere Knöpfe.' }),
+        anna: mkText({ name: 'DIE OFFENE BASIS', size: 76, acc: '#36A9E8', ok: 'MÄCHTIG UND FREI.', who: 'Anna · Vertrieb', say: 'Alles drin – nur welcher Tab war das noch?' }),
       };
 
       /* ---- Bildschirm-Anker (Welt) ---- */
@@ -320,6 +330,11 @@ export default function register(E) {
       tf(V_.ok, { y: 16 * (1 - tw(a, 0.3, 0.7, ease.ui)), o: tw(a, 0.3, 0.65) * (1 - off) });
       const p = tw(t, bubIn, bubIn + 0.4, ease.snap);
       tf(V_.bub, { s: 0.88 + 0.12 * p, o: clamp(p * 2.2) * (1 - off) }); tf(V_.who, { o: clamp(p * 2.2) * (1 - off) });
+      if (V_.call) {
+        const pc = tw(t, bubIn + 0.25, bubIn + 0.6, ease.snap), sec = 134 + Math.max(0, Math.floor(t - bubIn)), mm = Math.floor(sec / 60), ss = sec % 60;
+        tf(V_.call, { s: 0.9 + 0.1 * pc, o: clamp(pc * 2.2) * (1 - off) }); V_.fx.time.textContent = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+        V_.fx.bars.forEach((b, i) => { b.style.height = (8 + 20 * Math.abs(Math.sin(t * 9.5 + i * 1.7) * Math.cos(t * 3.1 + i))).toFixed(1) + 'px'; });
+      }
     }
   }
 }
