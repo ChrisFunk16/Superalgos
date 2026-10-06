@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-Linkado – Werbefilm: synthetischer Soundtrack (ruhiger, melodischer Techno), 78,000 s.
+Linkado – Werbefilm: synthetischer Soundtrack (ruhiger, melodischer Techno), 84,000 s.
 
 Dramaturgie (siehe timeline.json, 120 BPM, 1 Takt = 2 s, Zeiten werden aus der Timeline gelesen):
-  Takte 1–11  (0–22 s)  Akt I: Hook (nur Drone, Ticks, drei Marimba-Töne A–C–E), drei Büro-Szenen im 3D-Büro (Kameragleiten 8,0 / 12,5 s: leises Wischen) (Kick ab der ersten in halber Zeit, volle Zeit + Hats auf der Taktgrenze
-                        vor der zweiten, offene Hats + Bass vor der dritten), Überforderung (fünf Akkord-Stabs), harter Schnitt 22.0
-  Takte 12–15 (22–30 s) Übergang in Annas Büro: leiser Herzschlag je Sekunde (auf x,5 s), Frage-Intonation 23,2–23,7, Pad Am9 → bei Annas Klick (25,0) E-sus (Dominante, offen),
-                        Falt-Swoosh, drei Marimba-Töne A5 · H5 · E6 auf den Aussagen, Lichtwelle 27,5 (+ „Ah“-Ton E6), Sog 29,0–29,92 (Herzschlag beschleunigt, Riser,
-                        Rückwärts-Hall), 80 ms Vakuum vor 30.0
-  Takt 16     (30 s)    Drop = Ankunft: Crash, Sonic Logo A–C♯–E–A (Dur), Groove startet sofort voll (A-Dur)
-  Takte 16–35 (30–70 s) Klarheit: Schicht für Schicht (Arpeggio erst luftig bis Szene 02, voll ab Szene 03, zweite Stimme ab 04/05),
-                        Kette 05: Glocken bei den snap-Hits, Einrast-Boom beim lock-Hit (58,0 s, Kick setzt dort aus; der Akkordplan legt ihn auf die A-Eins)
-  Takt 35     (68–70 s) Aufbau, Halbtakt-Drop-out, Kristall bei 70.0: die Dominante E löst sich nach A auf
-  Takte 36–39 (70–78 s) Finale: Sonic Logo A–C♯–E–A (Dur), Groove bis 74.0, danach nur Glocken und Pad, Ausklang
+  Takte 1–14  (0–28 s)  Akt I: Hook (nur Drone, Ticks, drei Marimba-Töne A–C–E), drei Büro-Szenen à 6,5 s im 3D-Büro (Karten 4,0 / 10,5 / 17,0 s, Kameragleiten 10,0 / 16,5 s: leises Wischen) (Kick ab der ersten in halber Zeit, volle Zeit + Hats auf der Taktgrenze
+                        vor der zweiten, offene Hats + Bass vor der dritten), Überforderung 23,5–28,0 (fünf Akkord-Stabs), harter Schnitt 28.0
+  Takte 15–18 (28–36 s) Übergang in Annas Büro: leiser Herzschlag je Sekunde (auf x,5 s), Frage-Intonation 29,2–29,7, Pad Am9 → bei Annas Klick (31,0) E-sus (Dominante, offen),
+                        Falt-Swoosh, drei Marimba-Töne A5 · H5 · E6 auf den Aussagen, Lichtwelle 33,5 (+ „Ah“-Ton E6), Sog 35,0–35,92 (Herzschlag beschleunigt, Riser,
+                        Rückwärts-Hall), 80 ms Vakuum vor 36.0
+  Takt 19     (36 s)    Drop = Ankunft: Crash, Sonic Logo A–C♯–E–A (Dur), Groove startet sofort voll (A-Dur)
+  Takte 19–38 (36–76 s) Klarheit: Schicht für Schicht (Arpeggio erst luftig bis Szene 02, voll ab Szene 03, zweite Stimme ab 04/05),
+                        Kette 05: Glocken bei den snap-Hits, Einrast-Boom beim lock-Hit (64,0 s, Kick setzt dort aus; der Akkordplan legt ihn auf die A-Eins)
+  Takt 38     (74–76 s) Aufbau, Halbtakt-Drop-out, Kristall bei 76.0: die Dominante E löst sich nach A auf
+  Takte 39–42 (76–84 s) Finale: Sonic Logo A–C♯–E–A (Dur), Groove bis 80.0, danach nur Glocken und Pad, Ausklang
 
 „Happy-Beat“-Fassung (v5 „wohlig“): Akt II steht ab dem Drop in A-DUR (I – vi – IV – V = A – F#m – D – E, ein Akkord je ZWEI Takte; zum Schluss D und E je einen Takt, siehe chord_blocks()), Halbtakt-Gefühl (Kick auf 1 und 3,
 Backbeat nur auf 3 – das Tempo bleibt 120 BPM wegen des Takt-Rasters, fühlt sich aber wie ≈ 60 an), runder Bass, Rhodes-Akkorde, weiche Zupf-Arpeggien in Achteln mit „Laid-back“-Swing,
@@ -20,7 +20,7 @@ Tamburin auf 2 und 4, ein Vibraphon-Hook in mittlerer Lage (pausiert in 04 und i
 (unaufgelöst, Frage-Glissando); Annas Klick beantwortet die Frage, der Drop löst nach A-Dur auf. Aufhellung beim Kristall = Auflösung der Dominante (V → I).
 
 Welle 3: Akt I per Pegelkurve angehoben (ACT1_GAIN), Mischung von Sub/Bass zu Mitten, Kick mit Mitten-Anschlag, Clap, Kettenklack, Akzent-Ducking,
-Callback-Akzent bei 65,6 s, Look-ahead-Limiter (−1,5 dBFS). Mess-Skripte: siehe README (Qualitätssicherung).
+Callback-Akzent bei 71,6 s, Look-ahead-Limiter (−1,5 dBFS). Mess-Skripte: siehe README (Qualitätssicherung).
 
 Alle Zeitpunkte der Bild-Akzente (hits) werden zur Laufzeit aus ../timeline.json gelesen.
 Ausgabe: audio/soundtrack.wav (48 kHz / 16 Bit / Stereo / Länge = timeline.json), soundtrack.mp3, Analyse-Bilder.
@@ -38,13 +38,14 @@ BPM = 120.0
 BEAT = 60.0 / BPM            # 0,5 s
 BAR = 4 * BEAT               # 2,0 s
 S16 = BEAT / 4               # 0,125 s
-DUR = float(json.load(open(os.path.join(HERE, '..', 'timeline.json'), encoding='utf-8'))['meta']['duration'])   # 64,0 s
-N = int(round(DUR * SR))     # 2 880 000
+DUR = float(json.load(open(os.path.join(HERE, '..', 'timeline.json'), encoding='utf-8'))['meta']['duration'])   # 84,0 s
+N = int(round(DUR * SR))     # 4 032 000
 rng = np.random.default_rng(20261001)
 TL = json.load(open(os.path.join(HERE, '..', 'timeline.json'), encoding='utf-8'))
 HITS = TL['hits']
-CB = int(round([h for h in HITS if h['kind'] == 'crystal'][0]['t'] / BAR)) + 1       # Takt, in dem der Kristall einsetzt (33)
-B0 = int(round([h for h in HITS if h['kind'] == 'drop'][0]['t'] / BAR)) + 1           # Takt, in dem der Drop einsetzt (13)
+DT = [h for h in HITS if h['kind'] == 'drop'][0]['t'] - 30.0      # Verschiebung des Übergangs gegenüber der Urfassung (Drop bei 30 s): 6,0 s = 3 Takte
+CB = int(round([h for h in HITS if h['kind'] == 'crystal'][0]['t'] / BAR)) + 1       # Takt, in dem der Kristall einsetzt (39)
+B0 = int(round([h for h in HITS if h['kind'] == 'drop'][0]['t'] / BAR)) + 1           # Takt, in dem der Drop einsetzt (19)
 
 # ------------------------------------------------------------------ Mischpult (linear) – hier drehen
 # Welle 3: Bass/Kick zurück (kleine Lautsprecher geben unter ~100 Hz nichts wieder), Melodie/Glocken/Hats nach vorn, UI-Klänge hörbar
@@ -52,7 +53,7 @@ MIX = dict(
     kick=0.52, bass=0.31, hats=0.078, rim=0.30, pad=0.50, arp=0.52, arp2=0.30, stab=0.50, bell=0.50, fx=0.34, chaos=1.0, drone=0.5, a1=0.40, a1v=0.55, ui=0.58, lead=0.34,
 )
 # Akt I war zu leise (Hook −32 LUFS, Alltagsmomente −29…−22): Pegelkurve für a1/a1v/drone – Spannungsbogen bleibt, aber auch der Anfang trägt (Laptop, Talk-Übertragung)
-ACT1_GAIN = ([0.0, 4.0, 8.5, 13.0, 17.5, 22.0, 24.0], [2.4, 2.1, 1.75, 1.5, 1.3, 1.1, 1.0])
+ACT1_GAIN = ([0.0, 4.0, 10.5, 17.0, 23.5, 28.0, 30.0], [2.4, 2.1, 1.75, 1.5, 1.3, 1.1, 1.0])     # Karten 4,0 · 10,5 · 17,0, Überforderung 23,5, Schnitt 28,0
 SEND_REV = dict(kick=0.00, bass=0.00, hats=0.07, rim=0.35, pad=0.38, arp=0.28, arp2=0.34, stab=0.55, bell=0.60, fx=0.45, chaos=0.34, drone=0.20, a1=0.26, a1v=0.34, ui=0.24, lead=0.32)
 SEND_DLY = dict(arp=0.38, arp2=0.42, stab=0.55, bell=0.22, chaos=0.10, hats=0.0, a1v=0.30, ui=0.08, lead=0.40)
 DUCK = dict(pad=0.50, bass=0.55, arp=0.28, arp2=0.28, stab=0.35, bell=0.10, fx=0.20, lead=0.22)    # Sidechain-Tiefe je Bus
@@ -437,7 +438,7 @@ def render():
         tt = h['t']; n = int(0.45 * SR); t = np.arange(n) / SR; f = 700 * np.exp(-t / 0.25) + 150; y = filt(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.2), 'lp', 1800, 0.7)
         A1V.add(fade_edges(y, 0.003, 0.03), tt, 0.12, pan=0.0)
     for h in hits('riser'):
-        if h['t'] < 20:
+        if h['t'] < CUT:
             dur = h['end'] - h['t']; B['fx'].add(riser(dur, 300, 7500, 1.0, pitch=(220, 880)), h['t'], 0.5)
     # Tape-Stop: in den letzten 0,6 s „fällt“ die Welt zusammen (Tonhöhe + Höhen sacken ab), danach harter Schnitt
     def tape_stop(x, t0, dur, depth=0.88):
@@ -448,9 +449,9 @@ def render():
     for bus_ in (A1, A1V, B['drone']): tape_stop(bus_.x, CUT - 0.6, 0.6)
     gate = np.ones(N); i = idx(CUT); gate[i:] = 0.0; gate[i - 120:i] = np.linspace(1, 0, 120)
     for k in ('a1', 'a1v', 'drone'): B[k].x *= gate[:, None]
-    # ---- Übergang 22,0–30,0 (Annas Büro): leiser Herzschlag je Sekunde (jeweils auf x,5 s) – die Frage (22.5) – Annas Klick (25.0) beantwortet sie – drei Marimba-Töne auf den Aussagen
-    #      (A5 · B5 · E6: gehören zu Am9 UND zur Dominante E-sus) – Lichtwelle (27.5) – Sog in den Drop. Pad: Am9 bis zum Klick, dann E-sus, offen bis 30,0.
-    HB = [(22.5, 0.20, 240), (23.5, 0.24, 250), (24.5, 0.28, 260), (25.5, 0.30, 280), (26.5, 0.33, 300), (27.5, 0.36, 330), (28.5, 0.42, 420)]
+    # ---- Übergang 28,0–36,0 (Annas Büro): leiser Herzschlag je Sekunde (jeweils auf x,5 s) – die Frage (28.5) – Annas Klick (31.0) beantwortet sie – drei Marimba-Töne auf den Aussagen
+    #      (A5 · B5 · E6: gehören zu Am9 UND zur Dominante E-sus) – Lichtwelle (33.5) – Sog in den Drop. Pad: Am9 bis zum Klick, dann E-sus, offen bis 36,0.
+    HB = [(22.5 + DT, 0.20, 240), (23.5 + DT, 0.24, 250), (24.5 + DT, 0.28, 260), (25.5 + DT, 0.30, 280), (26.5 + DT, 0.33, 300), (27.5 + DT, 0.36, 330), (28.5 + DT, 0.42, 420)]
     for tt, lv, co in HB:                                                                   # „lub-dub“: ein weicher Hauptschlag, kurz danach ein leiserer Nachschlag
         A1.add(filt(kick(1.0, 0.0, 0.5), 'lp', co, 0.7, order=2) * lv, tt, 1.0)
         A1.add(filt(kick(1.0, 0.0, 0.5), 'lp', co * 0.8, 0.7, order=2) * lv * 0.5, tt + 0.22, 1.0)
@@ -460,14 +461,14 @@ def render():
     while tt < DROP - 0.1:
         A1.add(rim(0.3 + 0.5 * prog(tt, DROP - 0.75, DROP - 0.1)), tt, 0.28 + 0.40 * prog(tt, DROP - 0.75, DROP - 0.1), pan=0.1); tt += 0.125 if tt < DROP - 0.4 else 0.0625
     B['fx'].add(riser(0.92, 400, 9000, 1.0, pitch=(330, 1320)), DROP - 1.0, 0.55)
-    # Sub-Swell (erstes Mal Tiefbass) + Rückwärts-Becken, Rückwärts-Hall saugt in den Drop (30.0)
+    # Sub-Swell (erstes Mal Tiefbass) + Rückwärts-Becken, Rückwärts-Hall saugt in den Drop (36.0)
     n = idx(2.0); t = np.arange(n) / SR; sw = np.sin(2 * np.pi * 55.0 * t) * np.clip((t - 0.4) / 1.5, 0, 1) ** 2
     B['fx'].add(fade_edges(sw * 0.45, 0.01, 0.01), DROP - 2.0, 1.0)
     nr = idx(1.3); rc = filt(noise(nr), 'hp', 3800, 0.7, order=2) * np.linspace(0, 1, nr) ** 2.4; B['fx'].add(fade_edges(np.stack([rc, np.roll(rc, 150)], axis=1) * 0.55, 0.01, 0.002), DROP - 1.3, 1.0)
     chord = pad_chord(CH['Esus']['stab'], 0.25, attack=0.01, release=0.2, cutoff=2400.0)              # Cliffhanger: der Sog endet auf der Dominante E-sus – unaufgelöst
     suck = _suck_back(chord)
     B['fx'].add(suck, DROP - len(suck) / SR, 0.60)
-    # Cliffhanger-Frage: Die Frage (22.5) steigt am Ende wie eine echte Frage-Intonation (E5 → B5, 23.2–23.7), der Ton hängt kurz nach – die Antwort ist Annas Klick (25.0),
+    # Cliffhanger-Frage: Die Frage (28.5) steigt am Ende wie eine echte Frage-Intonation (E5 → B5, 29.2–29.7), der Ton hängt kurz nach – die Antwort ist Annas Klick (31.0),
     # die Dominante E-sus bleibt dabei unaufgelöst, erst der Drop (A-Dur) löst sie. Kein Text, kein Name.
     Q0, Q1 = CUT + 1.2, CUT + 1.7
     gl = int((Q1 - Q0) * SR); hold = int(0.8 * SR); tg_ = np.arange(gl + hold) / SR
@@ -475,7 +476,7 @@ def render():
     qq = np.sin(2 * np.pi * np.cumsum(fq) / SR) * np.minimum(1, tg_ / 0.04) * np.where(tg_ < Q1 - Q0, 0.30, 0.30 * np.exp(-(tg_ - (Q1 - Q0)) / 0.45))
     A1V.add(fade_edges(np.stack([qq, qq], axis=1), 0.004, 0.02), Q0, 0.30, pan=0.0)
     A1V.add(bell(midi(83), 1.0, 0.7, tail=0.4), Q1, 0.14)
-    # Kamera-Gleiten im 3D-Büro (8,0 und 12,5 s): ganz leises Wischen, damit die Fahrt von Platz zu Platz hörbar mitgeht
+    # Kamera-Gleiten im 3D-Büro (10,0 und 16,5 s): ganz leises Wischen, damit die Fahrt von Platz zu Platz hörbar mitgeht
     for h_ in HITS:
         if h_['kind'] == 'glide' and h_['t'] < CUT: B['ui'].add(ui_swipe(h_['end'] - h_['t'], 0.5), h_['t'], 0.32)
     # Bild-Akzente des Übergangs (aus der Timeline): Klick · Tabs falten · drei Aussagen · Lichtwelle
@@ -553,7 +554,7 @@ def render():
             else:
                 B['rim'].add(tambourine(0.55), tt + 0.004, 0.30, pan=0.3)
     # Pad: Akkordteppich (warm: Filter öffnet sich nur bis ≈ 2 kHz), ein Akkord je zwei Takte
-    segs = [(CUT + 0.5, 25.0, 'Am9'), (25.0, DROP, 'Esus')]; a_ = DROP                                    # Übergang: A-Moll-Pad (Spannung) bis zum Klick, dann die Dominante E-sus (offen) – ab dem Drop A-Dur
+    segs = [(CUT + 0.5, 25.0 + DT, 'Am9'), (25.0 + DT, DROP, 'Esus')]; a_ = DROP                                    # Übergang: A-Moll-Pad (Spannung) bis zum Klick, dann die Dominante E-sus (offen) – ab dem Drop A-Dur
     while a_ < CRY - 1e-6:
         b_ = a_ + (4.0 if a_ + 4.0 <= CRY - 2.0 + 1e-6 else 2.0); segs.append((a_, min(b_, CRY), chord_at(a_))); a_ = b_
     for a, b, ch in segs:

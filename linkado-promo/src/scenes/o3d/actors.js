@@ -12,6 +12,12 @@ import { deskLayout, DESK_H, SEAT_H, MON } from './world.js';
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const Q = THREE.Quaternion;
 
+/** Zeitabbildung neu → alt: Die Skripte sind für die Urfassung (Momente à 4,5 s) geschrieben. Seit v7 dauert jeder Moment 6,5 s: bis zum ersten Ereignis läuft die Zeit 1:1 (nur verschoben),
+ *  danach werden die Bewegungen auf die längere Zeit gedehnt (ruhiger, mehr Haltezeit im Gespräch). (n0 → o0: erstes Ereignis, n1 → o1: Ende des Moments) */
+const warp = (n0, o0, n1, o1) => (t) => (t <= n0 ? t - n0 + o0 : t <= n1 ? o0 + (o1 - o0) * (t - n0) / (n1 - n0) : o1 + (t - n1));
+export const WARP = { tom: warp(5.0, 4.75, 10.5, 8.5), lena: warp(11.5, 9.25, 17.0, 13.0), anna: warp(18.0, 13.75, 23.5, 17.5) };
+const NIGHT0 = 23.8, NIGHT_DT = 6.0;       // Anna im Übergang: Skript der Urfassung, um 6 s verschoben
+
 /* ---------------------------------------------------------------- Mimik */
 export const EXPR = {
   neutral:    { raise: 0.0,  angle: 0.0,  asym: 0.0, smile: 0.14,  open: 0.0,  width: 1.0,  squint: 0.0,  cheeks: 0 },
@@ -114,13 +120,15 @@ export const phoneRest = (pos, yaw) => ({ pos: pos.clone(), quat: new Q().setFro
 
 /* ================================================================ TOM – „Der Allrounder“ (4,0–8,5; Pings 4,75 · 5,375 · 6,0) */
 export function scriptTom(t, A, ctx) {
+  t = WARP.tom(t);
   const P = [4.75, 5.375, 6.0], L = A.L, base = L.seatYaw;
   const a = ez.io2(prog(t, 4.96, 5.3)), b = ez.io2(prog(t, 5.4, 6.0)), g = ez.io2(prog(t, 5.26, 5.4));            // a: weg von der Tastatur · b: Hörer ans Ohr · g: Griff
   const yaw = base - 0.5 * ez.io2(prog(t, 5.3, 6.3)) + 0.04 * Math.sin(t * 0.9);
   const startle = (ez.out3(prog(t, 4.82, 4.92)) * (1 - ez.io2(prog(t, 4.92, 5.3)))) * 0.1;
   const sit = ez.io2(prog(t, 4.8, 4.97)) * 0.1 - 0.03 * ez.io2(prog(t, 4.97, 5.25)), call = ez.io2(prog(t, 5.9, 6.4));
   const lean = 0.2 - 0.3 * startle * 10 - 0.0 + 0.1 * ez.io2(prog(t, 5.0, 5.25)) - 0.2 * call;
-  const tk = talk(t, 5.55, 8.4, 7, false);
+  const tk0 = talk(t, 5.55, 8.4, 7, false), listen = ez.io2(prog(t, 6.75, 6.95)) * (1 - ez.io2(prog(t, 7.4, 7.6)));    // hört kurz zu, was der IT-Service antwortet
+  const tk = { ...tk0, open: tk0.open * (1 - listen), emph: tk0.emph * (1 - listen) };
   const gest = ez.io2(prog(t, 5.9, 6.3));
   // Blick: Bildschirm → (Telefon) geradeaus/oben → Kamera → Bildschirm
   const wCam = ez.io2(prog(t, 6.7, 7.0)) * (1 - ez.io2(prog(t, 7.6, 7.9))), wFwd = ez.io2(prog(t, 5.55, 5.9)) * (1 - ez.io2(prog(t, 6.7, 6.9))) * (1 - wCam) + 0.0;
@@ -158,6 +166,7 @@ export function scriptTom(t, A, ctx) {
 
 /* ================================================================ LENA – „Das fertige Portal“ (8,5–13,0; Pings 9,25 · 9,875 · 10,5) */
 export function scriptLena(t, A, ctx) {
+  t = WARP.lena(t);
   const L = A.L, base = L.seatYaw, m = L.m;
   const open = ez.io2(prog(t, 9.25, 9.5)), startle = ez.out3(prog(t, 9.27, 9.38)) * (1 - ez.io2(prog(t, 9.38, 9.8))) * 0.1;
   const shr = ez.back(prog(t, 9.875, 10.4), 1.3), relax = ez.io2(prog(t, 11.3, 12.1)), sigh = Math.sin(Math.PI * prog(t, 11.7, 12.5)) ** 1.5;
@@ -193,6 +202,7 @@ export function scriptLena(t, A, ctx) {
 
 /* ================================================================ ANNA – „Die offene Basis“ (13,0–17,5; Pings 13,75 · 14,375 · 15,0) + Nacht-Übergang (22,5–30,0) */
 export function scriptAnna(t, A, ctx) {
+  t = t >= NIGHT0 ? t - NIGHT_DT : WARP.anna(t);
   const L = A.L, base = L.seatYaw;
   const night = t >= 17.8;
   // --- Akt I: Tab-Flut, Haareraufen, Zusammensinken ---
@@ -204,19 +214,19 @@ export function scriptAnna(t, A, ctx) {
   const lift = ez.io2(prog(t, 23.6, 24.5)), mouseW = ez.io2(prog(t, 24.1, 24.85)), clickDip = Math.sin(Math.PI * prog(t, 24.98, 25.14)) * (t >= 24.98 && t < 25.14 ? 1 : 0);
   const happy = ez.io2(prog(t, 27.6, 28.4)), relief = ez.io2(prog(t, 27.9, 28.5)) * (1 - ez.io2(prog(t, 29.0, 29.5)));
   const lookPhone = ez.io2(prog(t, 28.55, 28.85)) * (1 - ez.io2(prog(t, 29.15, 29.45)));
-  const dive = ez.io2(prog(t, 29.3, 30.0));
+  const dive = ez.io2(prog(t, 28.8, 30.0));                                                                    // beugt sich zum Bildschirm vor: der Kopf rückt von der Kamera weg und gibt den Blick frei
   const joy = ez.io2(prog(t, 27.45, 27.9)) * (1 - ez.io2(prog(t, 28.95, 29.35)));                // „Wow“: beide Hände an die Wangen
   let yaw = base, lean, headPitch = 0, headRoll = 0;
   if (!night) {
     lean = 0.2 + 0.12 * ez.io2(prog(t, 13.7, 14.4)) + 0.1 * sink; headPitch = 0.05 * sink; yaw = base;
   } else {
-    lean = lerp(0.62, 0.2, lift) - 0.1 * happy * relief - 0.12 * joy + 0.1 * dive - 0.35 * 0; headPitch = lerp(0.2, 0.0, lift);
+    lean = lerp(0.62, 0.2, lift) - 0.1 * happy * relief - 0.12 * joy + 0.46 * dive - 0.35 * 0; headPitch = lerp(0.2, 0.0, lift);
     headRoll = lerp(-0.08, 0, lift);
     yaw = base - 0.1 * lift;
   }
   const squint = night ? 0 : 0.55 * ez.io2(prog(t, 13.75, 14.3)) * (1 - ez.io2(prog(t, 14.3, 14.6)));
   const aimScreen = A.screenC.clone();
-  const phoneAt = A.dp(L.kbX + 0.62, DESK_H + 0.06, -0.12);
+  const standW = A.dp(L.monX + 0.52, DESK_H, 0.10), phoneAt = standW.clone().add(V(0, 0.115, 0));            // das Handy steht rechts neben dem Monitor im Ständer
   let aim = aimScreen.clone().lerp(phoneAt, lookPhone);
   if (!night) aim = aimScreen.clone().lerp(A.dp(L.kbX, DESK_H + 0.1, -0.2), ez.io2(prog(t, 16.2, 16.9)) * 0.9);
   const eyesClosed = !night ? ez.io2(prog(t, 16.2, 16.7)) : (1 - lift) * 0.9;
@@ -254,14 +264,15 @@ export function scriptAnna(t, A, ctx) {
     { w: wHair * (1 - faceW), pos: hairL, pole: polePt(yaw, 1, 1.2, -0.45, -0.1), roll: -0.5 },
     { w: faceW, pos: faceL, pole: polePt(yaw, 1, 0.9, 1.0, 0.3) },
   ];
-  const standPh = phoneRest(phoneAt.clone().setY(DESK_H + 0.03), 0.12 * L.m);                    // liegt links neben der Tastatur, Oberkante zeigt von der Person weg (nach Norden) und ist angelehnt
-  standPh.quat.premultiply(new Q().setFromAxisAngle(V(1, 0, 0), 0.5));
+  // Pose im Ständer: der Bildschirm zeigt zur Person/Kamera (Monitor-Normale), das Handy lehnt 18° nach hinten; Oberkante des Bildschirms (−z lokal) zeigt nach oben
+  const Nn = fwd(L.monYaw), al = 0.31, up = V(0, 1, 0), yp = Nn.clone().multiplyScalar(Math.cos(al)).addScaledVector(up, Math.sin(al)), zp = up.clone().multiplyScalar(-Math.cos(al)).addScaledVector(Nn, Math.sin(al)), xp = new THREE.Vector3().crossVectors(yp, zp).normalize();
+  const standPh = { pos: phoneAt, quat: new Q().setFromRotationMatrix(new THREE.Matrix4().makeBasis(xp, yp, zp)) };
   return {
     yaw, lean, head: { pitch: headPitch, roll: headRoll }, aim, headW: 0.75, expr, talk: tk, squint, blink: eyesClosed > 0.01 ? Math.max(eyesClosed, 0) : undefined,
     RH: RHm, LH: LHm, arc: 0.06, sacc: night ? (lift > 0.9 ? 0.5 : 0.1) : 0.5,
     shrug: night ? 0.45 * (1 - lift) * 0 + 0.7 * happy * relief * 0 : 0, breath: night ? (1 + 0.9 * (1 - lift) + 1.2 * relief) : 1,
     dy: 0,
-    phone: night ? () => ({ pos: standPh.pos, quat: standPh.quat }) : null,
+    phone: () => ({ pos: standPh.pos, quat: standPh.quat }),
   };
 }
 

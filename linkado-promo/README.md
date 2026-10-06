@@ -1,4 +1,4 @@
-# Linkado – Werbefilm (78 s)
+# Linkado – Werbefilm (84 s)
 
 **Zielgruppe:** Unternehmer und Entscheider sowie junge, moderne Beschäftigte – der Film soll modern, klar und dynamisch wirken (nicht „vereinfacht für Ältere“), aber nie überfordern: Texte stehen ≥ 1,3 s, keine Rollbewegungen, nichts Wichtiges wird angeschnitten.
 
@@ -33,12 +33,12 @@ wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
 ## Aufbau
 
 ```
-timeline.json            Zeitplan: 39 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
+timeline.json            Zeitplan: 42 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
 src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
-  scenes/act1.js           Chaos: Hook (4 s) und Überforderung in fünf Blickwinkeln (die Büro-Szenen 4–17,5 s liegen im 3D-Büro, office3d.js)
-  scenes/office3d.js       3D-Büro von oben (three.js, WebGL): Akt I mit Tom, Lena, Anna (je 4,5 s; die Kamera steht steil über und hinter der Person und gleitet von Platz zu Platz) und der Übergang 22,5–30 s (nachts, Abstieg hinter Annas Schulter, Zoom in den Bildschirm). Kameras (`SHOTS`), Lichtregie (`LOOK`), Bildschirme sind DOM, per matrix3d auf die 3D-Monitore gelegt
+  scenes/act1.js           Chaos: Hook (4 s) und Überforderung in fünf Blickwinkeln (23,5–28 s; die Büro-Szenen 4–23,5 s liegen im 3D-Büro, office3d.js)
+  scenes/office3d.js       3D-Büro von oben (three.js, WebGL): Akt I mit Tom, Lena, Anna (je 6,5 s: Auftritt steil über und hinter der Person, nach 2,6 s Einfahrt an den Bildschirm, Nahaufnahme mit lesbarem Problem; die Kamera gleitet von Platz zu Platz) und der Übergang 28–36 s (nachts, Hermite-Kamerafahrt hinter Annas Schulter, Zoom in den Bildschirm, Handy neben dem Monitor). Kameras (`SHOTS`), Lichtregie (`LOOK`), Bildschirme sind DOM, per matrix3d auf die 3D-Monitore gelegt
   scenes/o3d/world.js      das Büro (24 × 14 m): Boden, Wände, Stadtfenster, elf Arbeitsplätze (drei Hauptfiguren + acht Kolleg*innen; Platzierung `deskLayout`), Regale, Küchenzeile, Sofaecke, Besprechungsraum, Pflanzen, Licht (Hemisphäre, Sonne mit Schatten, ein Spot und ein Punktlicht, die dem Platz im Fokus folgen), Höhenfeld-Ambient-Occlusion
   scenes/o3d/props.js      Möbel und Gegenstände (Schreibtisch, Stuhl, Monitor mit Glas und Fuß, Tastatur, Maus, Becher, Lampe, Telefon, Kopfhörer, Pflanzen, Regale, Sofa, Küche …)
   scenes/o3d/gfx.js        Grafik-Werkzeuge: Rauschen, prozedurale Texturen (Holz, Teppich, Beton, Papier, Tastatur …), Materialien, Ambient-Occlusion als Shader-Einschub, Normalen-Reparatur
@@ -47,10 +47,10 @@ src/                     der Film als HTML-Animation (jedes Bild ist eine reine 
   scenes/o3d/actors.js     Spielanweisungen je Person, gebunden an die hits (Tippen, Schreck, Telefonat, Schulterzucken, Stuhl zur Kamera drehen, Haareraufen, Kopf in den Händen, Klick, Lächeln)
   scenes/o3d/anim.js       Animations-Werkzeuge (Easing, Spuren, Atmen, Blinzeln, Blickwechsel, Sprechen); domquad.js = DOM auf 3D-Flächen (Homographie)
   vendor/three.module.js   three.js (MIT-Lizenz, siehe vendor/three-LICENSE.txt); vendor/examples/jsm/ = die benutzten Addons (EffectComposer, Passes, RoundedBoxGeometry), über die Import-Map in index.html eingebunden
-  scenes/transition.js     Übergang 22,5–30 s: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy (die Oberfläche liegt auf dem 3D-Monitor; die Kamera landet exakt in Szene 01)
+  scenes/transition.js     Übergang 28–36 s: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy (die Oberfläche liegt auf dem 3D-Monitor und dem Handy neben dem Monitor – erst grau, dann farbig; die Kamera landet exakt in Szene 01)
   scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
   scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
-  scenes/devices.js        Oberflächen im Übergang: Browser-Leiste (36 Tabs → 1 Tab) und Handy mit derselben Oberfläche (das Gehäuse zeichnet das 3D-Büro)
+  scenes/devices.js        Oberflächen im Übergang: Browser-Leiste (36 Tabs → 1 Tab) und Handy mit derselben Oberfläche (das Gehäuse zeichnet das 3D-Büro; `phoneScreen` wird beim Klick geweckt und färbt sich mit der Lichtwelle)
   scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
   scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
 audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
@@ -65,12 +65,12 @@ build.sh                 komplette Produktion (Ton → Bilder → ffmpeg)
 npm install                          # Playwright, Schriften, Icons (Chromium liegt unter /opt/pw-browsers)
 pip install numpy scipy soundfile matplotlib pyloudnorm
 # WebGL für das 3D-Büro läuft im Headless-Chromium von selbst (SwiftShader, Software-Rendering) – keine GPU nötig; ein 3D-Bild kostet ≈ 9–12 s (4K, 4 Kerne), die
-# 3D-Teile (4–17,9 s und 22,4–30,5 s ≈ 660 Bilder) zusammen ≈ 2 h; parallele Prozesse bringen nichts, weil WebGL alle Kerne nutzt
+# 3D-Teile (4–23,5 s und 28–36 s ≈ 830 Bilder) zusammen ≈ 2,5 h; parallele Prozesse bringen nichts, weil WebGL alle Kerne nutzt
 bash build.sh                        # 4K + 1080p nach out/
 # oder einzeln:
 python3 audio/soundtrack.py          # Ton (≈ 30 s) inkl. Spektrogramm
 node render.mjs --times 6,25.2,29,56.3 --out out/preview/x --debug     # Standbilder zum Prüfen
-node render.mjs --from 22 --to 30 --out out/preview/seq            # Ausschnitt
+node render.mjs --from 28 --to 36 --out out/preview/seq            # Ausschnitt
 node render.mjs --scale 2                                           # 4K (deviceScaleFactor 2)
 ```
 
@@ -87,10 +87,10 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 ## Qualitätssicherung
 
 * Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
-* Ton: exakt 3 744 000 Samples (78 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
+* Ton: exakt 4 032 000 Samples (84 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
   Struktur im Spektrogramm (`audio/spektrogramm.png`).
-* 3D-Bilder: Das Büro wird mit Pixelverhältnis 1,5 gerendert (bei 4K 2880 × 1620, danach auf 3840 × 2160 gestreckt; Text, Oberflächen und Schilder sind DOM und bleiben bei 4K scharf), 4× MSAA, PCF-Schatten, Tilt-Shift (Tiefenunschärfe) und Farbkorrektur im Nachbearbeitungs-Durchgang. Stellschrauben: `LOOK` in `office3d.js` (Licht, Belichtung, `pr`), `createPost` in `o3d/post.js` (MSAA, FXAA). Bei Änderungen am 3D nur die betroffenen Zeitbereiche neu rendern (`node render.mjs --scale 2 --from 3.9 --to 17.9 --out out/frames4k`; Bilder außerhalb bleiben bitgleich, weil alles deterministisch ist) und danach `bash tools/encode.sh` (4K, 1080p, Poster) ausführen.
-* Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 78 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften, übereinanderliegende Mini-Fenster auf den Büro-Bildschirmen und die Absicht-Chaos-Szene 17,5–22 s erscheinen als Treffer, sind aber gewollt).
+* 3D-Bilder: Das Büro wird mit Pixelverhältnis 1,5 gerendert (bei 4K 2880 × 1620, danach auf 3840 × 2160 gestreckt; Text, Oberflächen und Schilder sind DOM und bleiben bei 4K scharf), 4× MSAA, PCF-Schatten, Tilt-Shift (Tiefenunschärfe) und Farbkorrektur im Nachbearbeitungs-Durchgang. Stellschrauben: `LOOK` in `office3d.js` (Licht, Belichtung, `pr`), `createPost` in `o3d/post.js` (MSAA, FXAA). Bei Änderungen am 3D nur die betroffenen Zeitbereiche neu rendern (`node render.mjs --scale 2 --from 3.9 --to 36.1 --out out/frames4k`; Bilder außerhalb bleiben bitgleich, weil alles deterministisch ist – Szenen, die nur um ganze Takte verschoben wurden, lassen sich per Umbenennen der Bilder übernehmen, nachdem einzelne Stichproben mit `--times` bitgleich ausfielen. Achtung: Schwebende Hintergrundfenster der Überforderung hängen an der absoluten Zeit, sie müssen mit neu gerendert werden) und danach `bash tools/encode.sh` (4K, 1080p, Poster) ausführen.
+* Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 84 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften, übereinanderliegende Mini-Fenster auf den Büro-Bildschirmen und die Absicht-Chaos-Szene 23,5–28 s erscheinen als Treffer, sind aber gewollt).
 * Lesbarkeit: Titel 70–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
 
 ## Offene Wünsche (leicht nachzuziehen)

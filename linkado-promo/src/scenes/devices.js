@@ -82,5 +82,5 @@ export function buildDevices(E, cam, beforeEl) {
   Object.assign(ph.el.style, { left: '-540px', top: '296px', zIndex: 70 });                                                           // steht links neben dem Laptop auf dem Tisch
   if (beforeEl) cam.insertBefore(back, beforeEl); else cam.append(back);
   cam.append(chrome, ph.el);
-  return { back, bezel, base, chrome, tab, pill, tabs36, phone: ph.el, phoneOff, homeX: 138, homeY: -24 };
+  return { back, bezel, base, chrome, tab, pill, tabs36, phone: ph.el, phoneScreen: ph.screen, phoneOff, homeX: 138, homeY: -24 };
 }

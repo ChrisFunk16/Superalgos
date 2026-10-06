@@ -11,19 +11,19 @@ Tonalität: ruhig, selbstbewusst, warm; „du“-Ansprache wie in der Schlusszei
 | Zeit (s) | Bild | Text |
 |---|---|---|
 | 0–4 | Alles funktioniert. Nur nicht dazwischen. | *(Pause, nur Musik – oder:)* „Alles funktioniert. Nur nicht dazwischen.“ (das letzte Wort steht bis 3,8 s) |
-| 4–8,5 | Der Allrounder (Tom am Telefon, Preisschilder) | „Alles aus einer Hand – aber Erweiterungen kosten extra, und zugeschnitten ist es nicht auf dich.“ |
-| 8,5–13 | Das fertige Portal (Lena, ein Login, fünf Oberflächen) | „Offen und lokal gedacht – aber hinter dem Login sieht alles anders aus. Die Werkzeuge bleiben einzeln.“ |
-| 13–17,5 | Die offene Basis (Anna, Tab-Flut) | „Mächtig und frei – aber im Alltag roh, und die Pflege bleibt bei dir.“ |
-| 17,5–22 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine IT-Frage.“ |
-| 22,5–25 | Übergang / Cliffhanger | „Keine Lust mehr, sich damit herumzuärgern?“ (die Antwort ist Annas Klick, kein Text) |
-| 25–29 | Klick, ein Tab, ein Login, Lichtwelle, Handy | „Ein Browser. Ein Login. Alle Geräte.“ – „Dateien, Kalender, Chat – in einem Tab.“ (oder ohne Sprache: nur die Zeilen im Bild) |
-| 30–34 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
-| 34–38 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |
-| 38–44 | 03 | „Passende Werkzeuge an einem Ort: Apps über den Linkado-Appshop auswählen und verwalten.“ |
-| 44–54 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen. Und wenn es persönlich sein soll: per Chat oder Anruf.“ |
-| 54–60 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
-| 60–68 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
-| 70–78 | Logo | „Linkado. Einfach für deinen Alltag.“ |
+| 4–10,5 | Der Allrounder (Tom am Telefon, Preisschilder) | „Alles aus einer Hand – aber Erweiterungen kosten extra, und zugeschnitten ist es nicht auf dich.“ |
+| 10,5–17 | Das fertige Portal (Lena, ein Login, fünf Oberflächen) | „Offen und lokal gedacht – aber hinter dem Login sieht alles anders aus. Die Werkzeuge bleiben einzeln.“ |
+| 17–23,5 | Die offene Basis (Anna, Tab-Flut) | „Mächtig und frei – aber im Alltag roh, und die Pflege bleibt bei dir.“ |
+| 23,5–28 | fünf Blickwinkel | „Noch ein Login. Noch ein Tool. Noch ein Abo. Noch eine KI. Noch eine IT-Frage.“ |
+| 28,5–31 | Übergang / Cliffhanger | „Keine Lust mehr, sich damit herumzuärgern?“ (die Antwort ist Annas Klick, kein Text) |
+| 31–35,5 | Klick, ein Tab, ein Login, Lichtwelle, Handy | „Ein Browser. Ein Login. Alle Geräte.“ – „Dateien, Kalender, Chat – in einem Tab.“ (oder ohne Sprache: nur die Zeilen im Bild) |
+| 36–40 | 01 | „Nextcloud als Basis. Linkado als Benutzererlebnis.“ |
+| 40–44 | 02 | „Mehr Übersicht im Arbeitsalltag – Anwendungen und wichtige Funktionen schneller finden.“ |
+| 44–50 | 03 | „Passende Werkzeuge an einem Ort: Apps über den Linkado-Appshop auswählen und verwalten.“ |
+| 50–60 | 04 | „Hilfe direkt in der Cloud – Anleitungen und Support dort, wo Fragen entstehen. Und wenn es persönlich sein soll: per Chat oder Anruf.“ |
+| 60–66 | 05 | „Ein stimmiges Gesamtpaket: Oberfläche, Erweiterungen und Betreuung greifen ineinander.“ |
+| 66–74 | 06 | „Mehr Zeit fürs Wesentliche – weniger mit Technik beschäftigen, leichter zusammenarbeiten.“ |
+| 76–84 | Logo | „Linkado. Einfach für deinen Alltag.“ |
 
-Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 17,5–22 s, 22,5 s, 25–29 s, 30–34 s und 70–78 s sprechen
+Gesamt ca. 120 Wörter. Wer weniger Text will: nur die Zeilen 23,5–28 s, 28,5 s, 31–35,5 s, 36–40 s und 76–84 s sprechen
 und die übrigen Szenen allein über Bild und Musik tragen lassen.

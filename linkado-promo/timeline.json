@@ -1,144 +1,639 @@
 {
-  "meta": {
-    "title": "Linkado – Werbefilm „Vom Chaos zur Klarheit“",
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "duration": 78.0,
-    "bpm": 120,
-    "beat": 0.5,
-    "bar": 2.0,
-    "note": "1 Takt = 2,0 s, 39 Takte = 78 s (Akt I: Hook 4 s, drei Büro-Szenen à 4,5 s, Überforderung 4,5 s, dann der Übergang 22–30 s: Annas Büro, Cliffhanger-Frage, Klick, Zoom in den Browser; der Drop liegt bei 30 s; Szene 04 mit Talk, Szene 06 und das Schlussbild haben Luft). Alle Szenengrenzen liegen auf Takt- oder Halbtaktgrenzen. Dieses File ist der Vertrag zwischen Bild (src/) und Ton (audio/)."
+ "meta": {
+  "title": "Linkado – Werbefilm „Vom Chaos zur Klarheit“",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "duration": 84.0,
+  "bpm": 120,
+  "beat": 0.5,
+  "bar": 2.0,
+  "note": "1 Takt = 2,0 s, 42 Takte = 84 s (Akt I: Hook 4 s, drei Büro-Szenen à 6,5 s mit Nahaufnahme auf den Bildschirm, Überforderung 4,5 s, dann der Übergang 28–36 s: Annas Büro, Cliffhanger-Frage, Klick, Zoom in den Browser, Handy neben dem Bildschirm; der Drop liegt bei 36 s; Szene 04 mit Talk, Szene 06 und das Schlussbild haben Luft). Alle Szenengrenzen liegen auf Takt- oder Halbtaktgrenzen. Dieses File ist der Vertrag zwischen Bild (src/) und Ton (audio/)."
+ },
+ "acts": [
+  {
+   "id": "chaos",
+   "start": 0.0,
+   "end": 30.0,
+   "bars": "1-15",
+   "idea": "Drei Insellösungen, die nicht zusammenpassen. Spannung baut sich auf, dann Atempause."
   },
-
-  "acts": [
-    { "id": "chaos",   "start": 0.0,  "end": 30.0, "bars": "1-15",  "idea": "Drei Insellösungen, die nicht zusammenpassen. Spannung baut sich auf, dann Atempause." },
-    { "id": "clarity", "start": 30.0, "end": 68.0, "bars": "16-34", "idea": "Linkado: sechs Nutzenversprechen, die nacheinander einrasten. Ruhiger Groove wächst Schicht für Schicht." },
-    { "id": "finale",  "start": 68.0, "end": 78.0, "bars": "35-39", "idea": "Alles kristallisiert zum Linkado-Logo. Abschlusszeile, Ausklang." }
-  ],
-
-  "scenes": [
-    { "id": "hook",      "start": 0.0,  "end": 4.0,  "bars": "1-2",   "text": "Alles funktioniert. Nur nicht dazwischen. (ruhig gesetzt, das letzte Wort steht 1,6 s)" },
-    { "id": "m365",      "start": 4.0,  "end": 8.5,  "bars": "3-5",   "text": "Der Allrounder – alles aus einer Hand, aber (Alltagssätze mit Profilbild): „Und wenn der Anbieter die Regeln ändert?“ · „Jede Erweiterung kostet extra.“ · „Wir passen uns der Software an.“ – Laptop + Handy voller Apps" },
-    { "id": "opendesk",  "start": 8.5,  "end": 13.0, "bars": "5-7",   "text": "Das fertige Portal – offen und lokal gedacht, aber: „Ein Login, schön. Dahinter ist alles anders.“ · „Die Mail sieht anders aus als der Chat.“ · „Es fühlt sich nicht wie ein Ganzes an.“ – ein Handy-Login, dahinter fünf verschiedene Oberflächen" },
-    { "id": "nextcloud", "start": 13.0, "end": 17.5, "bars": "7-9",   "text": "Die offene Basis – mächtig und frei, aber: „Das Update spielen wir selbst ein.“ · „Im Alltag sieht es noch roh aus.“ · „Für die Kolleg*innen zu technisch.“ – Laptop mit nacktem Wireframe, Update-Balken, Werkzeuge" },
-    { "id": "overwhelm", "start": 17.5, "end": 22.0, "bars": "9-11",   "text": "Fünf Blickwinkel: Noch ein Login (Mitarbeitende). Noch ein Tool (Teams). Noch ein Abo (Geschäftsführung). Noch eine KI (Datenschutz). Noch eine IT-Frage." },
-    { "id": "pause",     "start": 22.0, "end": 30.0, "bars": "12-15", "text": "Übergang: Schwarz 22,0–22,5; dann Annas Büro. Die Cliffhanger-Frage „Keine Lust mehr, sich damit herumzuärgern?“; Annas Klick aufs Haus-Symbol, 36 Tabs werden 1 Tab (EIN BROWSER), Anmeldefeld mit Haken (EIN LOGIN), Lichtwelle auf dem Bildschirm, Handy leuchtet (ALLE GERÄTE), Zoom in den Browser – der Drop ist die Ankunft." },
-
-    { "id": "reveal",    "start": 30.0, "end": 34.0, "bars": "16-17", "text": "Nextcloud als Basis. Linkado als Benutzererlebnis. – Technik verständlich und zugänglich machen." },
-    { "id": "overview",  "start": 34.0, "end": 38.0, "bars": "18-19", "text": "Mehr Übersicht im Arbeitsalltag. – Anwendungen und wichtige Funktionen leichter finden." },
-    { "id": "appshop",   "start": 38.0, "end": 44.0, "bars": "20-22", "text": "Passende Werkzeuge an einem Ort. – Apps über den Linkado-Appshop auswählen und verwalten." },
-    { "id": "help",      "start": 44.0, "end": 54.0, "bars": "23-27", "text": "Hilfe direkt in der Cloud. – Anleitungen, Assistent und Support dort, wo Fragen entstehen; persönlich per Chat und Anruf (Talk)." },
-    { "id": "package",   "start": 54.0, "end": 60.0, "bars": "28-30", "text": "Ein stimmiges Gesamtpaket. – Oberfläche, Erweiterungen und Betreuung greifen ineinander." },
-    { "id": "time",      "start": 60.0, "end": 68.0, "bars": "31-34", "text": "Mehr Zeit fürs Wesentliche. – Weniger mit Technik beschäftigen, leichter zusammenarbeiten." },
-
-    { "id": "finale",    "start": 68.0, "end": 78.0, "bars": "35-39", "text": "Linkado. Einfach für deinen Alltag. – Der europäische digitale Arbeitsplatz." }
-  ],
-
-  "hits": [
-    { "t": 1.0,    "kind": "ping",    "voice": 0, "note": "Hook: „funktioniert.“" },
-    { "t": 2.0,    "kind": "ping",    "voice": 0, "note": "Hook: „Nur nicht“" },
-    { "t": 2.5,    "kind": "ping",    "voice": 0, "note": "Hook: „dazwischen.“ (Buchstaben öffnen sich, steht bis 3,8 s)" },
-
-    { "t": 4.0,    "kind": "card",    "voice": 1, "note": "Alltagsmoment „Der Allrounder“ schlägt ein (Ton A)" },
-    { "t": 4.75,    "kind": "ping",    "voice": 1, "note": "Satz 1 mit Profilbild" },
-    { "t": 5.375, "kind": "ping",    "voice": 1, "note": "Satz 2" },
-    { "t": 6.0, "kind": "ping",    "voice": 1, "note": "Satz 3" },
-    { "t": 8.0,    "kind": "glide",   "end": 8.95, "note": "Kamera gleitet im 3D-Büro von Toms zu Lenas Platz (leises Wischen)" },
-    { "t": 8.25,   "kind": "shove",   "voice": 1, "note": "Moment wird nach hinten geschoben" },
-
-    { "t": 8.5,    "kind": "card",    "voice": 2, "note": "Alltagsmoment „Das fertige Portal“ (Ton C)" },
-    { "t": 9.25,    "kind": "ping",    "voice": 2 },
-    { "t": 9.875, "kind": "ping",    "voice": 2 },
-    { "t": 10.5, "kind": "ping",    "voice": 2 },
-    { "t": 12.5,  "kind": "glide",   "end": 13.45, "note": "Kamera gleitet von Lenas zu Annas Platz" },
-    { "t": 12.75, "kind": "shove",   "voice": 2 },
-
-    { "t": 13.0,  "kind": "card",    "voice": 3, "note": "Alltagsmoment „Die offene Basis“ (Ton E)" },
-    { "t": 13.75,  "kind": "ping",    "voice": 3 },
-    { "t": 14.375, "kind": "ping",    "voice": 3 },
-    { "t": 15.0, "kind": "ping",    "voice": 3 },
-    { "t": 17.25, "kind": "shove",   "voice": 3 },
-
-    { "t": 17.5,  "kind": "riser",   "end": 22.0, "note": "Überforderung: alles stapelt sich, Spannung steigt" },
-    { "t": 17.5,  "kind": "text",    "note": "Blickwinkel 1 · Mitarbeitende: Noch ein Login." },
-    { "t": 18.25,"kind": "text",    "note": "Blickwinkel 2 · Teams: Noch ein Tool (Tabs füllen sich)." },
-    { "t": 19.0,  "kind": "text",    "note": "Blickwinkel 3 · Geschäftsführung: Noch ein Abo." },
-    { "t": 19.75,"kind": "text",    "note": "Blickwinkel 4 · Datenschutz: Noch eine KI." },
-    { "t": 20.5,  "kind": "text",    "note": "Blickwinkel 5 · IT: Noch eine IT-Frage." },
-    { "t": 22.0,  "kind": "cut",     "note": "harter Schnitt: Chaos-Stimmen stoppen, nur Hall-Schwanz + tiefer Puls bleiben" },
-    { "t": 22.5,  "kind": "text",    "note": "Cliffhanger-Frage „Keine Lust mehr, sich damit herumzuärgern?“ – setzt auf dem ersten Herzschlag ein; Frage-Intonation 23.2–23.7, endet unaufgelöst auf der Dominante, der Drop (24.0) ist die Antwort" },
-
-
-
-    { "t": 25.0,  "kind": "click",   "variant": "tap", "note": "Annas Klick aufs Haus-Symbol der Browser-Leiste – das ist die Antwort auf die Frage" },
-    { "t": 25.1,  "kind": "fold",    "end": 26.3, "note": "die 36 Tabs falten sich zu einem; die Pille „1 TAB“ erscheint" },
-    { "t": 25.5,  "kind": "chip",    "note": "EIN BROWSER." },
-    { "t": 26.5,  "kind": "chip",    "note": "EIN LOGIN. – ein Anmeldefeld mit Haken (der Name steht noch nirgends)" },
-    { "t": 27.5,  "kind": "whoosh",  "end": 28.7, "note": "Lichtwelle im Büro-Bildschirm: aus der grauen Seite wird die Startseite, Annas Gesicht wird warm – der Ah-Moment" },
-    { "t": 28.5,  "kind": "chip",    "note": "ALLE GERÄTE. – das Handy auf dem Tisch leuchtet; darunter: Dateien, Kalender, Chat – in einem Tab" },
-    { "t": 29.0,  "kind": "build",   "end": 29.92, "note": "Sog in den Drop: der Zoom in den Bildschirm beschleunigt, Herzschläge, Riser; der Faden glüht auf (Dominante bleibt offen)" },
-    { "t": 29.92, "kind": "vacuum",  "end": 30.0, "note": "kurzes Einatmen (80 ms Stille) direkt vor dem Drop" },
-    { "t": 30.0,  "kind": "drop",    "note": "Drop = Ankunft im bereits farbigen Fenster: Lichtblitz (gedämpft), Druckwellen, Crash, Sonic Logo (Dur: A–C♯–E–A), Groove startet in A-Dur; der Name Linkado erscheint erst jetzt" },
-    { "t": 30.25, "kind": "text",    "note": "Nextcloud als Basis." },
-    { "t": 31.5,  "kind": "text",    "note": "Linkado als Benutzererlebnis." },
-    
-    { "t": 34.0,  "kind": "ping",    "voice": 0, "note": "Szene Übersicht" },
-    { "t": 34.0,  "kind": "swipe",   "note": "Ansicht rastet ein (Widgets)" },
-    { "t": 34.5,  "kind": "snap",    "note": "Widgets rasten ins Raster" },
-    { "t": 36.4,  "kind": "ping",    "voice": 0, "note": "Treffer im Menü erscheinen (erste Zeile: Assistent)" },
-
-    { "t": 35.0,  "kind": "click",   "variant": "tap",    "note": "Raster-Symbol: das große Menü öffnet sich" },
-    { "t": 35.0,  "kind": "swipe",   "note": "Menü fährt von links ein" },
-    { "t": 35.7,  "kind": "type",    "end": 36.4, "n": 7,  "note": "„Angebot“ wird in „Was möchten Sie tun?“ getippt" },
-    { "t": 38.0,  "kind": "ping",    "voice": 0, "note": "Szene Appshop" },
-    { "t": 38.0,  "kind": "swipe",   "note": "Ansicht wechselt zu Apps und Pakete" },
-    { "t": 40.0,  "kind": "click",   "variant": "add",    "note": "App hinzufügen (1): Deck" },
-    { "t": 40.06, "kind": "fly",     "end": 40.84, "note": "Icon fliegt in die Leiste" },
-    { "t": 40.62, "kind": "land",    "note": "Deck erscheint in der Leiste" },
-    { "t": 41.5,  "kind": "click",   "variant": "add",    "note": "App hinzufügen (2): Formulare" },
-    { "t": 41.56, "kind": "fly",     "end": 42.34, "note": "Icon fliegt in die Leiste" },
-    { "t": 42.12, "kind": "land",    "note": "Formulare erscheint in der Leiste" },
-    { "t": 42.7,  "kind": "ping",    "voice": 0, "note": "Apps verwalten (Scroll zu den Paketen)" },
-    { "t": 43.2,  "kind": "click",   "variant": "toggle", "note": "App-Schalter (Collectives)" },
-
-    { "t": 44.0,  "kind": "ping",    "voice": 0, "note": "Szene Hilfe" },
-    { "t": 44.0,  "kind": "click",   "variant": "nav",    "note": "Support in der Leiste" },
-    { "t": 44.0,  "kind": "swipe",   "note": "Ansicht wechselt zu Support" },
-    { "t": 45.5,  "kind": "click",   "variant": "tap",    "note": "Suchfeld „Anleitungen durchsuchen“" },
-    { "t": 45.62, "kind": "type",    "end": 46.22, "n": 13, "note": "„Ordner teilen“ wird getippt" },
-    { "t": 46.3,  "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 1" },
-    { "t": 46.9,  "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 2" },
-    { "t": 47.5,  "kind": "ping",    "voice": 0, "note": "Anleitung Schritt 3" },
-    { "t": 47.85, "kind": "click",   "variant": "tap",    "note": "„Im Chat fragen“ (Karte Hilfe und Kontakt)" },
-    { "t": 48.0,  "kind": "ping",    "voice": 0, "note": "Talk öffnet sich: Chat mit dem Support" },
-    { "t": 48.0,  "kind": "swipe",   "note": "Ansicht wechselt zu Talk" },
-    { "t": 48.15, "kind": "msg",     "variant": "out",    "note": "Nachricht gesendet: Wie lade ich Kollegen ein?" },
-    { "t": 48.75, "kind": "chime",   "note": "Antwort vom Support trifft ein (mit Einladungslink)" },
-    { "t": 49.4,  "kind": "msg",     "variant": "out",    "note": "Nachricht gesendet: Können wir kurz sprechen?" },
-    { "t": 50.2,  "kind": "click",   "variant": "tap",    "note": "„Anruf starten“" },
-    { "t": 50.3,  "kind": "swipe",   "note": "Anrufansicht" },
-    { "t": 50.4,  "kind": "ring",    "end": 51.4, "note": "Es klingelt (Warte auf weitere Teilnehmer)" },
-    { "t": 51.4,  "kind": "join",    "note": "Mira vom Support ist im Anruf" },
-    { "t": 52.1,  "kind": "join",    "note": "Das Team tritt bei (Raster 2 × 2)" },
-    { "t": 53.5,  "kind": "click",   "variant": "tap",    "note": "„Anruf verlassen“" },
-
-    { "t": 55.0,  "kind": "snap",    "note": "Kettenglied 1: Oberfläche" },
-    { "t": 56.0,  "kind": "snap",    "note": "Kettenglied 2: Erweiterungen" },
-    { "t": 57.0,  "kind": "snap",    "note": "Kettenglied 3: Betreuung" },
-    { "t": 58.0,  "kind": "lock",    "note": "Kette rastet ein, Lichtpuls" },
-
-    { "t": 53.55, "kind": "swipe",   "note": "Fenster verlässt das Bild, Kette erscheint" },
-    { "t": 60.0,  "kind": "ping",    "voice": 0, "note": "Szene Mehr Zeit" },
-    { "t": 60.0,  "kind": "swipe",   "note": "Zeitleiste fährt ein" },
-
-    { "t": 68.0,  "kind": "riser",   "end": 70.0, "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren" },
-    { "t": 69.5,  "kind": "cut",     "end": 70.0, "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall" },
-    { "t": 70.0,  "kind": "crystal", "note": "Logo kristallisiert, Lichtblitz. Die Dominante (E) löst sich nach A auf – Volltreffer, Glas-Kaskade" },
-    { "t": 70.5,  "kind": "snap",    "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)" },
-    { "t": 70.75, "kind": "tagline", "note": "Einfach für deinen Alltag. (einzige Schlusszeile, die Marke steht allein)" },
-    { "t": 72.0,  "kind": "tagline", "note": "Strich unter „Alltag.“ (zweiter Glockenton)" },
-    { "t": 73.0,  "kind": "tagline", "note": "Logo-Tagline + genau ein CTA; ab hier 5 s volles Endbild" },
-    { "t": 78.0,  "kind": "end" }
-  ]
+  {
+   "id": "clarity",
+   "start": 30.0,
+   "end": 68.0,
+   "bars": "16-34",
+   "idea": "Linkado: sechs Nutzenversprechen, die nacheinander einrasten. Ruhiger Groove wächst Schicht für Schicht."
+  },
+  {
+   "id": "finale",
+   "start": 68.0,
+   "end": 78.0,
+   "bars": "35-39",
+   "idea": "Alles kristallisiert zum Linkado-Logo. Abschlusszeile, Ausklang."
+  }
+ ],
+ "scenes": [
+  {
+   "id": "hook",
+   "start": 0.0,
+   "end": 4.0,
+   "bars": "1-2",
+   "text": "Alles funktioniert. Nur nicht dazwischen. (ruhig gesetzt, das letzte Wort steht 1,6 s)"
+  },
+  {
+   "id": "m365",
+   "start": 4.0,
+   "end": 10.5,
+   "bars": "3-6",
+   "text": "Der Allrounder – alles aus einer Hand, aber (Alltagssätze mit Profilbild): „Und wenn der Anbieter die Regeln ändert?“ · „Jede Erweiterung kostet extra.“ · „Wir passen uns der Software an.“ – Laptop + Handy voller Apps"
+  },
+  {
+   "id": "opendesk",
+   "start": 10.5,
+   "end": 17.0,
+   "bars": "6-9",
+   "text": "Das fertige Portal – offen und lokal gedacht, aber: „Ein Login, schön. Dahinter ist alles anders.“ · „Die Mail sieht anders aus als der Chat.“ · „Es fühlt sich nicht wie ein Ganzes an.“ – ein Handy-Login, dahinter fünf verschiedene Oberflächen"
+  },
+  {
+   "id": "nextcloud",
+   "start": 17.0,
+   "end": 23.5,
+   "bars": "9-12",
+   "text": "Die offene Basis – mächtig und frei, aber: „Das Update spielen wir selbst ein.“ · „Im Alltag sieht es noch roh aus.“ · „Für die Kolleg*innen zu technisch.“ – Laptop mit nacktem Wireframe, Update-Balken, Werkzeuge"
+  },
+  {
+   "id": "overwhelm",
+   "start": 23.5,
+   "end": 28.0,
+   "bars": "12-14",
+   "text": "Fünf Blickwinkel: Noch ein Login (Mitarbeitende). Noch ein Tool (Teams). Noch ein Abo (Geschäftsführung). Noch eine KI (Datenschutz). Noch eine IT-Frage."
+  },
+  {
+   "id": "pause",
+   "start": 28.0,
+   "end": 36.0,
+   "bars": "15-18",
+   "text": "Übergang: Schwarz 28,0–28,5; dann Annas Büro. Die Cliffhanger-Frage „Keine Lust mehr, sich damit herumzuärgern?“; Annas Klick aufs Haus-Symbol, 36 Tabs werden 1 Tab (EIN BROWSER), Anmeldefeld mit Haken (EIN LOGIN), Lichtwelle auf dem Bildschirm, Handy leuchtet (ALLE GERÄTE), Zoom in den Browser – der Drop ist die Ankunft."
+  },
+  {
+   "id": "reveal",
+   "start": 36.0,
+   "end": 40.0,
+   "bars": "19-20",
+   "text": "Nextcloud als Basis. Linkado als Benutzererlebnis. – Technik verständlich und zugänglich machen."
+  },
+  {
+   "id": "overview",
+   "start": 40.0,
+   "end": 44.0,
+   "bars": "21-22",
+   "text": "Mehr Übersicht im Arbeitsalltag. – Anwendungen und wichtige Funktionen leichter finden."
+  },
+  {
+   "id": "appshop",
+   "start": 44.0,
+   "end": 50.0,
+   "bars": "23-25",
+   "text": "Passende Werkzeuge an einem Ort. – Apps über den Linkado-Appshop auswählen und verwalten."
+  },
+  {
+   "id": "help",
+   "start": 50.0,
+   "end": 60.0,
+   "bars": "26-30",
+   "text": "Hilfe direkt in der Cloud. – Anleitungen, Assistent und Support dort, wo Fragen entstehen; persönlich per Chat und Anruf (Talk)."
+  },
+  {
+   "id": "package",
+   "start": 60.0,
+   "end": 66.0,
+   "bars": "31-33",
+   "text": "Ein stimmiges Gesamtpaket. – Oberfläche, Erweiterungen und Betreuung greifen ineinander."
+  },
+  {
+   "id": "time",
+   "start": 66.0,
+   "end": 74.0,
+   "bars": "34-37",
+   "text": "Mehr Zeit fürs Wesentliche. – Weniger mit Technik beschäftigen, leichter zusammenarbeiten."
+  },
+  {
+   "id": "finale",
+   "start": 74.0,
+   "end": 84.0,
+   "bars": "38-42",
+   "text": "Linkado. Einfach für deinen Alltag. – Der europäische digitale Arbeitsplatz."
+  }
+ ],
+ "hits": [
+  {
+   "t": 1.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Hook: „funktioniert.“"
+  },
+  {
+   "t": 2.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Hook: „Nur nicht“"
+  },
+  {
+   "t": 2.5,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Hook: „dazwischen.“ (Buchstaben öffnen sich, steht bis 3,8 s)"
+  },
+  {
+   "t": 4.0,
+   "kind": "card",
+   "voice": 1,
+   "note": "Alltagsmoment „Der Allrounder“ schlägt ein (Ton A)"
+  },
+  {
+   "t": 5.0,
+   "kind": "ping",
+   "voice": 1,
+   "note": "Tom: Mitteilung zur Preisanpassung, Schilder fallen"
+  },
+  {
+   "t": 5.75,
+   "kind": "ping",
+   "voice": 1,
+   "note": "Tom: nimmt das Telefon"
+  },
+  {
+   "t": 6.5,
+   "kind": "ping",
+   "voice": 1,
+   "note": "Tom: telefoniert, die Rückfrage"
+  },
+  {
+   "t": 10.0,
+   "kind": "glide",
+   "end": 10.95,
+   "note": "Kamera gleitet im 3D-Büro von Toms zu Lenas Platz (leises Wischen)"
+  },
+  {
+   "t": 10.25,
+   "kind": "shove",
+   "voice": 1,
+   "note": "Moment wird nach hinten geschoben"
+  },
+  {
+   "t": 10.5,
+   "kind": "card",
+   "voice": 2,
+   "note": "Alltagsmoment „Das fertige Portal“ (Ton C)"
+  },
+  {
+   "t": 11.5,
+   "kind": "ping",
+   "voice": 2,
+   "note": "Lena: Anmeldefeld klappt auf"
+  },
+  {
+   "t": 12.25,
+   "kind": "ping",
+   "voice": 2,
+   "note": "Lena: fünf Oberflächen, jede anders"
+  },
+  {
+   "t": 13.0,
+   "kind": "ping",
+   "voice": 2,
+   "note": "Lena: Kamera fährt an den Bildschirm"
+  },
+  {
+   "t": 16.5,
+   "kind": "glide",
+   "end": 17.45,
+   "note": "Kamera gleitet von Lenas zu Annas Platz"
+  },
+  {
+   "t": 16.75,
+   "kind": "shove",
+   "voice": 2
+  },
+  {
+   "t": 17.0,
+   "kind": "card",
+   "voice": 3,
+   "note": "Alltagsmoment „Die offene Basis“ (Ton E)"
+  },
+  {
+   "t": 18.0,
+   "kind": "ping",
+   "voice": 3,
+   "note": "Anna: Tab-Flut beginnt"
+  },
+  {
+   "t": 18.75,
+   "kind": "ping",
+   "voice": 3,
+   "note": "Anna: Haareraufen"
+  },
+  {
+   "t": 19.5,
+   "kind": "ping",
+   "voice": 3,
+   "note": "Anna: Kamera fährt an den Bildschirm"
+  },
+  {
+   "t": 23.25,
+   "kind": "shove",
+   "voice": 3
+  },
+  {
+   "t": 23.5,
+   "kind": "riser",
+   "end": 28.0,
+   "note": "Überforderung: alles stapelt sich, Spannung steigt"
+  },
+  {
+   "t": 23.5,
+   "kind": "text",
+   "note": "Blickwinkel 1 · Mitarbeitende: Noch ein Login."
+  },
+  {
+   "t": 24.25,
+   "kind": "text",
+   "note": "Blickwinkel 2 · Teams: Noch ein Tool (Tabs füllen sich)."
+  },
+  {
+   "t": 25.0,
+   "kind": "text",
+   "note": "Blickwinkel 3 · Geschäftsführung: Noch ein Abo."
+  },
+  {
+   "t": 25.75,
+   "kind": "text",
+   "note": "Blickwinkel 4 · Datenschutz: Noch eine KI."
+  },
+  {
+   "t": 26.5,
+   "kind": "text",
+   "note": "Blickwinkel 5 · IT: Noch eine IT-Frage."
+  },
+  {
+   "t": 28.0,
+   "kind": "cut",
+   "note": "harter Schnitt: Chaos-Stimmen stoppen, nur Hall-Schwanz + tiefer Puls bleiben"
+  },
+  {
+   "t": 28.5,
+   "kind": "text",
+   "note": "Cliffhanger-Frage „Keine Lust mehr, sich damit herumzuärgern?“ – setzt auf dem ersten Herzschlag ein; Frage-Intonation 29.2–29.7, endet unaufgelöst auf der Dominante, der Drop (36.0) ist die Antwort"
+  },
+  {
+   "t": 31.0,
+   "kind": "click",
+   "variant": "tap",
+   "note": "Annas Klick aufs Haus-Symbol der Browser-Leiste – das ist die Antwort auf die Frage"
+  },
+  {
+   "t": 31.1,
+   "kind": "fold",
+   "end": 32.3,
+   "note": "die 36 Tabs falten sich zu einem; die Pille „1 TAB“ erscheint"
+  },
+  {
+   "t": 31.5,
+   "kind": "chip",
+   "note": "EIN BROWSER."
+  },
+  {
+   "t": 32.5,
+   "kind": "chip",
+   "note": "EIN LOGIN. – ein Anmeldefeld mit Haken (der Name steht noch nirgends)"
+  },
+  {
+   "t": 33.5,
+   "kind": "whoosh",
+   "end": 34.7,
+   "note": "Lichtwelle im Büro-Bildschirm: aus der grauen Seite wird die Startseite, Annas Gesicht wird warm – der Ah-Moment"
+  },
+  {
+   "t": 34.5,
+   "kind": "chip",
+   "note": "ALLE GERÄTE. – das Handy auf dem Tisch leuchtet; darunter: Dateien, Kalender, Chat – in einem Tab"
+  },
+  {
+   "t": 35.0,
+   "kind": "build",
+   "end": 35.92,
+   "note": "Sog in den Drop: der Zoom in den Bildschirm beschleunigt, Herzschläge, Riser; der Faden glüht auf (Dominante bleibt offen)"
+  },
+  {
+   "t": 35.92,
+   "kind": "vacuum",
+   "end": 36.0,
+   "note": "kurzes Einatmen (80 ms Stille) direkt vor dem Drop"
+  },
+  {
+   "t": 36.0,
+   "kind": "drop",
+   "note": "Drop = Ankunft im bereits farbigen Fenster: Lichtblitz (gedämpft), Druckwellen, Crash, Sonic Logo (Dur: A–C♯–E–A), Groove startet in A-Dur; der Name Linkado erscheint erst jetzt"
+  },
+  {
+   "t": 36.25,
+   "kind": "text",
+   "note": "Nextcloud als Basis."
+  },
+  {
+   "t": 37.5,
+   "kind": "text",
+   "note": "Linkado als Benutzererlebnis."
+  },
+  {
+   "t": 40.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Szene Übersicht"
+  },
+  {
+   "t": 40.0,
+   "kind": "swipe",
+   "note": "Ansicht rastet ein (Widgets)"
+  },
+  {
+   "t": 40.5,
+   "kind": "snap",
+   "note": "Widgets rasten ins Raster"
+  },
+  {
+   "t": 41.0,
+   "kind": "click",
+   "variant": "tap",
+   "note": "Raster-Symbol: das große Menü öffnet sich"
+  },
+  {
+   "t": 41.0,
+   "kind": "swipe",
+   "note": "Menü fährt von links ein"
+  },
+  {
+   "t": 41.7,
+   "kind": "type",
+   "end": 42.4,
+   "n": 7,
+   "note": "„Angebot“ wird in „Was möchten Sie tun?“ getippt"
+  },
+  {
+   "t": 42.4,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Treffer im Menü erscheinen (erste Zeile: Assistent)"
+  },
+  {
+   "t": 44.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Szene Appshop"
+  },
+  {
+   "t": 44.0,
+   "kind": "swipe",
+   "note": "Ansicht wechselt zu Apps und Pakete"
+  },
+  {
+   "t": 46.0,
+   "kind": "click",
+   "variant": "add",
+   "note": "App hinzufügen (1): Deck"
+  },
+  {
+   "t": 46.06,
+   "kind": "fly",
+   "end": 46.84,
+   "note": "Icon fliegt in die Leiste"
+  },
+  {
+   "t": 46.62,
+   "kind": "land",
+   "note": "Deck erscheint in der Leiste"
+  },
+  {
+   "t": 47.5,
+   "kind": "click",
+   "variant": "add",
+   "note": "App hinzufügen (2): Formulare"
+  },
+  {
+   "t": 47.56,
+   "kind": "fly",
+   "end": 48.34,
+   "note": "Icon fliegt in die Leiste"
+  },
+  {
+   "t": 48.12,
+   "kind": "land",
+   "note": "Formulare erscheint in der Leiste"
+  },
+  {
+   "t": 48.7,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Apps verwalten (Scroll zu den Paketen)"
+  },
+  {
+   "t": 49.2,
+   "kind": "click",
+   "variant": "toggle",
+   "note": "App-Schalter (Collectives)"
+  },
+  {
+   "t": 50.0,
+   "kind": "click",
+   "variant": "nav",
+   "note": "Support in der Leiste"
+  },
+  {
+   "t": 50.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Szene Hilfe"
+  },
+  {
+   "t": 50.0,
+   "kind": "swipe",
+   "note": "Ansicht wechselt zu Support"
+  },
+  {
+   "t": 51.5,
+   "kind": "click",
+   "variant": "tap",
+   "note": "Suchfeld „Anleitungen durchsuchen“"
+  },
+  {
+   "t": 51.62,
+   "kind": "type",
+   "end": 52.22,
+   "n": 13,
+   "note": "„Ordner teilen“ wird getippt"
+  },
+  {
+   "t": 52.3,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Anleitung Schritt 1"
+  },
+  {
+   "t": 52.9,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Anleitung Schritt 2"
+  },
+  {
+   "t": 53.5,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Anleitung Schritt 3"
+  },
+  {
+   "t": 53.85,
+   "kind": "click",
+   "variant": "tap",
+   "note": "„Im Chat fragen“ (Karte Hilfe und Kontakt)"
+  },
+  {
+   "t": 54.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Talk öffnet sich: Chat mit dem Support"
+  },
+  {
+   "t": 54.0,
+   "kind": "swipe",
+   "note": "Ansicht wechselt zu Talk"
+  },
+  {
+   "t": 54.15,
+   "kind": "msg",
+   "variant": "out",
+   "note": "Nachricht gesendet: Wie lade ich Kollegen ein?"
+  },
+  {
+   "t": 54.75,
+   "kind": "chime",
+   "note": "Antwort vom Support trifft ein (mit Einladungslink)"
+  },
+  {
+   "t": 55.4,
+   "kind": "msg",
+   "variant": "out",
+   "note": "Nachricht gesendet: Können wir kurz sprechen?"
+  },
+  {
+   "t": 56.2,
+   "kind": "click",
+   "variant": "tap",
+   "note": "„Anruf starten“"
+  },
+  {
+   "t": 56.3,
+   "kind": "swipe",
+   "note": "Anrufansicht"
+  },
+  {
+   "t": 56.4,
+   "kind": "ring",
+   "end": 57.4,
+   "note": "Es klingelt (Warte auf weitere Teilnehmer)"
+  },
+  {
+   "t": 57.4,
+   "kind": "join",
+   "note": "Mira vom Support ist im Anruf"
+  },
+  {
+   "t": 58.1,
+   "kind": "join",
+   "note": "Das Team tritt bei (Raster 2 × 2)"
+  },
+  {
+   "t": 59.5,
+   "kind": "click",
+   "variant": "tap",
+   "note": "„Anruf verlassen“"
+  },
+  {
+   "t": 59.55,
+   "kind": "swipe",
+   "note": "Fenster verlässt das Bild, Kette erscheint"
+  },
+  {
+   "t": 61.0,
+   "kind": "snap",
+   "note": "Kettenglied 1: Oberfläche"
+  },
+  {
+   "t": 62.0,
+   "kind": "snap",
+   "note": "Kettenglied 2: Erweiterungen"
+  },
+  {
+   "t": 63.0,
+   "kind": "snap",
+   "note": "Kettenglied 3: Betreuung"
+  },
+  {
+   "t": 64.0,
+   "kind": "lock",
+   "note": "Kette rastet ein, Lichtpuls"
+  },
+  {
+   "t": 66.0,
+   "kind": "ping",
+   "voice": 0,
+   "note": "Szene Mehr Zeit"
+  },
+  {
+   "t": 66.0,
+   "kind": "swipe",
+   "note": "Zeitleiste fährt ein"
+  },
+  {
+   "t": 74.0,
+   "kind": "riser",
+   "end": 76.0,
+   "note": "Alles löst sich in Knoten auf und beginnt zu kristallisieren"
+  },
+  {
+   "t": 75.5,
+   "kind": "cut",
+   "end": 76.0,
+   "note": "halber Takt Drop-out (Kick/Bass aus) direkt vor dem Kristall"
+  },
+  {
+   "t": 76.0,
+   "kind": "crystal",
+   "note": "Logo kristallisiert, Lichtblitz. Die Dominante (E) löst sich nach A auf – Volltreffer, Glas-Kaskade"
+  },
+  {
+   "t": 76.5,
+   "kind": "snap",
+   "note": "Der orange Faden rastet als Flaggen-Steg ins A (letztes Teil des Logos)"
+  },
+  {
+   "t": 76.75,
+   "kind": "tagline",
+   "note": "Einfach für deinen Alltag. (einzige Schlusszeile, die Marke steht allein)"
+  },
+  {
+   "t": 78.0,
+   "kind": "tagline",
+   "note": "Strich unter „Alltag.“ (zweiter Glockenton)"
+  },
+  {
+   "t": 79.0,
+   "kind": "tagline",
+   "note": "Logo-Tagline + genau ein CTA; ab hier 5 s volles Endbild"
+  },
+  {
+   "t": 84.0,
+   "kind": "end"
+  }
+ ]
 }

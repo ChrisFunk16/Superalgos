@@ -3,16 +3,20 @@
 //   22,0–22,5 Schwarz · 22,5 das dämmrige Büro blendet auf, Anna sitzt mit dem Kopf in den Händen, oben die Cliffhanger-Frage
 //   23,6 sie hebt den Kopf · 24,6 Hand an der Maus · 25,0 KLICK aufs Start-Symbol der Browser-Leiste (die Antwort auf die Frage)
 //   25,1–26,3 die 36 Tabs falten sich zu EINEM · 25,5 „EIN BROWSER.“ · 26,5 „EIN LOGIN.“ (ein Anmeldefeld mit Haken)
-//   27,5 Lichtwelle: aus der grauen Seite wird die Startseite, Annas Gesicht wird warm (der Ah-Moment) · 28,5 „ALLE GERÄTE.“, das Handy leuchtet
+//   27,5 Lichtwelle: aus der grauen Seite wird die Startseite, Annas Gesicht wird warm (der Ah-Moment) · das Handy neben dem Monitor wacht beim Klick (graue Seite) auf und wird kurz nach der Welle farbig · 28,5 „ALLE GERÄTE.“
 //   29,0–29,92 Sog (Zoom beschleunigt, Faden glüht – Overlay a2-ov), 29,92 Einatmen, 30,0 DROP: das Fenster steht schon, der Name erscheint erst jetzt
 // Das 3D-Büro (office3d.js) liefert die Kamera; die Oberfläche (Browser-Leiste + Fenster, Koordinaten 1480 × 900) wird per matrix3d auf den 3D-Monitor gelegt
 // (act2.js). Die letzte Kameraeinstellung ist so gewählt, dass der Bildschirm exakt die Pose „full“ von Szene 01 ergibt (Landung ±0 px).
 // Keine Produkt-/Firmennamen; die Seite im Bildschirm ist bis zur Welle die graue Rohfassung.
 // ============================================================
-export const T = { in: 22.5, lift: 23.6, mouse: 24.55, click: 25.0, foldA: 25.1, foldB: 26.3, chip1: 25.5, chip2: 26.5, wave0: 27.5, wave1: 28.7, chip3: 28.5, build: 29.0, drop: 30.0 };
+// Die Zeiten dieser Datei sind für den Drop bei 30,0 s geschrieben (TO); der Übergang liegt seit v7 um DT = 6,0 s (drei Takte) später (Drop bei 36,0 s).
+export const DT = 6.0;
+const TO = { in: 22.5, lift: 23.6, mouse: 24.55, click: 25.0, foldA: 25.1, foldB: 26.3, chip1: 25.5, chip2: 26.5, wave0: 27.5, wave1: 28.7, chip3: 28.5, build: 29.0, drop: 30.0 };
+export const T = Object.fromEntries(Object.entries(TO).map(([k, v]) => [k, v + DT]));
 
 export function buildTransition(E, o) {
   const { h, tf, tw, ease, prog, clamp, lerp, show, icon } = E;
+  const T = TO;                                                      // innen: Zeiten der Urfassung; update()/cursor() rechnen die globale Zeit um (− DT)
   const { root, cam, dev, raw, win } = o;
 
   /* ---------- Login-Feld mit Haken (liegt über der grauen Seite) ---------- */
@@ -52,7 +56,8 @@ export function buildTransition(E, o) {
   const TAB_X0 = 112, TAB_STEP = 35;
   const cursorPath = [[24.2, 820, 560], [24.9, 700, 520], [T.click, dev.homeX, dev.homeY], [25.4, dev.homeX, dev.homeY], [26.3, 960, 520], [29.0, 960, 520]];
 
-  function update(tG, camS) {
+  function update(tGlobal, camS) {
+    const tG = tGlobal - DT;
     const on = tG >= T.in - 0.05 && tG < T.drop + 0.5;
     show(login, on);
     // Browser-Leiste und Handy: Auf- und Abblenden (das 3D-Büro blendet selbst)
@@ -83,12 +88,15 @@ export function buildTransition(E, o) {
     login.style.opacity = li.toFixed(3); login.style.transform = `translateY(${(14 * (1 - tw(tG, 26.45, 26.85, ease.ui))).toFixed(1)}px)`;
     const ck = tw(tG, 27.0, 27.35, ease.outBack); check.style.opacity = clamp(ck * 2).toFixed(3); check.style.transform = `scale(${(0.4 + 0.6 * ck).toFixed(3)})`;
     raw.el.style.opacity = (tG > 25.05 && tG < 25.55 ? 0.55 : 1);                     // „Seite lädt“: kurz abgedunkelt
-    dev.phoneOff.style.opacity = (1 - tw(tG, T.chip3, T.chip3 + 0.35, ease.out2)).toFixed(3);
+    dev.phoneOff.style.opacity = (1 - tw(tG, T.click + 0.15, T.click + 0.55, ease.out2)).toFixed(3);                    // das Handy wacht mit dem Klick auf: erst die graue Rohfassung (ein Browser) …
+    const gray = 1 - ease.uiInOut(prog(tG, T.wave0 + 0.25, T.wave1 + 0.2));                                               // … dann, kurz nach der Lichtwelle des Bildschirms, Linkado in Farbe
+    dev.phoneScreen.style.filter = gray > 0.001 ? `grayscale(${gray.toFixed(3)}) contrast(${(1 - 0.12 * gray).toFixed(3)}) brightness(${(1 + 0.05 * gray).toFixed(3)})` : 'none';
     dev.phone.style.opacity = vis.toFixed(3);
   }
 
   /** Cursor im Kamera-Raum (null, wenn aus) */
-  function cursor(tG, camS) {
+  function cursor(tGlobal, camS) {
+    const tG = tGlobal - DT;
     if (tG < cursorPath[0][0] || tG >= 29.3) return null;
     let x = cursorPath[cursorPath.length - 1][1], y = cursorPath[cursorPath.length - 1][2];
     for (let i = 0; i < cursorPath.length - 1; i++) if (tG >= cursorPath[i][0] && tG < cursorPath[i + 1][0]) { const p = ease.uiInOut(prog(tG, cursorPath[i][0], cursorPath[i + 1][0])); x = lerp(cursorPath[i][1], cursorPath[i + 1][1], p); y = lerp(cursorPath[i][2], cursorPath[i + 1][2], p); }

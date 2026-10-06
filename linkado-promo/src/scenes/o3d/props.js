@@ -123,6 +123,14 @@ export function tabletDev(parent, color = '#1E2536') {
   put(g, new THREE.PlaneGeometry(0.155, 0.225), new THREE.MeshStandardMaterial({ color, roughness: 0.2, emissive: '#35508A', emissiveIntensity: 0.55 }), 0, 0.0085, 0, false, false).rotation.x = -Math.PI / 2;
   return g;
 }
+/** Handy-Ständer (Schale + Rückenlehne, zeigt nach +z; das Handy lehnt etwa 18° nach hinten) – das Handy selbst gehört zur Figur (figure.js, Pose aus actors.js) */
+export function phoneStand(parent) {
+  const g = new THREE.Group(); parent.add(g);
+  put(g, rbox(0.1, 0.012, 0.075, 0.005, 2), std('#2B3042', 0.45, 0.5), 0, 0.006, 0.0);
+  put(g, rbox(0.1, 0.02, 0.012, 0.004, 2), std('#2B3042', 0.45, 0.5), 0, 0.019, -0.034);                    // Anschlag vorn (Kante, auf der das Handy steht)
+  const back = put(g, rbox(0.07, 0.15, 0.008, 0.004, 2), std('#3A4158', 0.45, 0.5), 0, 0.085, 0.003); back.rotation.x = 0.32;      // Rückenlehne, nach hinten geneigt (Kopf zeigt nach +z)
+  return g;
+}
 export function laptop(parent, { color = '#C7CCD8', open = 1.95, screenMat } = {}) {
   const g = new THREE.Group(); parent.add(g);
   put(g, rbox(0.33, 0.014, 0.23, 0.007), std(color, 0.4, 0.7), 0, 0.007, 0);

@@ -1,4 +1,4 @@
-# Vorteile von Linkado – was uns von den drei Ansätzen abhebt (Arbeitsstand 6.10.2026)
+# Vorteile von Linkado – was uns von den drei Ansätzen abhebt (Arbeitsstand 6.10.2026, Film v7)
 
 Grundlage für Akt I des Films: Die drei Alltagsmomente stehen für drei reale Wege, einen digitalen Arbeitsplatz aufzubauen. **Im Film werden keine Namen genannt** (Beschluss); die Bilder sind erfunden. Hier stehen die realen Vorbilder und Belege, damit die Beispiele stimmen und Linkados Antwort klar wird.
 
@@ -8,15 +8,15 @@ Grundlage für Akt I des Films: Die drei Alltagsmomente stehen für drei reale W
 | **Das fertige Portal** (Lena, Büro) | openDesk | souverän, offen, ein Login | hinter dem Login stehen Einzelwerkzeuge mit eigener Oberfläche; Dinge sind schwer auffindbar | **eine** Oberfläche: Startseite, großes Menü, eine Suche über alles | 02 Mehr Übersicht · Übergang „Ein Login“ |
 | **Die offene Basis** (Anna, Vertrieb) | Nextcloud pur | mächtig, frei, europäisch | Oberfläche überladen, Einrichtung und Pflege brauchen Technikwissen | dieselbe offene Basis, aber verständliche Bedienung: „Ihr Tag“, ein Browser, ein Tab | Übergang „Ein Browser · 1 Tab“ · 01 Nextcloud als Basis, Linkado als Erlebnis |
 
-## Die drei Szenen, realitätsnah (seit v6.1)
+## Die drei Szenen, realitätsnah (seit v6.1; in v7 je 6,5 s mit Nahaufnahme auf den Bildschirm)
 
-**Tom am Telefon (Allrounder).** Tom sitzt mit dem Hörer am Ohr, unter der Blase zeigt eine grüne Pille „IT-Service“ mit laufender Gesprächszeit, wer am anderen Ende ist. Seine Blase ist die typische Rückfrage eines Einkäufers: **„Die KI kostet extra? Pro Nutzer?!“** Um den Monitor schweben drei konkrete Schilder: **+ KI-Option · + Telefonie · + Speicher**.
+**Tom am Telefon (Allrounder).** Tom sitzt mit dem Hörer am Ohr, unter der Blase zeigt eine grüne Pille „IT-Service“ mit laufender Gesprächszeit, wer am anderen Ende ist. Seine Blase ist die typische Rückfrage eines Einkäufers: **„Die KI kostet extra? Pro Nutzer?!“** – am anderen Ende kommt die Antwort: **„Ja. Und nur im Jahresabo.“** Um den Monitor schweben drei konkrete Schilder: **+ KI-Option · + Telefonie · + Speicher**; in der Nahaufnahme zeigt der Bildschirm eine **Abo-Übersicht** (Basis-Abo ▲ Preis angepasst, KI-Zusatz, Telefonie, Zusatzspeicher – je „pro Nutzer / Monat · Jahresabo“ und „+ extra“, **ohne Beträge**) mit wachsendem Kostenbalken.
 *Realitätsbezug:* Seit Juli 2026 steigen die Preise der verbreiteten Büro-Suiten (je Tarif 5 bis 33 Prozent; Business Standard von 12,50 auf 14 Euro, Business Basic von 6 auf 7 Euro je Nutzer und Monat). Die KI-Assistenz im Chat ist jetzt in die Pakete eingebaut – in der Branche spricht man von einer „KI-Steuer“, weil man sie auch bezahlt, wenn man sie nicht nutzt. Die Vollversion des KI-Assistenten und weitere Dienste (Compliance, Telefonie, Speicher) gibt es nur gegen Aufpreis je Nutzer und Monat (KI-Zusatz für Business rund 18 Euro, Compliance-Zusatz 10 Euro).
 
-**Lena (fertiges Portal).** **„Ein Login – aber überall andere Knöpfe.“** Hinter dem Anmeldefeld öffnen sich fünf Werkzeuge (Mail, Chat, Tabelle, Dateien, Tickets), jedes mit eigener Optik und eigenen Bedienelementen.
+**Lena (fertiges Portal).** **„Ein Login – aber überall andere Knöpfe.“** Hinter dem Anmeldefeld öffnen sich fünf Werkzeuge (Mail, Chat, Tabelle, Dateien, Tickets), jedes mit eigener Optik und eigenen Bedienelementen; in der Nahaufnahme benennen drei Schilder, was jeweils anders ist: **ANDERE SUCHE · ANDERES MENÜ · ANDERE KNÖPFE**.
 *Realitätsbezug:* Solche Portale bündeln etablierte Einzelanwendungen (Dateien, Büro-Dokumente, Mail und Kalender, Chat, Projekte, Wiki) hinter einem gemeinsamen Portal mit zentraler Anmeldung. Die Anwendungen bringen ihre eigene Oberfläche mit; Nutzerrückmeldungen aus der öffentlichen Verwaltung nennen die Auffindbarkeit von Funktionen im Portal als Schwachstelle.
 
-**Anna (offene Basis).** **„Alles drin – nur welcher Tab war das noch?“** Während sie sich die Haare rauft, wächst die Tab-Leiste von 3 auf 12.
+**Anna (offene Basis).** **„Alles drin – nur welcher Tab war das noch?“** Während sie sich die Haare rauft, wächst die (beschriftete) Tab-Leiste von 3 auf 12; in der Nahaufnahme stehen die Schilder **12 TABS OFFEN · OBERFLÄCHE ROH · UPDATES: SELBST**.
 *Realitätsbezug:* Nutzerbewertungen der offenen Plattform nennen die Oberfläche als überladen und nicht so einfach zu bedienen wie gewünscht; Einrichtung und Pflege setzen technische Kenntnisse voraus.
 
 ## Die fünf Vorteile (so formulieren, wie der Film sie zeigt)
@@ -27,7 +27,7 @@ Grundlage für Akt I des Films: Die drei Alltagsmomente stehen für drei reale W
 4. **Hilfe dort, wo die Frage entsteht.** Anleitungen, Assistent, dann Chat oder Anruf mit dem Support – ohne die Cloud zu verlassen. *(Antwort auf „Noch eine IT-Frage“ und Toms Telefonat.)*
 5. **Offene europäische Basis (Nextcloud).** Kein Insel-Produkt: dieselbe offene Grundlage, nur verständlicher. *(Antwort auf die Wahl „fertig, aber geschlossen“ oder „offen, aber roh“.)*
 
-Der Film zeigt alles in **einem Browser, mit einem Login, auf allen Geräten** (Übergang, 25 bis 29 s).
+Der Film zeigt alles in **einem Browser, mit einem Login, auf allen Geräten** (Übergang: Klick 31,0 s, ein Browser 31,5 s, ein Login 32,5 s, Lichtwelle 33,5 s, alle Geräte 34,5 s – dabei steht ein Handy neben dem Monitor und zeigt dieselbe Oberfläche –, Drop 36,0 s).
 
 ## Was der Film nicht sagen sollte
 

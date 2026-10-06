@@ -184,6 +184,7 @@ export function buildWorld(renderer) {
     const at = (obj, x, z, yaw = 0, y = DESK_H) => { obj.position.copy(lp(x, y, z)); obj.rotation.y = yaw * m; return obj; };
     const kx = L.kbX;
     at(P.mousepad(g, isX ? '#2A3148' : key === 'lena' ? '#2F3B3A' : key === 'anna' ? '#3A3563' : '#2A3148'), kx - 0.30, -0.24, 0, DESK_H + 0.002);
+    let phoneGlow = null;
     if (key === 'tom') {
       at(P.deskPhone(g), kx + 0.62, -0.02, 0.5); at(P.calculator(g), kx - 0.56, 0.14, 0.35); at(P.folderStack(g, 5, undefined, 0.2), kx + 0.74, 0.22, 0.0); at(P.penCup(g), kx - 0.78, -0.02); at(P.waterGlass(g), kx + 0.30, -0.34);
       P.sticky(mon.head, -0.31, 0.19, 0.012, '#F3D97A', 0.07, 0, 0, 0.1); P.sticky(mon.head, -0.33, 0.09, 0.012, '#F2A6B8', 0.065, 0, 0, -0.14); P.sticky(mon.head, 0.30, -0.19, 0.012, '#8FD3C5', 0.06, 0, 0, 0.08);
@@ -192,7 +193,7 @@ export function buildWorld(renderer) {
       at(P.waterGlass(g), kx + 0.34, -0.34); at(P.penCup(g, '#E8E1D3'), kx - 0.40, 0.16);
       P.sticky(mon.head, -0.32, 0.17, 0.012, '#8FD3C5', 0.07, 0, 0, -0.1);
     } else if (key === 'anna') {
-      at(P.tabletDev(g), kx + 0.66, -0.08, 0.3); at(P.headphones(g), kx - 0.45, 0.2, 0.5); at(P.notebook(g, { yaw: -0.3, cover: '#F2A6B8' }), kx - 0.62, 0.0); at(P.plant(g, 0, 0, { kind: 'succulent', s: 1, seed: 6, potColor: '#C9B8E8' }), kx - 0.80, 0.30);
+      at(P.phoneStand(g), L.monX + 0.52, 0.10, 0); phoneGlow = P.glowSprite(g, ...lp(L.monX + 0.52, DESK_H + 0.12, 0.04).toArray(), 0.55, '#FFB874', 0.0);       // Handy-Ständer rechts neben dem Monitor (das Handy steht in der Szene Annas, nie hinter ihrem Kopf) at(P.headphones(g), kx - 0.45, 0.2, 0.5); at(P.notebook(g, { yaw: -0.3, cover: '#F2A6B8' }), kx - 0.62, 0.0); at(P.plant(g, 0, 0, { kind: 'succulent', s: 1, seed: 6, potColor: '#C9B8E8' }), kx - 0.80, 0.30);
       const mg2 = P.mug(g, { color: '#F2C14E' }); mg2.position.copy(lp(kx + 0.36, DESK_H, -0.34));
       P.sticky(mon.head, -0.34, 0.2, 0.012, '#F3D97A', 0.07, 0, 0, 0.12); P.sticky(mon.head, -0.34, 0.1, 0.012, '#F2A6B8', 0.07, 0, 0, -0.08); P.sticky(mon.head, -0.34, 0.0, 0.012, '#A9C4F5', 0.07, 0, 0, 0.05); P.sticky(mon.head, 0.34, 0.18, 0.012, '#F3D97A', 0.06, 0, 0, -0.1);
       P.sticky(g, (kx + 0.30) * m, DESK_H + 0.002, -0.05, '#F3D97A', 0.075, -Math.PI / 2, 0, 0.2); P.sticky(g, (kx + 0.46) * m, DESK_H + 0.002, -0.06, '#F2A6B8', 0.075, -Math.PI / 2, 0, -0.1);
@@ -213,7 +214,7 @@ export function buildWorld(renderer) {
     const screenGlow = P.glowDecal(g, mon.g.position.x + Math.sin(sg) * 0.34, DESK_H + 0.004, mon.g.position.z + Math.cos(sg) * 0.34, 0.95, 0.62, isX ? '#8FA8FF' : '#9FB4FF', isX ? 0.16 : 0.0, -sg);
     let halo = null; if (lampG) halo = P.glowSprite(lampG.userData.head, 0, -0.03, 0, 0.34, '#FFD7A0', 0.0);
     mon.head.updateWorldMatrix(true, false);
-    desks[key] = { key, L, g, chair: ch, monHead: mon.head, scr: mon.scr, spotPos, spotTgt, glowPos, pool, screenGlow, halo, mon: mon.g, kb, mug: mg, lamp: lampG, screenMat };
+    desks[key] = { key, L, g, chair: ch, monHead: mon.head, scr: mon.scr, spotPos, spotTgt, glowPos, pool, screenGlow, halo, phoneGlow, mon: mon.g, kb, mug: mg, lamp: lampG, screenMat };
   }
 
   fixNormals(room);

@@ -15,6 +15,7 @@ import { Actor, scriptTom, scriptLena, scriptAnna, scriptIdle } from './o3d/acto
 import { matrixFor } from './o3d/domquad.js';
 import { ez, prog, lerp, clamp } from './o3d/anim.js';
 import { createPost } from './o3d/post.js';
+import { mulberry } from './o3d/gfx.js';
 
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const CREAM = '#F4EEE3', W = 1920, H = 1080;
@@ -29,6 +30,8 @@ function css(E) {
   .of-call .ic { width:48px; height:48px; border-radius:50%; background:#3FBF8A; display:flex; align-items:center; justify-content:center; flex:none; }
   .of-call small { font:600 24px/1 var(--font-body); color:#B9E7D3; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
   .of-call .eq { display:flex; align-items:center; gap:4px; height:30px; margin-left:4px; } .of-call .eq i { display:block; width:5px; height:8px; border-radius:3px; background:#7BE0B4; }
+  .of-bub.re { left:150px; max-width:560px; padding:18px 30px 20px; border-radius:30px; background:#26354A; color:#E9EEF6; font:600 40px/1.16 var(--font-body); box-shadow:0 14px 32px rgba(0,0,0,.4); transform-origin:0% 20%; }
+  .of-bub.re::after { display:none; }
   .of-who { position:absolute; left:114px; font:700 24px/1 var(--font-body); letter-spacing:.14em; color:#9AA3B8; text-transform:uppercase; }
   .of-ok { position:absolute; left:110px; display:flex; align-items:center; gap:16px; font:600 40px/1 var(--font-body); letter-spacing:.04em; color:#C9D0E0; text-transform:uppercase; white-space:nowrap; text-shadow:0 2px 14px rgba(10,14,22,.8); }
   .of-ok .ck { width:46px; height:46px; border-radius:50%; background:rgba(63,191,138,.2); color:#3FBF8A; display:flex; align-items:center; justify-content:center; flex:none; }
@@ -56,6 +59,12 @@ const SHOTS = {
   lena: mkShot(heroT('lena'), -6, 60, 4.9, 28, 330, 10),
   anna: mkShot(heroT('anna'), 4, 60, 4.9, 28, 330, 10),
 };
+/** Nahaufnahmen (v7): die Kamera fährt über die Schulter an den Bildschirm heran – von hinten und oben –, damit man das Problem auf dem Bildschirm lesen kann */
+const scrC = (k) => deskLayout(k).mon.clone().setY(DESK_H + MON.standH + MON.h / 2 + 0.02);
+const closeShot = (k, az, el, d, sx = 430, sy = 0) => mkShot(scrC(k), az, el, d, 28, sx, sy);
+SHOTS.tomC = closeShot('tom', 9, 34, 1.85);
+SHOTS.lenaC = closeShot('lena', -9, 34, 1.85, 500);
+SHOTS.annaC = closeShot('anna', 8, 34, 1.85);
 const mixShot = (a, b, p) => ({ tgt: a.tgt.clone().lerp(b.tgt, p), az: lerp(a.az, b.az, p), el: lerp(a.el, b.el, p), d: lerp(a.d, b.d, p), fov: lerp(a.fov, b.fov, p), sx: lerp(a.sx, b.sx, p), sy: lerp(a.sy, b.sy, p) });
 const driftShot = (s, k, az = 0.9, dd = -0.05) => ({ ...s, az: s.az + k * az, d: s.d + k * dd, tgt: s.tgt });
 const shotPose = (s) => { const az = s.az * D2R, el = s.el * D2R; return { pos: s.tgt.clone().add(V(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(s.d)), tgt: s.tgt.clone(), up: V(0, 1, 0), fov: s.fov, sx: s.sx, sy: s.sy }; };
@@ -67,30 +76,31 @@ export default function register(E) {
   const T0 = { tom: hit('card', 1)[0], lena: hit('card', 2)[0], anna: hit('card', 3)[0] };
   const PING = { tom: hit('ping', 1), lena: hit('ping', 2), anna: hit('ping', 3) };
   const SHOVE = { tom: hit('shove', 1)[0], lena: hit('shove', 2)[0], anna: hit('shove', 3)[0] };
-  const CUT = E.hits('cut')[0].t, DROP = E.hits('drop')[0].t, TIN = 22.5;
+  const CUT = E.hits('cut')[0].t, DROP = E.hits('drop')[0].t, DT = DROP - 30.0, TIN = 22.5 + DT;      // DT: Verschiebung des Übergangs gegenüber der Urfassung (6,0 s)
 
   const api = { ready: false, dbg: {} };
   E.o3d = api;
 
   /* ---------------------------------------------------------------- Kamerafahrt Akt I */
-  const GL1 = [8.0, 8.95], GL2 = [12.5, 13.45];
+  const GLIDES = E.hits('glide').filter((g) => g.t < CUT).map((g) => [g.t, g.end]);       // Gleitfahrten Tom → Lena, Lena → Anna
+  const SCN = [['tom', T0.tom, T0.tom + 1.4], ['lena', T0.lena, GLIDES[0][1]], ['anna', T0.anna, GLIDES[1][1]]];                   // [Person, Kartenschlag, Ankunft in der Halbnahen]
+  const PUSH = [2.6, 3.6];                                                                // Einfahrt zur Nahaufnahme: Kartenschlag + 2,6 … + 3,6 s
+  const within = (i, t) => {
+    const [key, c, arr] = SCN[i], hero = driftShot(SHOTS[key], Math.max(0, t - arr), 0.7), close = driftShot(SHOTS[key + 'C'], Math.max(0, t - (c + PUSH[1])), 0.5);
+    return mixShot(hero, close, ez.io2(prog(t, c + PUSH[0], c + PUSH[1])));
+  };
   function shotAt(t) {
-    const hold = (key, t0, k = 1) => driftShot(SHOTS[key], Math.max(0, t - t0), 0.9 * k);
-    if (t < T0.lena - 0.5) return t < 5.4 ? mixShot(SHOTS.over, hold('tom', 5.4), ez.out3(prog(t, T0.tom, 5.4))) : hold('tom', 5.4);
-    if (t < GL1[1]) {
-      const p = ez.io2(prog(t, GL1[0], GL1[1])), s = mixShot(hold('tom', 5.4), hold('lena', GL1[1], 0), p), a = Math.sin(Math.PI * p);
-      s.el += 12 * a; s.d += 3.2 * a; return s;
+    if (t < SCN[0][2]) return mixShot(SHOTS.over, within(0, SCN[0][2]), ez.out3(prog(t, T0.tom, SCN[0][2])));
+    for (let i = 0; i < 3; i++) {
+      const g = GLIDES[i];
+      if (!g || t < g[0]) return within(i, t);
+      if (t < g[1]) { const p = ez.io2(prog(t, g[0], g[1])), s = mixShot(within(i, g[0]), within(i + 1, g[1]), p), a = Math.sin(Math.PI * p); s.el += 12 * a; s.d += 3.2 * a; return s; }
     }
-    if (t < GL2[0]) return hold('lena', GL1[1]);
-    if (t < GL2[1]) {
-      const p = ez.io2(prog(t, GL2[0], GL2[1])), s = mixShot(hold('lena', GL1[1]), hold('anna', GL2[1], 0), p), a = Math.sin(Math.PI * p);
-      s.el += 12 * a; s.d += 3.2 * a; return s;
-    }
-    const s = hold('anna', GL2[1]); const push = ez.io2(prog(t, 16.4, 17.5)); s.d -= 0.5 * push; s.el -= 3 * push; return s;
+    return within(2, t);
   }
 
   E.scene({
-    id: 'o3d', start: T0.tom - 0.05, end: 30.5, z: 3,
+    id: 'o3d', start: T0.tom - 0.05, end: DROP + 0.5, z: 3,
     build(root) {
       const canvas = h('canvas', { style: { position: 'absolute', left: 0, top: 0, width: W + 'px', height: H + 'px' } });
       root.append(canvas);
@@ -119,14 +129,28 @@ export default function register(E) {
       const hosts = { tom: mkHost(), lena: mkHost(), anna: mkHost() };
       Object.values(hosts).forEach(addGlass);
       // Tom: „Alle Apps“ (generisch), eine Kachel passt nicht ins Raster
-      { const scr = hosts.tom; scr.style.background = 'linear-gradient(135deg,#1B2840,#0F1626)';
+      const tomUI = (() => { const host = hosts.tom, scr = h('div', { class: 'abs', style: { inset: 0 } }); host.append(scr); scr.style.background = 'linear-gradient(135deg,#1B2840,#0F1626)';
         scr.append(h('div', { class: 'abs', style: { left: 0, top: 0, right: 0, height: 26, background: 'rgba(255,255,255,.08)' } }));
         const win = h('div', { class: 'abs', style: { left: 40, top: 62, width: 600, height: 400, borderRadius: 12, background: '#F1F3F7', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,.45)' } },
           h('div', { class: 'abs', style: { left: 0, top: 0, right: 0, height: 38, background: '#fff', borderBottom: '1.5px solid #E3E7EF', display: 'flex', alignItems: 'center', gap: 8, padding: '0 14px', font: '700 15px/1 var(--font-body)', color: '#59627A' } }, h('i', { style: { width: 10, height: 10, borderRadius: '50%', background: '#D5DAE4', display: 'block' } }), h('i', { style: { width: 10, height: 10, borderRadius: '50%', background: '#D5DAE4', display: 'block' } }), 'Alle Apps'));
         APPCOL.forEach((c, k) => win.append(h('div', { class: 'abs', style: { left: 46 + (k % 4) * 138, top: 72 + Math.floor(k / 4) * 158, width: 116, height: 116, borderRadius: 26, background: c, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 14px rgba(31,37,50,.28)' }, html: icon(APPICO[k], 52, '#fff', 2) })));
         win.append(h('div', { class: 'abs', style: { left: 46 + 3 * 138 - 5, top: 72 + 158 - 5, width: 126, height: 126, borderRadius: 30, border: '3px dashed rgba(229,86,91,.9)', zIndex: 3 } }));
         scr.append(win);
-        const mb = mini(E, 'chat', 200, 138); Object.assign(mb.style, { left: '606px', top: '330px', transform: 'rotate(3deg)' }); scr.append(mb); }
+        const mb = mini(E, 'chat', 200, 138); Object.assign(mb.style, { left: '606px', top: '330px', transform: 'rotate(3deg)' }); scr.append(mb);
+        // Abo-Übersicht: die Folge von „alles aus einer Hand“ – jeder Baustein pro Nutzer, im Jahresabo, mit Aufpreis (ohne Beträge); der Balken wächst mit jedem Schild
+        const abo = h('div', { class: 'abs', style: { inset: 0, background: '#F4F5F8', zIndex: 6, opacity: 0, display: 'none' } });
+        abo.append(h('div', { class: 'abs', style: { left: 0, top: 0, right: 0, height: 78, background: '#1F2532', color: '#fff', display: 'flex', alignItems: 'center', gap: 18, padding: '0 28px', font: '700 30px/1 var(--font-display)', textTransform: 'uppercase', letterSpacing: '.03em' } },
+          'Abo-Übersicht', h('span', { text: 'Preisanpassung zum 1. Juli', style: { marginLeft: 'auto', font: '700 17px/1 var(--font-body)', textTransform: 'none', letterSpacing: '.02em', background: '#F2B23C', color: '#3A2A06', padding: '10px 16px', borderRadius: 20 } })));
+        const ROWS = [['Basis-Abo', '#1F2532', '▲ Preis angepasst', '#F2B23C', '#3A2A06'], ['KI-Zusatz', '#E5565B', '+ extra', '#E5565B', '#fff'], ['Telefonie', '#E67E22', '+ extra', '#E67E22', '#fff'], ['Zusatzspeicher', '#D1497A', '+ extra', '#D1497A', '#fff']];
+        const rows = ROWS.map(([name, dot, chip, cbg, cfg], i) => { const el = h('div', { class: 'abs', style: { left: 28, right: 28, top: 98 + i * 72, height: 60, borderRadius: 14, background: '#fff', boxShadow: '0 4px 12px rgba(31,37,50,.1)', display: 'flex', alignItems: 'center', gap: 16, padding: '0 18px', opacity: 0 } },
+          h('i', { style: { width: 16, height: 16, borderRadius: 5, background: dot, display: 'block', flex: 'none' } }),
+          h('div', {}, h('div', { text: name, style: { font: '700 24px/1.1 var(--font-body)', color: '#1F2532' } }), h('div', { text: 'pro Nutzer / Monat · Jahresabo', style: { font: '500 15px/1.2 var(--font-body)', color: '#6B7385', marginTop: 3 } })),
+          h('span', { text: chip, style: { marginLeft: 'auto', font: '700 18px/1 var(--font-body)', background: cbg, color: cfg, padding: '10px 16px', borderRadius: 20, whiteSpace: 'nowrap' } })); abo.append(el); return el; });
+        const SEGW = [300, 130, 110, 90], segs = ROWS.map(([, dot], i) => h('i', { style: { display: 'block', height: 34, width: '0px', background: dot, borderRadius: i === 0 ? '8px 0 0 8px' : i === 3 ? '0 8px 8px 0' : '0' } }));
+        abo.append(h('div', { class: 'abs', style: { left: 28, right: 28, top: 398, height: 110 } }, h('div', { text: 'Kosten pro Nutzer ▲', style: { font: '700 17px/1 var(--font-body)', letterSpacing: '.1em', color: '#6B7385', textTransform: 'uppercase', marginBottom: 14 } }), h('div', { style: { display: 'flex' } }, ...segs)));
+        host.append(abo);
+        const toast = h('div', { class: 'abs', style: { left: 150, top: 14, width: 520, height: 62, borderRadius: 14, background: '#fff', boxShadow: '0 12px 28px rgba(0,0,0,.4)', display: 'flex', alignItems: 'center', gap: 14, padding: '0 18px', zIndex: 7, opacity: 0, font: '700 22px/1.1 var(--font-body)', color: '#1F2532' } }, h('span', { html: icon('mail', 28, '#E5565B', 2.4) }), 'Preisanpassung zum 1. Juli'); host.append(toast);
+        return { apps: scr, abo, rows, segs, SEGW, toast }; })();
       // Lena: Anmeldefeld (klappt wie eine Tür auf) → fünf unterschiedliche Oberflächen
       const lenaUI = (() => { const scr = hosts.lena; scr.style.background = 'linear-gradient(160deg,#2A2150,#101226)';
         const wins = [['mail', 22, 44, 262, 210, -2], ['chat', 300, 76, 262, 200, 2], ['sheet', 566, 44, 232, 220, -1.5], ['files', 50, 290, 262, 200, 2], ['ticket', 340, 300, 262, 200, -2]].map(([k, x, y, w, hh, r]) => { const el = mini(E, k, w, hh); Object.assign(el.style, { left: x + 'px', top: y + 'px', transform: `rotate(${r}deg)` }); scr.append(el); return { el, r }; });
@@ -135,18 +159,23 @@ export default function register(E) {
           h('div', { style: { height: 50, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 14 } }), h('div', { style: { height: 50, borderRadius: 10, background: '#F1F3F7', border: '1.5px solid #E3E7EF', marginBottom: 26 } }), h('div', { style: { height: 56, borderRadius: 10, background: '#7B6CF6' } }));
         scr.append(panel); return { wins, panel }; })();
       // Anna: rohe, graue Oberfläche (dieselbe wie später im Übergang) + Browser-Leiste mit wachsender Tab-Zahl
+      const TABN = ['Mail', 'Kalender', 'Dateien', 'Chat', 'Aufgaben', 'Wiki', 'Tabelle', 'Formular', 'Angebote', 'Kontakte', 'Tickets', 'Notizen'];
       const annaUI = (() => { const scr = hosts.anna; const ui = buildUI(E), w = ui.window({ raw: true }); w.setActive('Startseite'); w.main.append(ui.home().el);
         w.el.style.transformOrigin = '0 0'; w.el.style.transform = `translate(0px,32px) scale(${(812 / 1480).toFixed(4)})`; scr.append(w.el);
         const strip = h('div', { class: 'abs', style: { left: 0, top: 0, width: 812, height: 32, background: '#E4E8EF', zIndex: 5 } });
         const cols = ['#E5565B', '#7B6CF6', '#36A9E8', '#3FBF8A', '#8E97AE', '#D1497A'];
-        const tabs = Array.from({ length: 12 }, (_, k) => { const el = h('div', { class: 'abs', style: { top: 4, height: 28, borderRadius: '8px 8px 0 0', background: '#fff', border: '1px solid #D5DAE4', borderBottom: 'none' } }, h('div', { class: 'abs', style: { left: 7, top: 9, width: 10, height: 10, borderRadius: 3, background: cols[k % 6] } }), h('div', { class: 'abs', style: { left: 22, top: 12, right: 6, height: 5, borderRadius: 2, background: 'rgba(31,37,50,.22)' } })); strip.append(el); return el; });
-        scr.append(strip); return { tabs }; })();
+        const tabs = Array.from({ length: 12 }, (_, k) => { const el = h('div', { class: 'abs', style: { top: 4, height: 28, borderRadius: '8px 8px 0 0', background: '#fff', border: '1px solid #D5DAE4', borderBottom: 'none' } }, h('div', { class: 'abs', style: { left: 7, top: 9, width: 10, height: 10, borderRadius: 3, background: cols[k % 6] } }), h('div', { class: 'abs', style: { left: 21, top: 8, right: 3, font: '600 11px/14px var(--font-body)', color: '#4A5266', overflow: 'hidden', whiteSpace: 'nowrap' }, text: TABN[k] })); strip.append(el); return el; });
+        const tip = h('div', { class: 'abs', style: { top: 42, left: 0, padding: '8px 12px', borderRadius: 8, background: '#1F2532', color: '#fff', font: '600 17px/1 var(--font-body)', whiteSpace: 'nowrap', zIndex: 8, opacity: 0, boxShadow: '0 6px 16px rgba(0,0,0,.3)' } });
+        const cur = h('div', { class: 'abs', style: { left: 0, top: 0, width: 26, height: 26, zIndex: 9, opacity: 0, filter: 'drop-shadow(0 2px 3px rgba(0,0,0,.4))' }, html: '<svg viewBox="0 0 24 24" width="26" height="26"><path d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.7 L11 13.3 L17.5 13 Z" fill="#fff" stroke="#1F2532" stroke-width="1.6" stroke-linejoin="round"/></svg>' });
+        scr.append(strip, tip, cur); return { tabs, tip, cur }; })();
 
       /* ---- Schwebende Fenster/Schilder (DOM-Flächen im Raum) ---- */
       const planes = [];
       const mkPlane = (el, wpx, hpx, wm) => { el.classList.add('o3-pl'); el.style.display = 'none'; planeLayer.append(el); const p = { el, wpx, hpx, wm, c: V(), roll: 0, scale: 1 }; planes.push(p); return p; };
       const tomTags = [['+ KI-OPTION', 232], ['+ TELEFONIE', 240], ['+ SPEICHER', 226]].map(([txt, w]) => { const el = h('div', { class: 'of-tag', style: { width: w + 'px', height: '52px', boxSizing: 'border-box' } }, h('span', { html: icon('euro', 26, '#E5565B', 2.6) }), txt); return mkPlane(el, w, 52, 0.30 * w / 200); });
-      const lenaMinis = [['files', 268, 176], ['ticket', 276, 180], ['chat', 232, 160]].map(([k, w, hh]) => mkPlane(mini(E, k, w, hh), w, hh, 0.34));
+      const mkPill = ([txt, icn, col, w]) => { const el = h('div', { class: 'of-tag', style: { width: w + 'px', height: '52px', boxSizing: 'border-box' } }, h('span', { html: icon(icn, 26, col, 2.6) }), txt); return mkPlane(el, w, 52, 0.30 * w / 200); };
+      const lenaPills = [['ANDERE SUCHE', 'search', '#7B6CF6', 256], ['ANDERES MENÜ', 'menu', '#7B6CF6', 258], ['ANDERE KNÖPFE', 'mouse-pointer-click', '#7B6CF6', 276]].map(mkPill);      // Beschriftungen der Nahaufnahme: was an den fünf Oberflächen jeweils anders ist
+      const annaPills = [['12 TABS OFFEN', 'app-window', '#36A9E8', 272], ['OBERFLÄCHE ROH', 'wrench', '#36A9E8', 288], ['UPDATES: SELBST', 'refresh-cw', '#36A9E8', 304]].map(mkPill);
 
       /* ---- Texte ---- */
       const mkText = (cfg) => {
@@ -155,6 +184,7 @@ export default function register(E) {
         const who = h('div', { class: 'of-who', text: cfg.who, style: { top: '444px' } });
         const bub = h('div', { class: 'of-bub', text: cfg.say, style: { top: '488px' } });
         const out = { name, ok, who, bub };
+        if (cfg.say2) { out.bub2 = h('div', { class: 'of-bub re', text: cfg.say2, style: { top: '764px' } }); textLayer.append(out.bub2); }
         if (cfg.call) {                                                   // Telefonat: wer am anderen Ende ist, ohne Lesezeit (kleine Pille unter der Blase)
           const bars = Array.from({ length: 4 }, () => h('i')), time = h('small', { text: '02:14' });
           out.call = h('div', { class: 'of-call', style: { top: '672px' } }, h('span', { class: 'ic', html: icon('phone', 24, '#fff', 2.6) }), h('span', { text: cfg.call }), time, h('span', { class: 'eq' }, ...bars));
@@ -163,7 +193,7 @@ export default function register(E) {
         textLayer.append(name, ok, who, bub); if (out.call) textLayer.append(out.call); return out;
       };
       const TXT = {
-        tom: mkText({ name: 'DER ALLROUNDER', size: 84, acc: '#E5565B', ok: 'ALLES AUS EINER HAND.', who: 'Tom · Einkauf', say: 'Die KI kostet extra? Pro Nutzer?!', call: 'IT-Service' }),
+        tom: mkText({ name: 'DER ALLROUNDER', size: 84, acc: '#E5565B', ok: 'ALLES AUS EINER HAND.', who: 'Tom · Einkauf', say: 'Die KI kostet extra? Pro Nutzer?!', say2: 'Ja. Und nur im Jahresabo.', call: 'IT-Service' }),
         lena: mkText({ name: 'DAS FERTIGE PORTAL', size: 68, acc: '#7B6CF6', ok: 'OFFEN UND LOKAL GEDACHT.', who: 'Lena · Büro', say: 'Ein Login – aber überall andere Knöpfe.' }),
         anna: mkText({ name: 'DIE OFFENE BASIS', size: 76, acc: '#36A9E8', ok: 'MÄCHTIG UND FREI.', who: 'Anna · Vertrieb', say: 'Alles drin – nur welcher Tab war das noch?' }),
       };
@@ -184,12 +214,39 @@ export default function register(E) {
       const Cn = scrCenter('anna'), Nn = V(0, 0, 1).applyQuaternion(qA), Upn = V(0, 1, 0).applyQuaternion(qA);
       const FOVF = 30, fpx = (H / 2) / Math.tan(FOVF * D2R / 2), dF = MON.w * fpx / FIN.w;
       const finalPose = { pos: Cn.clone().addScaledVector(Nn, dF), tgt: Cn.clone(), up: Upn, fov: FOVF, sx: FIN.cx - W / 2, sy: FIN.cy - H / 2 };
-      const startPose = shotPose(mkShot(heroT('anna', 0.8), 4, 74, 9.5, 30, 0, 90));
-      const T_Z0 = 22.6;
-      const transPose = (t) => {
-        const p = ez.in2(prog(t, T_Z0, DROP)), a = startPose, b = finalPose;
-        return { pos: a.pos.clone().lerp(b.pos, p), tgt: a.tgt.clone().lerp(b.tgt, p), up: a.up.clone().lerp(b.up, p).normalize(), fov: lerp(a.fov, b.fov, p), sx: lerp(a.sx, b.sx, p), sy: lerp(a.sy, b.sy, p) };
+      const T_Z0 = 22.6 + DT;
+      /* Kamerabogen: Schlüsselbilder (Ziel, Azimut, Höhenwinkel, Abstand, Brennweite, Linsenverschiebung) mit weichem Hermite-Verlauf; am Ende beschleunigt die Fahrt (Sog) und landet exakt in „full“ */
+      const finalShot = mkShot(Cn.clone(), Math.atan2(Nn.x, Nn.z) / D2R, Math.asin(clamp(Nn.y, -1, 1)) / D2R, dF, FOVF, FIN.cx - W / 2, FIN.cy - H / 2);
+      const phoneW = world.desks.anna.L.toW(world.desks.anna.L.monX + 0.52, DESK_H + 0.10, 0.10);                    // Handy im Ständer rechts neben dem Monitor
+      const midT = (k) => Cn.clone().lerp(phoneW, k).add(V(0, -0.06, 0));
+      const KEYS = [
+        [T_Z0, mkShot(heroT('anna', 0.8), 4, 74, 9.5, 30, 0, 90)],                           // hoch über Annas Platz
+        [T_Z0 + 2.6, mkShot(midT(0.45), 5, 52, 4.2, 30, 150, 30)],                          // Frage steht: Platz mit Bildschirm und Handy
+        [DROP - 2.7, mkShot(midT(0.30), 3, 30, 2.5, 30, 160, 10)],                          // über Annas Schulter: Bildschirm und Handy nebeneinander
+        [DROP, finalShot],
+      ];
+      const KP = KEYS.map(([t, k]) => ({ t, p: [k.tgt.x, k.tgt.y, k.tgt.z, k.az, k.el, k.d, k.fov, k.sx, k.sy] }));
+      const KM = KP.map((k, i) => { const a = KP[Math.max(0, i - 1)], b = KP[Math.min(KP.length - 1, i + 1)], dt = Math.max(1e-6, b.t - a.t), f = i === 0 ? 0.55 : i === KP.length - 1 ? 1.6 : 1; return k.p.map((_, j) => f * (b.p[j] - a.p[j]) / dt); });
+      const transShot = (t) => {
+        if (t <= KP[0].t) return KEYS[0][1]; if (t >= KP[KP.length - 1].t) return finalShot;
+        let i = 0; while (t >= KP[i + 1].t) i++;
+        const hh = KP[i + 1].t - KP[i].t, u = (t - KP[i].t) / hh, u2 = u * u, u3 = u2 * u, h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+        const pp = KP[i].p.map((_, j) => h00 * KP[i].p[j] + h10 * hh * KM[i][j] + h01 * KP[i + 1].p[j] + h11 * hh * KM[i + 1][j]);
+        return mkShot(V(pp[0], pp[1], pp[2]), pp[3], pp[4], pp[5], pp[6], pp[7], pp[8]);
       };
+      const transPose = (t) => shotPose(transShot(t));
+
+      /* Staub im Licht des Bildschirms: wenige, sehr weiche Partikel, die langsam steigen (deterministisch aus t) */
+      const motes = (() => {
+        const N = 150, r = mulberry(31), base = [], geo = new THREE.BufferGeometry(), arr = new Float32Array(N * 3);
+        for (let i = 0; i < N; i++) base.push([(r() - 0.5) * 1.5, r(), (r() - 0.5) * 1.2, r() * 6.28, 0.6 + r() * 0.8]);
+        geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+        const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.014, map: M_.glowTex, color: '#FFD9A8', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true, toneMapped: false }));
+        pts.frustumCulled = false; pts.userData.noAO = true; world.scene.add(pts);
+        const bs = Cn.clone().add(V(0, -0.12, 0.35));
+        pts.userData.update = (t, op) => { pts.material.opacity = op; pts.visible = op > 0.004; for (let i = 0; i < N; i++) { const b = base[i], y = ((b[1] + t * 0.018 * b[4]) % 1); arr[i * 3] = bs.x + b[0] + Math.sin(t * 0.35 * b[4] + b[3]) * 0.05; arr[i * 3 + 1] = bs.y + y * 0.9; arr[i * 3 + 2] = bs.z + b[2] + Math.cos(t * 0.3 * b[4] + b[3]) * 0.05; } geo.attributes.position.needsUpdate = true; };
+        return pts;
+      })();
 
       const setCamera = (pose) => {
         camera.position.copy(pose.pos); camera.up.copy(pose.up); camera.lookAt(pose.tgt); camera.fov = pose.fov; camera.updateProjectionMatrix();
@@ -208,12 +265,12 @@ export default function register(E) {
         if (f.phone.visible) { f.phone.updateWorldMatrix(true, false); phoneQuad = quadPx([[-0.036, 0.0046, -0.074], [0.036, 0.0046, -0.074], [0.036, 0.0046, 0.074], [-0.036, 0.0046, 0.074]].map(([x, y, z]) => V(x, y, z).applyMatrix4(f.phone.matrixWorld))); }
         return { quad: q, phoneQuad, scale: Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]) / 1480 };
       };
-      return { renderer, post, canvas, world, camera, actors, extras, hosts, lenaUI, annaUI, planes, tomTags, lenaMinis, TXT, scrim, hostLayer, planeLayer, textLayer, setCamera, projPx, quadPx, scrCorners, scrNormal, scrCenter, transPose };
+      return { renderer, post, canvas, world, camera, actors, extras, hosts, motes, lenaUI, annaUI, tomUI, planes, tomTags, lenaPills, annaPills, TXT, scrim, hostLayer, planeLayer, textLayer, setCamera, projPx, quadPx, scrCorners, scrNormal, scrCenter, transPose };
     },
 
     update(t, s) {
       const { renderer, world, camera, actors, hosts, TXT } = s;
-      const trans = t >= TIN - 0.1, vignettes = t >= T0.tom - 0.05 && t < T0.anna + 4.75;
+      const trans = t >= TIN - 0.1, vignettes = t >= T0.tom - 0.05 && t < T0.anna + 6.75;
       const live = vignettes || trans;
       s.canvas.style.display = live ? 'block' : 'none';
       [s.scrim, s.hostLayer, s.planeLayer, s.textLayer].forEach((el) => show(el, live));
@@ -229,7 +286,7 @@ export default function register(E) {
       /* ---- Licht ---- */
       const wFocus = { tom: 0, lena: 0, anna: 0 };
       if (trans) wFocus.anna = 1;
-      else { const ov = ez.out3(prog(t, T0.tom, 5.4)); const a = ez.io2(prog(t, GL1[0], GL1[1])), b = ez.io2(prog(t, GL2[0], GL2[1])); wFocus.tom = (1 - ov) * 0.45 + ov * (1 - a); wFocus.lena = a * (1 - b) + (1 - ov) * 0.45; wFocus.anna = b + (1 - ov) * 0.45; }
+      else { const ov = ez.out3(prog(t, T0.tom, SCN[0][2])); const a = ez.io2(prog(t, GLIDES[0][0], GLIDES[0][1])), b = ez.io2(prog(t, GLIDES[1][0], GLIDES[1][1])); wFocus.tom = (1 - ov) * 0.45 + ov * (1 - a); wFocus.lena = a * (1 - b) + (1 - ov) * 0.45; wFocus.anna = b + (1 - ov) * 0.45; }
       const L = world.lights, dist = pose.pos.distanceTo(pose.tgt), DB = api.dbg, K = LOOK, HK = ['tom', 'lena', 'anna'];
       // ein Spot + ein Punktlicht folgen dem Platz im Fokus (Gewichte aus der Kamerafahrt); die anderen Plätze bekommen nur weiche Lichtflecke
       { const sum = wFocus.tom + wFocus.lena + wFocus.anna || 1, sp = V(), st = V(), gp = V(); let wmax = 0;
@@ -252,7 +309,9 @@ export default function register(E) {
 
       /* ---- Bildschirm-Glühen (Farbe der Seite → Licht im Gesicht und auf dem Tisch) ---- */
       L.glow.color.set('#9FB4FF');
-      if (trans) { const warm = ez.io2(prog(t, 27.6, 28.7)); L.glow.color.set('#9FB4FF').lerp(new THREE.Color('#FFA85C'), warm); L.glow.intensity = lerp(2.2, 4.2, warm); world.desks.anna.screenGlow.material.color.set('#9FB4FF').lerp(new THREE.Color('#FFB070'), warm); world.desks.anna.screenGlow.material.opacity = lerp(0.45, 0.8, warm); }
+      if (trans) { const warm = ez.io2(prog(t, 27.6 + DT, 28.7 + DT)); L.glow.color.set('#9FB4FF').lerp(new THREE.Color('#FFA85C'), warm); L.glow.intensity = lerp(2.2, 4.2, warm); world.desks.anna.screenGlow.material.color.set('#9FB4FF').lerp(new THREE.Color('#FFB070'), warm); world.desks.anna.screenGlow.material.opacity = lerp(0.45, 0.8, warm);
+        const dn = world.desks.anna; dn.phoneGlow.material.opacity = 0.55 * ez.io2(prog(t, 25.2 + DT, 28.5 + DT)) * (0.6 + 0.4 * warm); s.motes.userData.update(t, (0.18 + 0.5 * warm) * tw(t, TIN, TIN + 1.0)); }
+      else { world.desks.anna.phoneGlow.material.opacity = 0; s.motes.userData.update(t, 0); }
 
       /* ---- Bildschirme: DOM auf die 3D-Flächen ---- */
       const q = [0, 0, 0];
@@ -269,7 +328,7 @@ export default function register(E) {
       updatePlanes(s, t, camera);
       updateTexts(s, t);
       /* ---- Zeichnen ---- */
-      const fadeIn = tw(t, T0.tom, T0.tom + 0.25, ease.out2), fadeOut = 1 - tw(t, 17.2, 17.75, ease.in2);
+      const fadeIn = tw(t, T0.tom, T0.tom + 0.25, ease.out2), fadeOut = 1 - tw(t, T0.anna + 6.2, T0.anna + 6.75, ease.in2);
       const tIn = tw(t, TIN, TIN + 0.5, ease.out2), tOut = 1 - tw(t, DROP + 0.12, DROP + 0.4, ease.out2);
       const op = (trans ? tIn * tOut : fadeIn * fadeOut).toFixed(3);
       s.canvas.style.opacity = op; s.hostLayer.style.opacity = op; s.planeLayer.style.opacity = op;
@@ -280,6 +339,22 @@ export default function register(E) {
   const scrNormalDot = (s, k, camPos) => s.scrNormal[k].dot(camPos.clone().sub(s.scrCenter(k)).normalize());
 
   function updateContent(s, t) {
+    // Tom: Mitteilung → Abo-Übersicht; Zeilen und Kostenbalken wachsen mit den Schildern (an den Pings)
+    { const c = T0.tom, P = PING.tom, u = s.tomUI, sw = ez.io2(prog(t, c + 1.15, c + 1.55)), tIn = tw(t, P[0], P[0] + 0.3, ease.out3), tOut = tw(t, c + 1.45, c + 1.7, ease.in2);
+      u.apps.style.opacity = (1 - sw).toFixed(3); u.abo.style.display = sw > 0.001 ? 'block' : 'none'; u.abo.style.opacity = sw.toFixed(3);
+      tf(u.toast, { y: -30 * (1 - tIn), o: tIn * (1 - tOut) });
+      const TR_ = [c + 1.3, P[0] + 0.3, P[1] + 0.3, P[2] + 0.3];
+      u.rows.forEach((el, i) => { const p = tw(t, TR_[i], TR_[i] + 0.4, ease.ui); el.style.opacity = p.toFixed(3); el.style.transform = `translateY(${(14 * (1 - p)).toFixed(1)}px)`; u.segs[i].style.width = (u.SEGW[i] * tw(t, TR_[i] + 0.15, TR_[i] + 0.65, ease.ui)).toFixed(1) + 'px'; }); }
+    // Anna: der Mauszeiger fährt über die Tabs, ein Tooltip nennt den Titel – „Welcher Tab war das noch?“
+    { const c = T0.anna, u = s.annaUI, HV = [[3, 'Chat – Team Vertrieb'], [8, 'Angebote – Hartmann'], [6, 'Tabelle – Q3 Pipeline'], [10, 'Tickets – Anfrage 4711'], [5, 'Wiki – Preisliste'], [7, 'Formular – Kundenanfrage']];
+      const t0 = c + 3.55, dw = 0.5, k = Math.floor((t - t0) / dw), live = t >= t0 && k < HV.length && t < SHOVE.anna - 0.1, wt = 66, cx = (i) => 8 + i * (wt + 1) + wt / 2;
+      if (!live) { u.cur.style.opacity = 0; u.tip.style.opacity = 0; u.tabs.forEach((el) => { el.style.background = '#fff'; }); }
+      else {
+        const prev = k > 0 ? HV[k - 1][0] : 1, cur = HV[k][0], m = ez.io2(clamp((t - t0 - k * dw) / 0.18)), x = lerp(cx(prev), cx(cur), m), y = lerp(k > 0 ? 18 : 120, 18, k > 0 ? 1 : m);
+        u.cur.style.opacity = tw(t, t0, t0 + 0.2).toFixed(3); u.cur.style.transform = `translate(${(x - 4).toFixed(1)}px,${(y - 2).toFixed(1)}px)`;
+        const dwell = clamp((t - t0 - k * dw - 0.18) / 0.12); u.tip.textContent = HV[k][1]; u.tip.style.opacity = dwell.toFixed(3); u.tip.style.left = clamp(cx(cur) - 60, 8, 570).toFixed(1) + 'px';
+        u.tabs.forEach((el, i) => { el.style.background = i === cur && dwell > 0.5 ? '#E8EEFF' : '#fff'; });
+      } }
     // Lena: Anmeldefeld klappt auf, dahinter fünf Oberflächen (an den Pings)
     { const P = PING.lena, door = ease.io3(prog(t, P[0], P[0] + 0.7));
       s.lenaUI.panel.style.transform = `perspective(900px) rotateY(${(-82 * door).toFixed(2)}deg)`; s.lenaUI.panel.style.opacity = 1 - 0.95 * door;
@@ -299,26 +374,25 @@ export default function register(E) {
     p.el.style.display = 'block'; p.el.style.transform = matrixFor(0, 0, p.wpx, p.hpx, quad.map((q) => [q[0], q[1]]));
   };
   function updatePlanes(s, t, camera) {
-    // Tom: Preisschilder fallen herab und schweben um den Monitor
-    { const P = PING.tom, c0 = s.scrCenter('tom'), offs = [[-0.66, 0.30], [0.70, 0.46], [0.86, 0.04]], rolls = [-0.1, 0.07, -0.06];
-      s.tomTags.forEach((p, k) => { const tt = P[0] + k * 0.11, a = prog(t, tt, tt + 0.55), pp = ez.out3(a), bounce = Math.abs(Math.sin(a * Math.PI * 1.5)) * (1 - a) * 0.22;
-        const fo = 1 - tw(t, SHOVE.tom - 0.1, SHOVE.tom + 0.2, ease.in2);
+    const cr = V().setFromMatrixColumn(camera.matrixWorld, 0), cu = V().setFromMatrixColumn(camera.matrixWorld, 1);
+    // Tom: Preisschilder fallen herab (je eines pro Ping), schweben um den Monitor und ordnen sich bei der Nahaufnahme über dem Bildschirm
+    { const P = PING.tom, c0 = s.scrCenter('tom'), offsH = [[-0.66, 0.30], [0.70, 0.46], [0.86, 0.04]], offsC = [[-0.30, 0.33], [0.0, 0.33], [0.30, 0.33]], rolls = [-0.1, 0.07, -0.06];
+      const push = ez.io2(prog(t, T0.tom + PUSH[0], T0.tom + PUSH[1])), fo = 1 - tw(t, SHOVE.tom - 0.1, SHOVE.tom + 0.2, ease.in2);
+      s.tomTags.forEach((p, k) => { const tt = P[k], a = prog(t, tt, tt + 0.55), pp = ez.out3(a), bounce = Math.abs(Math.sin(a * Math.PI * 1.5)) * (1 - a) * 0.22;
         if (t < tt - 0.01 || fo <= 0.01) { p.el.style.display = 'none'; return; }
-        const cr = V().setFromMatrixColumn(camera.matrixWorld, 0), cu = V().setFromMatrixColumn(camera.matrixWorld, 1);
-        p.c.copy(c0).addScaledVector(cr, offs[k][0]).addScaledVector(cu, offs[k][1] - (1 - pp) * 1.9 + bounce + (t > P[2] ? 0.012 * Math.sin((t - P[2]) * 4 + k) : 0)).add(V(0, 0, 0.0));
-        p.roll = rolls[k]; p.scale = 1; p.el.style.opacity = clamp(a * 3) * fo; mapPlane(p, camera, s); }); }
-    // Lena: weitere Fenster schweben aus dem Bildschirm
-    { const P = PING.lena, c0 = s.scrCenter('lena'), offs = [[0.80, 0.30], [0.84, 0.64], [1.24, 0.08]], rolls = [0.07, -0.05, 0.08];
-      s.lenaMinis.forEach((p, k) => { const tt = P[2] + k * 0.12, a = prog(t, tt, tt + 0.55), pp = ez.back(a, 1.1);
-        const fo = 1 - tw(t, SHOVE.lena - 0.1, SHOVE.lena + 0.2, ease.in2);
+        const ox = lerp(offsH[k][0], offsC[k][0], push), oy = lerp(offsH[k][1], offsC[k][1], push);
+        p.c.copy(c0).addScaledVector(cr, ox).addScaledVector(cu, oy - (1 - pp) * 1.9 * (1 - push) + bounce * (1 - push) + (t > P[2] ? 0.012 * Math.sin((t - P[2]) * 4 + k) : 0));
+        p.roll = lerp(rolls[k], 0, push * 0.8); p.scale = lerp(1, 0.7, push); p.el.style.opacity = clamp(a * 3) * fo; mapPlane(p, camera, s); }); }
+    // Lena und Anna: Beschriftungen über dem Bildschirm in der Nahaufnahme – was genau das Problem ist
+    const pills = (arr, key, c, times, sh, offs) => { const c0 = s.scrCenter(key), fo = 1 - tw(t, sh - 0.1, sh + 0.2, ease.in2);
+      arr.forEach((p, k) => { const tt = c + times[k], a = prog(t, tt, tt + 0.45), pp = ez.back(a, 1.2);
         if (t < tt || fo <= 0.01) { p.el.style.display = 'none'; return; }
-        const cr = V().setFromMatrixColumn(camera.matrixWorld, 0), cu = V().setFromMatrixColumn(camera.matrixWorld, 1);
-        const px = ez.out3(a) ** 1.6, py = ez.out3(Math.min(1, a * 1.4));
-        p.c.copy(c0).addScaledVector(cr, offs[k][0] * px).addScaledVector(cu, offs[k][1] * py + 0.03 * Math.sin(t * 2 + k)).add(V(0, 0, 0.1));
-        p.roll = rolls[k]; p.scale = 0.5 + 0.5 * pp; p.el.style.opacity = clamp(a * 2.2) * 0.97 * fo; mapPlane(p, camera, s); }); }
+        p.c.copy(c0).addScaledVector(cr, offs[k]).addScaledVector(cu, 0.33 + 0.012 * Math.sin(t * 2.2 + k)); p.roll = (k - 1) * 0.04; p.scale = 0.7 * (0.6 + 0.4 * pp); p.el.style.opacity = clamp(a * 2.4) * fo; mapPlane(p, camera, s); }); };
+    pills(s.lenaPills, 'lena', T0.lena, [3.0, 3.5, 4.0], SHOVE.lena, [-0.42, -0.10, 0.22]);
+    pills(s.annaPills, 'anna', T0.anna, [3.2, 3.7, 4.2], SHOVE.anna, [-0.42, -0.06, 0.29]);
   }
   function updateTexts(s, t) {
-    const SPEC = [['tom', T0.tom, SHOVE.tom, PING.tom[1] + 0.1], ['lena', T0.lena, SHOVE.lena, PING.lena[1] + 0.15], ['anna', T0.anna, SHOVE.anna, PING.anna[1] + 0.1]];
+    const SPEC = [['tom', T0.tom, SHOVE.tom, T0.tom + 2.4], ['lena', T0.lena, SHOVE.lena, T0.lena + 2.0], ['anna', T0.anna, SHOVE.anna, T0.anna + 2.0]];
     for (const [k, t0, sh, bubIn] of SPEC) {
       // Tom/Lena: der Text ist weg, sobald das Schieben (Wisch-Ton) trifft – so läuft der nächste Schreibtisch nicht halbtransparent hinter der Sprechblase durch
       const f0 = k === 'anna' ? sh : sh - 0.3, f1 = k === 'anna' ? sh + 0.3 : sh + 0.05;
@@ -330,8 +404,9 @@ export default function register(E) {
       tf(V_.ok, { y: 16 * (1 - tw(a, 0.3, 0.7, ease.ui)), o: tw(a, 0.3, 0.65) * (1 - off) });
       const p = tw(t, bubIn, bubIn + 0.4, ease.snap);
       tf(V_.bub, { s: 0.88 + 0.12 * p, o: clamp(p * 2.2) * (1 - off) }); tf(V_.who, { o: clamp(p * 2.2) * (1 - off) });
+      if (V_.bub2) { const p2 = tw(t, t0 + 3.9, t0 + 4.3, ease.snap); tf(V_.bub2, { s: 0.9 + 0.1 * p2, o: clamp(p2 * 2.2) * (1 - off) }); }
       if (V_.call) {
-        const pc = tw(t, bubIn + 0.25, bubIn + 0.6, ease.snap), sec = 134 + Math.max(0, Math.floor(t - bubIn)), mm = Math.floor(sec / 60), ss = sec % 60;
+        const pc = tw(t, bubIn - 0.35, bubIn, ease.snap), sec = 134 + Math.max(0, Math.floor(t - bubIn)), mm = Math.floor(sec / 60), ss = sec % 60;
         tf(V_.call, { s: 0.9 + 0.1 * pc, o: clamp(pc * 2.2) * (1 - off) }); V_.fx.time.textContent = `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
         V_.fx.bars.forEach((b, i) => { b.style.height = (8 + 20 * Math.abs(Math.sin(t * 9.5 + i * 1.7) * Math.cos(t * 3.1 + i))).toFixed(1) + 'px'; });
       }
