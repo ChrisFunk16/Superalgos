@@ -37,12 +37,15 @@ src/                     der Film als HTML-Animation (jedes Bild ist eine reine 
   engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
   logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
   scenes/act1.js           Chaos: Hook (4 s) und Überforderung in fünf Blickwinkeln (die Büro-Szenen 4–17,5 s liegen im 3D-Büro, office3d.js)
-  scenes/office3d.js       3D-Büro in Vogelperspektive (three.js, WebGL): Akt I mit Tom, Lena, Anna (je 4,5 s, Kamera gleitet von Platz zu Platz) und der Übergang 22,5–30 s (nachts, Zoom in den Bildschirm); Bildschirme sind DOM, per matrix3d auf die 3D-Monitore gelegt
-  scenes/o3d/world.js      das Büro: Boden, Rückwand mit Nachtfenster, sieben Arbeitsplätze (drei Hauptfiguren + vier Kolleg*innen), Möbel, Pflanzen, Licht
-  scenes/o3d/figure.js     3D-Figuren (Kugeln/Zylinder, erfundene Personen): Rig mit Arm-IK, Mimik (Brauen, Augen, verformbarer Mund), Blick, Haare mit Nachschwingen
-  scenes/o3d/actors.js     Spielanweisungen je Person, gebunden an die hits (Tippen, Schreck, Telefonat, Schulterzucken, Haareraufen, Kopf in den Händen, Klick, Lächeln)
+  scenes/office3d.js       3D-Büro von oben (three.js, WebGL): Akt I mit Tom, Lena, Anna (je 4,5 s; die Kamera steht steil über und hinter der Person und gleitet von Platz zu Platz) und der Übergang 22,5–30 s (nachts, Abstieg hinter Annas Schulter, Zoom in den Bildschirm). Kameras (`SHOTS`), Lichtregie (`LOOK`), Bildschirme sind DOM, per matrix3d auf die 3D-Monitore gelegt
+  scenes/o3d/world.js      das Büro (24 × 14 m): Boden, Wände, Stadtfenster, elf Arbeitsplätze (drei Hauptfiguren + acht Kolleg*innen; Platzierung `deskLayout`), Regale, Küchenzeile, Sofaecke, Besprechungsraum, Pflanzen, Licht (Hemisphäre, Sonne mit Schatten, ein Spot und ein Punktlicht, die dem Platz im Fokus folgen), Höhenfeld-Ambient-Occlusion
+  scenes/o3d/props.js      Möbel und Gegenstände (Schreibtisch, Stuhl, Monitor mit Glas und Fuß, Tastatur, Maus, Becher, Lampe, Telefon, Kopfhörer, Pflanzen, Regale, Sofa, Küche …)
+  scenes/o3d/gfx.js        Grafik-Werkzeuge: Rauschen, prozedurale Texturen (Holz, Teppich, Beton, Papier, Tastatur …), Materialien, Ambient-Occlusion als Shader-Einschub, Normalen-Reparatur
+  scenes/o3d/post.js       Nachbearbeitung: MSAA in Halbfloat, Tilt-Shift-Tiefenunschärfe (zwei Durchgänge), Farbkorrektur („Neutral“-Tonwertkurve, Kontrast, Vignette, Filmkorn)
+  scenes/o3d/figure.js     3D-Figuren (erfundene Personen, elf Looks): Skelett (Becken, Wirbelsäule, Schultern, Arme, Beine) mit Haut-Mesh, Kleidung (Pullover, Strickjacke, Hoodie, Hemd, Bluse, T-Shirt), Arm- und Bein-IK, Mimik, Blick, Handy. `body.js` Körper, `head.js` Kopf (Ohren, Augen mit Iris, Lider, Brauen, Mund, Brille, Bart, Frisuren mit Strähnentextur), `hand.js` Hände mit Fingern
+  scenes/o3d/actors.js     Spielanweisungen je Person, gebunden an die hits (Tippen, Schreck, Telefonat, Schulterzucken, Stuhl zur Kamera drehen, Haareraufen, Kopf in den Händen, Klick, Lächeln)
   scenes/o3d/anim.js       Animations-Werkzeuge (Easing, Spuren, Atmen, Blinzeln, Blickwechsel, Sprechen); domquad.js = DOM auf 3D-Flächen (Homographie)
-  vendor/three.module.js   three.js (MIT-Lizenz, siehe vendor/three-LICENSE.txt)
+  vendor/three.module.js   three.js (MIT-Lizenz, siehe vendor/three-LICENSE.txt); vendor/examples/jsm/ = die benutzten Addons (EffectComposer, Passes, RoundedBoxGeometry), über die Import-Map in index.html eingebunden
   scenes/transition.js     Übergang 22,5–30 s: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy (die Oberfläche liegt auf dem 3D-Monitor; die Kamera landet exakt in Szene 01)
   scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
   scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
@@ -60,7 +63,8 @@ build.sh                 komplette Produktion (Ton → Bilder → ffmpeg)
 ```bash
 npm install                          # Playwright, Schriften, Icons (Chromium liegt unter /opt/pw-browsers)
 pip install numpy scipy soundfile matplotlib pyloudnorm
-# WebGL für das 3D-Büro läuft im Headless-Chromium von selbst (SwiftShader, Software-Rendering) – keine GPU nötig; 3D-Bilder dauern ≈ 3 s je 4K-Bild
+# WebGL für das 3D-Büro läuft im Headless-Chromium von selbst (SwiftShader, Software-Rendering) – keine GPU nötig; ein 3D-Bild kostet ≈ 9–12 s (4K, 4 Kerne), die
+# 3D-Teile (4–17,9 s und 22,4–30,5 s ≈ 660 Bilder) zusammen ≈ 2 h; parallele Prozesse bringen nichts, weil WebGL alle Kerne nutzt
 bash build.sh                        # 4K + 1080p nach out/
 # oder einzeln:
 python3 audio/soundtrack.py          # Ton (≈ 30 s) inkl. Spektrogramm
@@ -84,6 +88,7 @@ Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während 
 * Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
 * Ton: exakt 3 744 000 Samples (78 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
   Struktur im Spektrogramm (`audio/spektrogramm.png`).
+* 3D-Bilder: Das Büro wird mit Pixelverhältnis 1,5 gerendert (bei 4K 2880 × 1620, danach auf 3840 × 2160 gestreckt; Text, Oberflächen und Schilder sind DOM und bleiben bei 4K scharf), 4× MSAA, PCF-Schatten, Tilt-Shift (Tiefenunschärfe) und Farbkorrektur im Nachbearbeitungs-Durchgang. Stellschrauben: `LOOK` in `office3d.js` (Licht, Belichtung, `pr`), `createPost` in `o3d/post.js` (MSAA, FXAA). Bei Änderungen am 3D nur die betroffenen Zeitbereiche neu rendern (`node render.mjs --scale 2 --from 3.9 --to 17.9 --out out/frames4k`; Bilder außerhalb bleiben bitgleich, weil alles deterministisch ist) und danach `bash tools/encode.sh` (4K, 1080p, Poster) ausführen.
 * Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 78 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften, übereinanderliegende Mini-Fenster auf den Büro-Bildschirmen und die Absicht-Chaos-Szene 17,5–22 s erscheinen als Treffer, sind aber gewollt).
 * Lesbarkeit: Titel 70–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
 

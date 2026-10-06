@@ -41,10 +41,10 @@ export function exprAt(keys, t, defDur = 0.3) {
 function blendHand(modes, arc = 0.05) {
   let sw = 0; modes.forEach((m) => { sw += m.w; });
   if (sw < 1e-5) sw = 1;
-  const pos = V(), pole = V(); let roll = 0, s2 = 0;
-  modes.forEach((m) => { const w = m.w / sw; pos.addScaledVector(m.pos, w); pole.addScaledVector(m.pole, w); roll += (m.roll || 0) * w; s2 += w * w; });
+  const pos = V(), pole = V(); let roll = 0, s2 = 0, curl = 0, type = 0, splay = 0, thumb = 0;
+  modes.forEach((m) => { const w = m.w / sw; pos.addScaledVector(m.pos, w); pole.addScaledVector(m.pole, w); roll += (m.roll || 0) * w; s2 += w * w; curl += (m.curl ?? 0.3) * w; type += (m.type || 0) * w; splay += (m.splay ?? 0.1) * w; thumb += (m.thumb ?? 0.3) * w; });
   pos.y += arc * 2 * (1 - s2);
-  return { pos, pole, roll };
+  return { pos, pole, roll, curl, type, splay, thumb };
 }
 
 /* ---------------------------------------------------------------- Körper-Raum */
@@ -82,8 +82,10 @@ export class Actor {
         shrug: c.shrug || 0, breath: br * (c.breath ?? 1), head, aim: c.aim, headW: c.headW ?? 0.7, eyeX: sac[0] * (c.sacc ?? 1) * 0.6, eyeY: sac[1] * (c.sacc ?? 1) * 0.6,
         blink: c.blink ?? blink(t, A.seed), squint: ex.squint + (c.squint || 0),
         brow: { raise: ex.raise + tk.emph * 0.25 + (c.browRaise || 0), angle: ex.angle, asym: ex.asym }, mouth: { smile: ex.smile + (c.smileAdd || 0), open: clamp(ex.open + tk.open * (c.talkOpen ?? 0.75)), width: ex.width * (1 - tk.open * 0.08) },
-        RH: blendHand(c.RH || [], c.arc ?? 0.05), LH: blendHand(c.LH || [], c.arc ?? 0.05), foot: c.foot || 0,
+        RH: blendHand(c.RH || [], c.arc ?? 0.05), LH: blendHand(c.LH || [], c.arc ?? 0.05), foot: c.foot || 0, time: t,
       };
+      // Tippen erkennen: Hand dicht über der Tastatur → Finger tippen (Amplitude), leicht gekrümmt
+      [st.RH, st.LH].forEach((hnd) => { const d = Math.hypot(hnd.pos.x - A.L.kbd.x, hnd.pos.z - A.L.kbd.z), h = hnd.pos.y - (DESK_H + 0.047); const k = clamp(1 - d / 0.26) * clamp(1 - Math.abs(h) / 0.06); if (k > 0.01 && !(hnd.type > 0)) { hnd.type = k; hnd.curl = lerp(hnd.curl, 0.4, k); } });
       // Haare: Nachschwingen aus der Bewegung der letzten 0,09 s
       if (c.hairLag !== false && (fig.look.style === 'long' || fig.look.style === 'curly' || fig.look.style === 'bun')) {
         const p = A.script(t - 0.09, A, { ...ctx, hp: ctx.hp }); const ph = p.head || {}, ch = c.head || {};
@@ -159,8 +161,9 @@ export function scriptLena(t, A, ctx) {
   const L = A.L, base = L.seatYaw, m = L.m;
   const open = ez.io2(prog(t, 9.25, 9.5)), startle = ez.out3(prog(t, 9.27, 9.38)) * (1 - ez.io2(prog(t, 9.38, 9.8))) * 0.1;
   const shr = ez.back(prog(t, 9.875, 10.4), 1.3), relax = ez.io2(prog(t, 11.3, 12.1)), sigh = Math.sin(Math.PI * prog(t, 11.7, 12.5)) ** 1.5;
-  const turn = ez.io2(prog(t, 9.95, 10.7)) * (1 - 0.0);                             // dreht den Stuhl zur Kamera
-  const yaw = lerp(base, 0.0, 0.8 * turn) + 0.03 * Math.sin(t * 0.8);
+  const turn = ez.io2(prog(t, 9.95, 10.85));                                        // dreht den Stuhl zur Kamera (die Kamera sitzt hinter ihr)
+  const camYaw = Math.atan2(ctx.camPos.x - A.pelvis.x, ctx.camPos.z - A.pelvis.z), dTurn = Math.atan2(Math.sin(camYaw - base), Math.cos(camYaw - base));
+  const yaw = base + dTurn * 0.9 * turn + 0.03 * Math.sin(t * 0.8);
   const lean = 0.2 - 0.2 * open + 0.04 * sigh;
   // Blick: Bildschirm → (Fenster überfliegen) → Kamera (Blickkontakt) → hoch zu den schwebenden Fenstern → Kamera
   const wCam = ez.io2(prog(t, 10.05, 10.35)) * (1 - ez.io2(prog(t, 10.9, 11.2))) + ez.io2(prog(t, 12.0, 12.3)) * 0.8;
@@ -202,20 +205,20 @@ export function scriptAnna(t, A, ctx) {
   const happy = ez.io2(prog(t, 27.6, 28.4)), relief = ez.io2(prog(t, 27.9, 28.5)) * (1 - ez.io2(prog(t, 29.0, 29.5)));
   const lookPhone = ez.io2(prog(t, 28.55, 28.85)) * (1 - ez.io2(prog(t, 29.15, 29.45)));
   const dive = ez.io2(prog(t, 29.3, 30.0));
+  const joy = ez.io2(prog(t, 27.45, 27.9)) * (1 - ez.io2(prog(t, 28.95, 29.35)));                // „Wow“: beide Hände an die Wangen
   let yaw = base, lean, headPitch = 0, headRoll = 0;
-  const toCam = ez.io2(prog(t, 14.3, 15.0)) * (1 - ez.io2(prog(t, 16.5, 17.3)));
   if (!night) {
-    lean = 0.2 + 0.12 * ez.io2(prog(t, 13.7, 14.4)) + 0.1 * sink; headPitch = 0.05 * sink; yaw = base - 0.5 * toCam;
+    lean = 0.2 + 0.12 * ez.io2(prog(t, 13.7, 14.4)) + 0.1 * sink; headPitch = 0.05 * sink; yaw = base;
   } else {
-    lean = lerp(0.62, 0.2, lift) - 0.1 * happy * relief + 0.1 * dive - 0.35 * 0; headPitch = lerp(0.2, 0.0, lift);
+    lean = lerp(0.62, 0.2, lift) - 0.1 * happy * relief - 0.12 * joy + 0.1 * dive - 0.35 * 0; headPitch = lerp(0.2, 0.0, lift);
     headRoll = lerp(-0.08, 0, lift);
     yaw = base - 0.1 * lift;
   }
   const squint = night ? 0 : 0.55 * ez.io2(prog(t, 13.75, 14.3)) * (1 - ez.io2(prog(t, 14.3, 14.6)));
   const aimScreen = A.screenC.clone();
-  const phoneAt = A.dp(-0.7, DESK_H + 0.07, 0.1);
+  const phoneAt = A.dp(L.kbX + 0.62, DESK_H + 0.06, -0.12);
   let aim = aimScreen.clone().lerp(phoneAt, lookPhone);
-  if (!night) aim = aimScreen.clone().lerp(ctx.camPos, ez.io2(prog(t, 15.1, 15.4)) * (1 - ez.io2(prog(t, 16.3, 16.7)))).lerp(A.dp(0.0, DESK_H + 0.1, -0.1), ez.io2(prog(t, 16.5, 17.0)) * 0.9);
+  if (!night) aim = aimScreen.clone().lerp(A.dp(L.kbX, DESK_H + 0.1, -0.2), ez.io2(prog(t, 16.2, 16.9)) * 0.9);
   const eyesClosed = !night ? ez.io2(prog(t, 16.2, 16.7)) : (1 - lift) * 0.9;
   const expr = night
     ? exprAt([[17.8, 'sad'], [23.6, 'worried', 0.5], [24.3, 'focus', 0.5], [24.98, 'determined', 0.2], [25.3, 'surprised', 0.3], [26.0, 'focus', 0.5], [27.3, 'surprised', 0.35], [27.9, 'hopeful', 0.5], [28.3, 'happy', 0.5], [29.3, 'hopeful', 0.5], [29.7, 'surprised', 0.3]], t)
@@ -228,11 +231,13 @@ export function scriptAnna(t, A, ctx) {
   const wType = night ? 0 : tWpre;
   const rest = (s) => A.rp(yaw, s * 0.2, 0.2, 0.3);
   const kbdSide = A.typingHand(t, 1, 0.5);
+  const cheekR = ctx.hp(-0.115, -0.045, 0.075), cheekL = ctx.hp(0.115, -0.045, 0.075);
   const RHm = night ? [
     { w: faceW > 0.5 ? (1 - lift) : (1 - lift) * 0, pos: faceR, pole: polePt(yaw, -1, 0.9, 1.0, 0.3) },
     { w: (1 - lift) * 0 + 0, pos: faceR, pole: polePt(yaw, -1) },
-    { w: lift * (1 - mouseW), pos: rest(-1), pole: polePt(yaw, -1) },
-    { w: lift * mouseW, pos: L.mouse.clone().add(V(0, 0.04 - 0.009 * clickDip, 0)), pole: polePt(yaw, -1, 0.8, 0.8, 0.0), roll: 0.1 },
+    { w: lift * (1 - mouseW) * (1 - joy), pos: rest(-1), pole: polePt(yaw, -1) },
+    { w: lift * mouseW * (1 - joy), pos: L.mouse.clone().add(V(0, 0.04 - 0.009 * clickDip, 0)), pole: polePt(yaw, -1, 0.8, 0.8, 0.0), roll: 0.1 },
+    { w: joy, pos: cheekR, pole: polePt(yaw, -1, 1.0, 0.2, 0.2), roll: 0.9, curl: 0.15 },
   ] : [
     { w: wType, pos: A.typingHand(t, -1, 1), pole: polePt(base, -1) },
     { w: (1 - wType) * (1 - wHair), pos: A.typingHand(t, -1, 0.3), pole: polePt(base, -1) },
@@ -241,15 +246,16 @@ export function scriptAnna(t, A, ctx) {
   ];
   const LHm = night ? [
     { w: 1 - lift, pos: faceL, pole: polePt(yaw, 1, 0.9, 1.0, 0.3) },
-    { w: lift, pos: A.typingHand(t, 1, lift > 0.99 && t > 24.5 ? 0.3 : 0), pole: polePt(yaw, 1) },
+    { w: lift * (1 - joy), pos: A.typingHand(t, 1, lift > 0.99 && t > 24.5 ? 0.3 : 0), pole: polePt(yaw, 1) },
+    { w: joy, pos: cheekL, pole: polePt(yaw, 1, 1.0, 0.2, 0.2), roll: -0.9, curl: 0.15 },
   ] : [
     { w: wType, pos: A.typingHand(t, 1, 1), pole: polePt(base, 1) },
     { w: (1 - wType) * (1 - wHair), pos: kbdSide, pole: polePt(base, 1) },
     { w: wHair * (1 - faceW), pos: hairL, pole: polePt(yaw, 1, 1.2, -0.45, -0.1), roll: -0.5 },
     { w: faceW, pos: faceL, pole: polePt(yaw, 1, 0.9, 1.0, 0.3) },
   ];
-  const standPh = phoneRest(phoneAt.clone().setY(DESK_H + 0.075), L.m * -0.5);
-  standPh.quat.premultiply(new Q().setFromAxisAngle(V(1, 0, 0).applyAxisAngle(V(0, 1, 0), L.m * -0.5), 1.15));
+  const standPh = phoneRest(phoneAt.clone().setY(DESK_H + 0.03), 0.12 * L.m);                    // liegt links neben der Tastatur, Oberkante zeigt von der Person weg (nach Norden) und ist angelehnt
+  standPh.quat.premultiply(new Q().setFromAxisAngle(V(1, 0, 0), 0.5));
   return {
     yaw, lean, head: { pitch: headPitch, roll: headRoll }, aim, headW: 0.75, expr, talk: tk, squint, blink: eyesClosed > 0.01 ? Math.max(eyesClosed, 0) : undefined,
     RH: RHm, LH: LHm, arc: 0.06, sacc: night ? (lift > 0.9 ? 0.5 : 0.1) : 0.5,
