@@ -12,3 +12,5 @@ refs/
 audio/stems/
 audio/soundtrack-leise.wav
 out/vorschau-*.mp4
+out/*.ok
+out/*.done
