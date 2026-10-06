@@ -35,15 +35,19 @@ Der Film zeigt alles in **einem Browser, mit einem Login, auf allen Geräten** (
 * Keine Zahlen der Vorbilder im Bild (sie ändern sich, und auch ohne Namen wären sie dem Wettbewerber zuzuordnen). Die Preisschilder bleiben deshalb ohne Beträge.
 * Vergleichende Werbung ist in Deutschland erlaubt, wenn sie objektiv, nachprüfbar und nicht herabsetzend ist – sie liegt aber auch dann vor, wenn Wettbewerber **mittelbar erkennbar** sind. Die Szenen sind bewusst allgemein gehalten; eine kurze **rechtliche Prüfung** vor der Veröffentlichung bleibt auf der Liste (zusammen mit den Titeln „Der Allrounder“, „Das fertige Portal“, „Die offene Basis“).
 
-## Bitte bestätigen (Aussagen über Linkado, die der Film schon trägt oder tragen könnte)
+## Bestätigt vom Kunden (6.10.2026) und wie der Film es zeigt
 
-* Läuft die KI-Assistenz in der eigenen Cloud, und bleiben die Daten dort („Daten bleiben in Ihrer Cloud“ steht in der Antwort des Assistenten)?
-* Wie sind Erweiterungen und Pakete bepreist (nur wenn es ein klarer Gegensatz zur „Pro Nutzer extra“-Logik ist, lässt sich das in 05 ausspielen – z. B. „Pakete statt Einzel-Aufpreise“)?
-* Wird der Support per Chat und Anruf als fester Bestandteil angeboten (Szene 04)?
-* Hosting und Betrieb in Europa – darf das als Aussage ins Schlussbild?
-* Offene Standards und Datenmitnahme (kein Lock-in) – belegbar formulierbar?
+| Aussage | Status | Im Film |
+|---|---|---|
+| KI läuft in der eigenen Cloud, Daten bleiben dort | **bestätigt** | Szene 04, Rückbezug auf „Noch eine KI“: „KI in der eigenen Cloud. Daten bleiben dort.“ (zusätzlich die Zeile „Daten bleiben in Ihrer Cloud“ in der Antwort des Assistenten) |
+| Pakete: anwendungsbezogen, pro Zugang (je Benutzer), monatlich kündbar | **bestätigt** | Szene 03: „Pakete je Anwendung – pro Zugang, monatlich kündbar.“ · Szene 05: Kettenglied „Erweiterungen – Pakete, monatlich kündbar“ (Antwort auf Toms „Die KI kostet extra? Pro Nutzer?!“ und „Noch ein Abo“) |
+| Support per Chat und Anruf | **bestätigt, abhängig von der Support-Stufe** (anfangs enthalten) | Szene 04: Fußnote „Chat und Anruf je nach Support-Stufe.“ unter „Chat und Anruf – direkt in Talk“ |
+| Datenmitnahme / kein Lock-in | **nicht belegt** | bleibt aus dem Film; erst aufnehmen, wenn ein Beleg vorliegt |
+| Hosting und Betrieb in Europa | **offen** | nicht im Film (die Tagline „Der europäische digitale Arbeitsplatz“ stammt aus dem Briefing) |
 
-Wenn diese Punkte stimmen, lassen sich in Akt II kleine Rückbezüge setzen („Statt überall andere Knöpfe: eine Oberfläche.“), ohne neue Versprechen zu erfinden. Jede solche Zeile würde in 02 bis 05 je eine Sekunde Lesezeit kosten.
+Wichtig für die Aussage zu den Paketen: Linkado rechnet **auch pro Zugang** ab. Der Gegensatz zu Toms Beispiel ist daher nicht „ohne Nutzerpreis“, sondern **nur die Anwendungen buchen, die man braucht – je Anwendung ein Paket, monatlich kündbar** statt Aufschlägen auf die ganze Suite und Jahresabos (das KI-Zusatzpaket des Vorbilds wird laut den Quellen im Jahresabo angeboten). Im Film steht dazu **kein Vergleich**, nur die eigene Aussage.
+
+Noch offen: Läuft der Support-Chat im Einstiegspaket für alle Kunden? Dann könnte die Fußnote entfallen. Gibt es einen belegbaren Satz zu Hosting in Europa und Datenmitnahme?
 
 ## Quellen der Recherche (Stand 6.10.2026; Preise ändern sich – vor Veröffentlichung neu prüfen)
 
