@@ -181,9 +181,19 @@ export default function register(E) {
         K.headline(E, root, { num: '04', size: 80, y: 330, lines: ['HILFE DIREKT', 'IN DER <em>CLOUD.</em>'], sub: 'Anleitungen und Support dort, wo Fragen entstehen.' }),
       ];
       const sub2 = h('p', { class: 'a2-sub', html: 'Und persönlich? <em style="font-style:normal;color:var(--orange-deep);font-weight:600">Chat und Anruf</em> – direkt in Talk.', style: { position: 'absolute', left: 110, top: 770, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none' } }); root.append(sub2);
+      /* Rückbezüge auf Akt I (bestätigte Aussagen): eine Oberfläche/eine Suche · Pakete je Anwendung, pro Zugang, monatlich kündbar · KI in der eigenen Cloud · Chat/Anruf je nach Support-Stufe */
+      const em = (x) => `<em style="font-style:normal;color:var(--orange-deep);font-weight:600">${x}</em>`;
+      const mkEcho = (html, top, size) => { const p = h('p', { class: 'a2-sub', html, style: { position: 'absolute', left: 110, top, margin: 0, color: 'var(--navy)', fontWeight: 500, display: 'none', ...(size ? { fontSize: size } : {}) } }); root.append(p); return p; };
+      const echoes = [
+        { el: mkEcho(`Eine Oberfläche. ${em('Eine Suche.')}`, 770), a: 25.2, b: 27.95 },                                        // 02 · Antwort auf Lena und Anna
+        { el: mkEcho(`Pakete je Anwendung –<br>${em('pro Zugang, monatlich kündbar.')}`, 806), a: 29.2, b: 33.95 },              // 03 · Antwort auf Tom
+        { el: mkEcho(`KI in der eigenen Cloud. ${em('Daten bleiben dort.')}`, 770), a: 36.1, b: 37.95 },                      // 04 · Antwort auf „Noch eine KI“
+        { el: mkEcho('Chat und Anruf je nach Support-Stufe.', 896, 24), a: 38.4, b: 44.0 },                                   // Fußnote zu „Chat und Anruf – direkt in Talk“
+      ];
+      echoes[3].el.style.color = 'var(--warm-gray)';
       const tr = buildTransition(E, { root, cam, dev, raw, win });
       root.insertBefore(dev.phone, root.children[1] || null); Object.assign(dev.phone.style, { left: '0px', top: '0px', transformOrigin: '0 0', display: 'none' });     // das Handy hängt am 3D-Handy (matrix3d), nicht am Fenster
-      return { root, tr, dev, sub2, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
+      return { root, tr, dev, sub2, echoes, talk, ui, outer, cam, raw, win, dash, shop, sup, menu, dim, gridTile, rDeck, rFor, rails: [rDeck, rFor], bandWrap, shine, edge, trailSvg, flyer, cur, capRaw, capLk, heads, trailLen: {}, activeRail: null, tg: { 0: 0, 1: 0, 3: 0 } };
     },
 
     update(t, s, _E, tGlobal) {
@@ -223,6 +233,7 @@ export default function register(E) {
 
       /* ---- Überschriften ---- */
       s.heads[0].update(t, 20.25, 24.0); s.heads[1].update(t, 24.0, 28.0); s.heads[2].update(t, 28.0, 34.0); s.heads[3].update(t, 34.0, 44.0);
+      s.echoes.forEach(({ el, a, b }) => { const on = t >= a && t < b; el.style.display = on ? 'block' : 'none'; if (on) tf(el, { y: 20 * (1 - tw(t, a, a + 0.6, ease.ui)), o: tw(t, a, a + 0.5, ease.out2) * (1 - tw(t, b - 0.35, b, ease.in2)) }); });
       s.sub2.style.display = (t >= 37.95 && t < 44.0) ? 'block' : 'none'; tf(s.sub2, { y: 20 * (1 - tw(t, 38.0, 38.6, ease.ui)), o: tw(t, 38.0, 38.5, ease.out2) * (1 - tw(t, 43.6, 44.0, ease.in2)) });
 
       /* ---- 02: Übersicht – Widgets rasten ein, Suche mit Assistent ---- */
