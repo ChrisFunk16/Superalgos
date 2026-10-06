@@ -1,0 +1,103 @@
+# Linkado – Werbefilm (84 s)
+
+**Zielgruppe:** Unternehmer und Entscheider sowie junge, moderne Beschäftigte – der Film soll modern, klar und dynamisch wirken (nicht „vereinfacht für Ältere“), aber nie überfordern: Texte stehen ≥ 1,3 s, keine Rollbewegungen, nichts Wichtiges wird angeschnitten.
+
+Ein Werbefilm für **Linkado**, den europäischen digitalen Arbeitsplatz auf Nextcloud-Basis:
+**Chaos der Insellösungen → Klarheit → das Linkado-Logo kristallisiert heraus.** Mit ruhigem, schrittweise
+wachsendem Techno. Konzept und Dramaturgie: [`KONZEPT.md`](KONZEPT.md).
+
+| Datei | Inhalt |
+|---|---|
+| `out/linkado-werbefilm-4k.mp4` | Master, 3840×2160, 30 fps, H.264, AAC 256 kbit/s |
+| `out/linkado-werbefilm-1080p.mp4` | Web-Fassung, 1920×1080, 30 fps |
+| `out/poster.png` | Standbild (Endkarte) |
+| `audio/soundtrack.mp3` | Musik als eigene Tonspur (48 kHz, −14 LUFS, Spitzen ≤ −1,5 dBFS); die verlustfreie `soundtrack.wav` erzeugt `python3 audio/soundtrack.py` |
+| `audio/soundtrack-leise.mp3` | dieselbe Musik, −20 LUFS (Messe / Empfang / Hintergrund) |
+| `audio/stems/*.wav` | Stems für den Schnitt: drums · bass · pad · music · bells (inkl. UI) · fx (24 Bit, ohne Sättigung/Limiter; Summe ≈ Master) – entstehen beim Ton-Rendern |
+| `KONZEPT.md` · `KONZEPTE-WEITERDENKEN.md` · `PLAN.md` | Dramaturgie, weitergedachte Konzepte (Fassungen, Faden, KI, Ton), priorisierter Plan |
+| `Sprechertext-Vorschlag.md` | optionaler Sprechertext mit Zeitmarken |
+| `VORTEILE.md` | Linkados Vorteile gegenüber den drei Ansätzen aus Akt I, belegte Alltagsärgernisse mit Quellen, offene Bestätigungen, Rechtshinweise |
+
+> **Platzhalter / bitte prüfen**
+> * Das **Logo** ist aus den gelieferten Abbildungen als Vektor nachgezeichnet (`src/logo.js`). Liegt das Original-SVG vor,
+>   die Pfade in `LOGO.parts` ersetzen – alle Szenen greifen nur auf `LOGO` zu.
+> * **Farben** sind aus Screenshots/Logo geschätzt (`src/brand.css`, Block `:root`). Exakte Hex-Werte dort eintragen.
+> * Die **Oberflächen** (Startseite „Ihr Tag“, Apps und Pakete, Support, Leiste) sind nach **echten Screenshots der Cloud** nachgebaut (`src/ui.js`). Die Instanz war leer;
+>   **alle Inhalte (Termine, Dateien, Anfragen, Namen, Assistent-Antworten) sind erfundene Demo-Daten**. Die „SNEAK PEEK“-Marke ist entfernt – bitte vor Veröffentlichung die gezeigten Funktionen freigeben.
+>   Die Original-Screenshots liegen lokal in `refs/` (nicht im Repository: enthalten Instanz-Daten).
+> * Im Chaos-Teil werden **keine Produkt- oder Firmennamen** genannt: drei allgemeine Ansätze (Allrounder, fertiges Portal, offene Basis), jeweils „erst Stärke, dann *Aber:*“. Bitte inhaltlich freigeben.
+>   Nextcloud kommt nur als eure eigene Basis vor (Szene 01); das Endbild zeigt die Marke allein (kein Produktname).
+> * Im Logo-Lockup steht „Der europäische digitale Arbeitsplatz“; im Briefing war von „offenem Arbeitsplatz“ die Rede.
+>   Umstellen: Konstante `TAGLINE` in `src/scenes/finale.js`.
+
+## Aufbau
+
+```
+timeline.json            Zeitplan: 42 Takte à 2 s (120 BPM), Szenen und „hits“ (Bild-/Ton-Akzente) – der Vertrag zwischen Bild und Ton
+src/                     der Film als HTML-Animation (jedes Bild ist eine reine Funktion der Zeit t)
+  engine.js kit.js ui.js   Mini-Engine, Act-II-Bausteine, nachgebaute Linkado-Oberfläche (home / apps / support)
+  logo.js brand.css        Logo (Vektor) und Marken-Variablen (Farben, Schriften)
+  scenes/act1.js           Chaos: Hook (4 s) und Überforderung in fünf Blickwinkeln (23,5–28 s; die Büro-Szenen 4–23,5 s liegen im 3D-Büro, office3d.js)
+  scenes/office3d.js       3D-Büro von oben (three.js, WebGL): Akt I mit Tom, Lena, Anna (je 6,5 s: Auftritt steil über und hinter der Person, nach 2,6 s Einfahrt an den Bildschirm, Nahaufnahme mit lesbarem Problem; die Kamera gleitet von Platz zu Platz) und der Übergang 28–36 s (nachts, Hermite-Kamerafahrt hinter Annas Schulter, Zoom in den Bildschirm, Handy neben dem Monitor). Kameras (`SHOTS`), Lichtregie (`LOOK`), Bildschirme sind DOM, per matrix3d auf die 3D-Monitore gelegt
+  scenes/o3d/world.js      das Büro (24 × 14 m): Boden, Wände, Stadtfenster, elf Arbeitsplätze (drei Hauptfiguren + acht Kolleg*innen; Platzierung `deskLayout`), Regale, Küchenzeile, Sofaecke, Besprechungsraum, Pflanzen, Licht (Hemisphäre, Sonne mit Schatten, ein Spot und ein Punktlicht, die dem Platz im Fokus folgen), Höhenfeld-Ambient-Occlusion
+  scenes/o3d/props.js      Möbel und Gegenstände (Schreibtisch, Stuhl, Monitor mit Glas und Fuß, Tastatur, Maus, Becher, Lampe, Telefon, Kopfhörer, Pflanzen, Regale, Sofa, Küche …)
+  scenes/o3d/gfx.js        Grafik-Werkzeuge: Rauschen, prozedurale Texturen (Holz, Teppich, Beton, Papier, Tastatur …), Materialien, Ambient-Occlusion als Shader-Einschub, Normalen-Reparatur
+  scenes/o3d/post.js       Nachbearbeitung: MSAA in Halbfloat, Tilt-Shift-Tiefenunschärfe (zwei Durchgänge), Farbkorrektur („Neutral“-Tonwertkurve, Kontrast, Vignette, Filmkorn)
+  scenes/o3d/figure.js     3D-Figuren (erfundene Personen, elf Looks): Skelett (Becken, Wirbelsäule, Schultern, Arme, Beine) mit Haut-Mesh, Kleidung (Pullover, Strickjacke, Hoodie, Hemd, Bluse, T-Shirt), Arm- und Bein-IK, Mimik, Blick, Handy. `body.js` Körper, `head.js` Kopf (Ohren, Augen mit Iris, Lider, Brauen, Mund, Brille, Bart, Frisuren mit Strähnentextur), `hand.js` Hände mit Fingern
+  scenes/o3d/actors.js     Spielanweisungen je Person, gebunden an die hits (Tippen, Schreck, Telefonat, Schulterzucken, Stuhl zur Kamera drehen, Haareraufen, Kopf in den Händen, Klick, Lächeln)
+  scenes/o3d/anim.js       Animations-Werkzeuge (Easing, Spuren, Atmen, Blinzeln, Blickwechsel, Sprechen); domquad.js = DOM auf 3D-Flächen (Homographie)
+  vendor/three.module.js   three.js (MIT-Lizenz, siehe vendor/three-LICENSE.txt); vendor/examples/jsm/ = die benutzten Addons (EffectComposer, Passes, RoundedBoxGeometry), über die Import-Map in index.html eingebunden
+  scenes/transition.js     Übergang 28–36 s: Cliffhanger-Frage, Klick aufs Start-Symbol, 36 Tabs → 1 Tab, Anmeldefeld, Lichtwelle, Handy (die Oberfläche liegt auf dem 3D-Monitor und dem Handy neben dem Monitor – erst grau, dann farbig; die Kamera landet exakt in Szene 01)
+  scenes/act1-bits.js      Bausteine für Akt I: Laptop, Handy, Mini-Oberflächen (Mail, Chat, Kalender, Tabelle, Video, Tickets, KI, Dateien, Board, Formular), Alltagssatz mit Profilbild
+  scenes/act2.js           Klarheit 01–04: Rohfassung→Linkado, Übersicht + großes Menü mit Suche und Assistent, Apps und Pakete, Support + Talk (Chat, Anruf) + Fortschrittsfaden
+  scenes/devices.js        Oberflächen im Übergang: Browser-Leiste (36 Tabs → 1 Tab) und Handy mit derselben Oberfläche (das Gehäuse zeichnet das 3D-Büro; `phoneScreen` wird beim Klick geweckt und färbt sich mit der Lichtwelle)
+  scenes/act2b.js          05 Gesamtpaket (Kettenglieder), 06 Mehr Zeit (Zeitleiste), Übergabe-Knoten
+  scenes/finale.js         Kristallisation, Logo, Schlusszeilen, Tagline, CTA
+audio/soundtrack.py      synthetischer Soundtrack v3 (numpy/scipy), liest die hits aus timeline.json (auch Klicks, Tippen, Swipes, Flüge)
+audio/alt/               frühere Fassungen des Tons (v1, v2)
+render.mjs               rendert Frame für Frame mit Headless-Chromium (Playwright)
+build.sh                 komplette Produktion (Ton → Bilder → ffmpeg)
+```
+
+## Neu rendern
+
+```bash
+npm install                          # Playwright, Schriften, Icons (Chromium liegt unter /opt/pw-browsers)
+pip install numpy scipy soundfile matplotlib pyloudnorm
+# WebGL für das 3D-Büro läuft im Headless-Chromium von selbst (SwiftShader, Software-Rendering) – keine GPU nötig; ein 3D-Bild kostet ≈ 9–12 s (4K, 4 Kerne), die
+# 3D-Teile (4–23,5 s und 28–36 s ≈ 830 Bilder) zusammen ≈ 2,5 h; parallele Prozesse bringen nichts, weil WebGL alle Kerne nutzt
+bash build.sh                        # 4K + 1080p nach out/
+# oder einzeln:
+python3 audio/soundtrack.py          # Ton (≈ 30 s) inkl. Spektrogramm
+node render.mjs --times 6,25.2,29,56.3 --out out/preview/x --debug     # Standbilder zum Prüfen
+node render.mjs --from 28 --to 36 --out out/preview/seq            # Ausschnitt
+node render.mjs --scale 2                                           # 4K (deviceScaleFactor 2)
+```
+
+Im Browser ansehen: `node render.mjs` startet einen lokalen Server nur während des Renderns; zum Anschauen reicht
+`npx http-server src -p 8080` plus `/index.html?play&fit` (Zeitplan wird aus `/timeline.json` geladen → Datei dorthin kopieren/serven).
+
+## Texte, Farben, Zeiten ändern
+
+* **Texte:** in den Szenendateien (Versalien-Titel in `act2.js`/`act2b.js` über `K.headline`, Chaos-Karten, Hook und Blickwinkel in `act1.js`, Schlusszeilen in `finale.js`, Demo-Inhalte der Oberfläche in `ui.js`).
+* **Farben/Schrift:** `src/brand.css` (`:root`) und `src/logo.js` (`BRAND`).
+* **Zeiten:** `timeline.json` (Szenen + hits). Das Ton-Skript liest die hits zur Laufzeit; danach `python3 audio/soundtrack.py`.
+* **Mischung des Tons:** Wörterbuch `MIX` am Anfang von `audio/soundtrack.py`.
+
+## Qualitätssicherung
+
+* Alle Frames sind deterministisch (keine Zufallswerte ohne Seed): zweimal rendern → identische Bilder.
+* Ton: exakt 4 032 000 Samples (84 s), −14 LUFS, Spitzen ≤ −1,5 dBFS (Look-ahead-Limiter), Mono-Verträglichkeit < 1 dB Verlust, Akkorde per Chroma-Analyse gegen die Komposition geprüft,
+  Struktur im Spektrogramm (`audio/spektrogramm.png`).
+* 3D-Bilder: Das Büro wird mit Pixelverhältnis 1,5 gerendert (bei 4K 2880 × 1620, danach auf 3840 × 2160 gestreckt; Text, Oberflächen und Schilder sind DOM und bleiben bei 4K scharf), 4× MSAA, PCF-Schatten, Tilt-Shift (Tiefenunschärfe) und Farbkorrektur im Nachbearbeitungs-Durchgang. Stellschrauben: `LOOK` in `office3d.js` (Licht, Belichtung, `pr`), `createPost` in `o3d/post.js` (MSAA, FXAA). Bei Änderungen am 3D nur die betroffenen Zeitbereiche neu rendern (`node render.mjs --scale 2 --from 3.9 --to 36.1 --out out/frames4k`; Bilder außerhalb bleiben bitgleich, weil alles deterministisch ist – Szenen, die nur um ganze Takte verschoben wurden, lassen sich per Umbenennen der Bilder übernehmen, nachdem einzelne Stichproben mit `--times` bitgleich ausfielen. Achtung: Schwebende Hintergrundfenster der Überforderung hängen an der absoluten Zeit, sie müssen mit neu gerendert werden) und danach `bash tools/encode.sh` (4K, 1080p, Poster) ausführen.
+* Render-Fehler-Suche: `node tools/domcheck.mjs --from 0 --to 84 --step 0.1` meldet abgeschnittene Texte, Text außerhalb des Bildes und sich überlagernde Texte (Maskenanimationen der Überschriften, übereinanderliegende Mini-Fenster auf den Büro-Bildschirmen und die Absicht-Chaos-Szene 23,5–28 s erscheinen als Treffer, sind aber gewollt).
+* Lesbarkeit: Titel 70–80 px, Untertitel 36 px, Chips ≥ 24 px (bei 1080p). Test mit 640-px-Kontaktbogen (Smartphone-Größe) – siehe `tools/sheet.py`.
+
+## Offene Wünsche (leicht nachzuziehen)
+
+* **9:16-Fassung** für Smartphone/Social: Szenen sind in 1920×1080 komponiert; für Hochformat Textspalte über die Oberfläche legen (eigene Layout-Variante je Szene).
+* **15-Sekunden-Schnitt:** Hook → Überforderung → „Es geht auch anders.“ → Drei Kernbilder → Logo; dafür eigene Kurz-Zeitleiste + Kurzfassung des Tons.
+* **Sprecherstimme und Untertitel:** Text liegt bei; Einsprechen, dann Mischen (Musik absenken) und SRT erzeugen.
+* **Englische Fassung:** Texte in den Szenen ersetzen (alle Strings stehen zentral in den Szenendateien).
+
+Lizenzen: Schriften Outfit, Inter, Barlow Condensed (SIL OFL), Icons Lucide (ISC), Musik und Bild selbst erzeugt.

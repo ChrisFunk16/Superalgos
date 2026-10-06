@@ -1,0 +1,29 @@
+{
+  "name": "linkado-promo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Linkado Werbefilm (60 s): HTML-Animation + synthetischer Soundtrack, gerendert per Playwright und ffmpeg",
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs",
+    "audio": "python3 audio/soundtrack.py",
+    "build": "bash build.sh"
+  },
+  "devDependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/bebas-neue": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/lexend": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
+    "@fontsource/outfit": "^5.3.0",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "@fontsource/red-hat-display": "^5.3.0",
+    "@fontsource/sora": "^5.3.0",
+    "@fontsource/urbanist": "^5.3.0",
+    "d3-delaunay": "^6.0.4",
+    "lucide-static": "^1.49.0",
+    "playwright-core": "^1.56.1",
+    "three": "^0.186.1"
+  }
+}
